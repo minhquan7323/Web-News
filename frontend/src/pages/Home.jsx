@@ -21,8 +21,8 @@ const Home = () => {
 
     return (
         <>
-            {news.map((article, index) => (
-                <Card key={index} maxW="md" m="4" boxShadow="lg">
+            {news.map((article) => (
+                <Card key={article.id} maxW="md" m="4" boxShadow="lg">
                     <Image
                         src={article.urlToImage || "https://via.placeholder.com/150"}
                         alt={article.title}
