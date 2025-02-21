@@ -2,11 +2,12 @@ import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerCont
 import { HamburgerIcon } from '@chakra-ui/icons'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react"
 
 const Header = () => {
     const { isOpen, onClose, onOpen } = useDisclosure()
     const [isScrolled, setIsScrolled] = useState(false)
-    const [movieSearch, setMovieSearch] = useState([])
+    const [newsSearch, setnewsSearch] = useState([])
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -47,7 +48,7 @@ const Header = () => {
                             fontWeight='bold'
                             textTransform='uppercase' px={2}
                         >
-                            Movie
+                            NEWS
                         </Text>
                     </Link>
                     <Link to="/favorite">
@@ -57,10 +58,21 @@ const Header = () => {
                     </Link>
                 </Box>
 
+
+
                 <Box display="flex" alignItems="center">
-                    <Button m='7px'>
-                        Sign in
+                    <Button colorScheme="teal" size="md" onClick={onOpen} marginRight={5}>
+                        <i className="fas fa-magnifying-glass"></i>
                     </Button>
+
+                    <Box p={2}>
+                        <SignedOut>
+                            <SignInButton />
+                        </SignedOut>
+                        <SignedIn>
+                            <UserButton />
+                        </SignedIn>
+                    </Box>
                 </Box>
             </Box>
 
@@ -71,7 +83,7 @@ const Header = () => {
                     <DrawerHeader>
                         <Link to="/">
                             <Text fontSize='4xl' color='teal' fontWeight='bold' textTransform='uppercase' px={4} onClick={onClose}>
-                                Movie
+                                NEWS
                             </Text>
                         </Link>
                     </DrawerHeader>
@@ -84,8 +96,8 @@ const Header = () => {
                                 placeholder='Search'
                                 mr={2}
                                 color='white'
-                                value={movieSearch}
-                                onChange={(e) => setMovieSearch(e.target.value)}
+                                value={newsSearch}
+                                onChange={(e) => setnewsSearch(e.target.value)}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
                                         onSearch()
@@ -97,11 +109,16 @@ const Header = () => {
 
                         <Divider borderColor="teal" />
 
-                        <VStack as="ul" spacing={4} color="white" align="start" w="full" p={10}>
+                        <VStack as="ul" spacing={4} align="start" w="full" p={10}>
                             <List spacing={4} styleType="disc">
                                 <ListItem>
-                                    <Link to="/favorite" onClick={onClose}>
-                                        <Text _hover={{ textDecoration: "none" }} px={4} >
+                                    <Link to="/favorite" onClick={onClose} color="inherit">
+                                        <Text
+                                            _hover={{ textDecoration: "none" }}
+                                            px={4}
+                                            sx={{ color: "white !important" }}
+                                            color="white"
+                                        >
                                             Favorite List
                                         </Text>
                                     </Link>
