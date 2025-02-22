@@ -2,13 +2,16 @@ import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerCont
 import { HamburgerIcon } from '@chakra-ui/icons'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react"
+import { useUser, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react"
 
 const Header = () => {
     const { isOpen, onClose, onOpen } = useDisclosure()
     const [isScrolled, setIsScrolled] = useState(false)
     const [newsSearch, setnewsSearch] = useState([])
     const navigate = useNavigate()
+    const { user } = useUser()
+
+    console.log(user?.id);
 
     useEffect(() => {
         const handleScroll = () => {
