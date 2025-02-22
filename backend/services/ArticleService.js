@@ -34,80 +34,80 @@ const createArticle = (newArticle) => {
     })
 }
 
-// const updateProduct = (id, data) => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             const checkProduct = await Product.findOne({
-//                 _id: id
-//             })
+const updateArticle = (id, data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const checkArticle = await Article.findOne({
+                _id: id
+            })
 
-//             if (checkProduct === null) {
-//                 resolve({
-//                     status: 'ERR',
-//                     message: 'The product is not defined'
-//                 })
-//             }
+            if (checkArticle === null) {
+                resolve({
+                    status: 'ERR',
+                    message: 'The Article is not defined'
+                })
+            }
 
-//             const updateProduct = await Product.findByIdAndUpdate(id, data, { new: true })
+            const updateArticle = await Article.findByIdAndUpdate(id, data, { new: true })
 
-//             resolve({
-//                 status: 'OK',
-//                 message: 'Update product success',
-//                 data: updateProduct
-//             })
-//         }
-//         catch (e) {
-//             reject(e)
-//         }
-//     })
-// }
+            resolve({
+                status: 'OK',
+                message: 'Update Article success',
+                data: updateArticle
+            })
+        }
+        catch (e) {
+            reject(e)
+        }
+    })
+}
 
-// const detailsProduct = (id) => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             const product = await Product.findOne({ _id: id }).populate('type', 'name');
+const detailsArticle = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const article = await Article.findOne({ _id: id }).populate('categoryId', 'name');
 
-//             if (!product) {
-//                 return resolve({
-//                     status: 'ERR',
-//                     message: 'The product is not defined'
-//                 });
-//             }
+            if (!article) {
+                return resolve({
+                    status: 'ERR',
+                    message: 'The article is not defined'
+                });
+            }
 
-//             resolve({
-//                 status: 'OK',
-//                 message: 'Success',
-//                 data: product
-//             });
-//         } catch (e) {
-//             reject(e);
-//         }
-//     });
-// }
+            resolve({
+                status: 'OK',
+                message: 'Success',
+                data: article
+            });
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
 
-// const deleteProduct = (id) => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             const checkProduct = await Product.findOne({ _id: id })
+const deleteArticle = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const checkArticle = await Article.findOne({ _id: id })
 
-//             if (checkProduct === null) {
-//                 return resolve({
-//                     status: 'ERR',
-//                     message: 'The product is not defined'
-//                 })
-//             }
+            if (checkArticle === null) {
+                return resolve({
+                    status: 'ERR',
+                    message: 'The Article is not defined'
+                })
+            }
 
-//             await Product.findByIdAndDelete(id)
+            await Article.findByIdAndDelete(id)
 
-//             resolve({
-//                 status: 'OK',
-//                 message: 'Delete product success'
-//             })
-//         } catch (e) {
-//             reject(e)
-//         }
-//     })
-// }
+            resolve({
+                status: 'OK',
+                message: 'Delete Article success'
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
 
 // const deleteManyProducts = (ids) => {
 //     return new Promise(async (resolve, reject) => {
@@ -124,69 +124,69 @@ const createArticle = (newArticle) => {
 //     })
 // }
 
-// const allProduct = (limit, page, sort, filter, search) => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             const query = {};
-//             // Lọc theo search query
-//             if (search) {
-//                 query['name'] = { '$regex': search, '$options': 'i' };
-//             }
+const allArticle = (limit, page, sort, filter, search) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const query = {};
+            // Lọc theo search query
+            if (search) {
+                query['name'] = { '$regex': search, '$options': 'i' };
+            }
 
-//             // Lọc theo loại sản phẩm (type) và giá
-//             if (filter && Array.isArray(filter)) {
-//                 filter.forEach((f, index) => {
-//                     if (index % 2 === 0) {
-//                         if (f === 'type') {
-//                             query['type'] = { '$in': filter[index + 1].split(',') };
-//                         } else if (f === 'price') {
-//                             const priceRange = filter[index + 1].split(',').map(Number);
-//                             if (priceRange.length === 2) {
-//                                 const [minPrice, maxPrice] = priceRange;
-//                                 if (!isNaN(minPrice) && !isNaN(maxPrice)) {
-//                                     query['price'] = { $gte: minPrice, $lte: maxPrice };
-//                                 }
-//                             }
-//                         } else if (f === 'cover') {
-//                             const covers = filter[index + 1].split(',');
-//                             query['cover'] = { $in: covers };
-//                         }
-//                     }
-//                 });
-//             }
+            // Lọc theo loại sản phẩm (type) và giá
+            if (filter && Array.isArray(filter)) {
+                filter.forEach((f, index) => {
+                    if (index % 2 === 0) {
+                        if (f === 'type') {
+                            query['type'] = { '$in': filter[index + 1].split(',') };
+                        } else if (f === 'price') {
+                            const priceRange = filter[index + 1].split(',').map(Number);
+                            if (priceRange.length === 2) {
+                                const [minPrice, maxPrice] = priceRange;
+                                if (!isNaN(minPrice) && !isNaN(maxPrice)) {
+                                    query['price'] = { $gte: minPrice, $lte: maxPrice };
+                                }
+                            }
+                        } else if (f === 'cover') {
+                            const covers = filter[index + 1].split(',');
+                            query['cover'] = { $in: covers };
+                        }
+                    }
+                });
+            }
 
-//             const totalProduct = await Product.countDocuments();
-//             const totalProductFilter = await Product.countDocuments(query);
+            const totalArticle = await Article.countDocuments();
+            const totalArticleFilter = await Article.countDocuments(query);
 
-//             let productQuery = Product.find(query)
-//                 .populate('type', 'name') // Lấy thông tin chi tiết của danh mục
-//                 .limit(limit)
-//                 .skip((page - 1) * limit);
+            let articleQuery = Article.find(query)
+                .populate('categoryId', 'name')
+                .limit(limit)
+                .skip((page - 1) * limit);
 
-//             // Sắp xếp theo yêu cầu
-//             if (sort) {
-//                 const objectSort = {};
-//                 objectSort[sort[1]] = sort[0] === 'asc' ? 1 : -1;
-//                 productQuery = productQuery.sort(objectSort);
-//             }
+            // Sắp xếp theo yêu cầu
+            if (sort) {
+                const objectSort = {};
+                objectSort[sort[1]] = sort[0] === 'asc' ? 1 : -1;
+                articleQuery = articleQuery.sort(objectSort);
+            }
 
-//             // Lấy danh sách sản phẩm theo query
-//             const allProduct = await productQuery;
+            // Lấy danh sách sản phẩm theo query
+            const allArticle = await articleQuery;
 
-//             resolve({
-//                 status: 'OK',
-//                 message: 'Success',
-//                 data: allProduct,
-//                 totalProduct,
-//                 totalProductFilter,
-//                 currentPage: Number(page),
-//                 totalPage: Math.ceil(totalProductFilter / limit),
-//             });
-//         } catch (e) {
-//             reject(e);
-//         }
-//     });
-// };
+            resolve({
+                status: 'OK',
+                message: 'Success',
+                data: allArticle,
+                totalArticle,
+                totalArticleFilter,
+                currentPage: Number(page),
+                totalPage: Math.ceil(totalArticleFilter / limit),
+            });
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
 
 
 // const getAllTypeProduct = async () => {
@@ -213,10 +213,10 @@ const createArticle = (newArticle) => {
 
 module.exports = {
     createArticle,
-    // updateProduct,
-    // detailsProduct,
-    // deleteProduct,
-    // allProduct,
+    updateArticle,
+    detailsArticle,
+    deleteArticle,
+    allArticle,
     // deleteManyProducts,
     // getAllTypeProduct
 }
