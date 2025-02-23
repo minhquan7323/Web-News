@@ -32,7 +32,8 @@ const Header = () => {
                 position="fixed"
                 justifyContent="space-between"
                 alignItems="center"
-                bg={isScrolled ? '#1a202c' : 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0))'}
+                // bg={isScrolled ? '#1a202c' : 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0))'}
+                bg={isScrolled ? '#ffffff' : 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0))'}
                 w="100%"
                 p="5px 10px"
                 shadow={isScrolled ? '0 0 10px 1px rgba(0, 0, 0, 0.13)' : 'none'}
@@ -55,7 +56,9 @@ const Header = () => {
                         </Text>
                     </Link>
                     <Link to="/favorite">
-                        <Text _hover={{ textDecoration: "none" }} display={{ base: 'none', sm: 'flex' }} px={4} >
+                        <Text
+                            color={isScrolled ? 'black' : 'white'}
+                            transition="color 0.3s ease" _hover={{ textDecoration: "none" }} fontWeight='bold' display={{ base: 'none', sm: 'flex' }} px={4} >
                             Favorite List
                         </Text>
                     </Link>

@@ -1,22 +1,19 @@
 const Article = require('../models/ArticleModel')
 const Category = require('../models/CategoryModel')
+const slugify = require("slugify")
 
 const createArticle = (newArticle) => {
     return new Promise(async (resolve, reject) => {
-        const { title, slug, content, imageUrl, author, source, categoryId } = newArticle
+        const { title, content, imageUrl, author, source, categoryId } = newArticle
         try {
-            const checkArticle = await Article.findOne({
-                $or: [
-                    { title: title },
-                    { slug: slug }
-                ]
-            })
+            const checkArticle = await Article.findOne({ title: title })
             if (checkArticle !== null) {
                 resolve({
                     status: 'ERR',
                     message: 'The name of Article is already'
                 })
             }
+            const slug = slugify(title, { lower: true, strict: true })
             const newArticle = await Article.create({
                 title, slug, content, imageUrl, author, source, categoryId
             })
@@ -128,28 +125,15 @@ const allArticle = (limit, page, sort, filter, search) => {
     return new Promise(async (resolve, reject) => {
         try {
             const query = {};
-            // Lọc theo search query
             if (search) {
                 query['name'] = { '$regex': search, '$options': 'i' };
             }
 
-            // Lọc theo loại sản phẩm (type) và giá
             if (filter && Array.isArray(filter)) {
                 filter.forEach((f, index) => {
                     if (index % 2 === 0) {
                         if (f === 'type') {
                             query['type'] = { '$in': filter[index + 1].split(',') };
-                        } else if (f === 'price') {
-                            const priceRange = filter[index + 1].split(',').map(Number);
-                            if (priceRange.length === 2) {
-                                const [minPrice, maxPrice] = priceRange;
-                                if (!isNaN(minPrice) && !isNaN(maxPrice)) {
-                                    query['price'] = { $gte: minPrice, $lte: maxPrice };
-                                }
-                            }
-                        } else if (f === 'cover') {
-                            const covers = filter[index + 1].split(',');
-                            query['cover'] = { $in: covers };
                         }
                     }
                 });
@@ -163,14 +147,12 @@ const allArticle = (limit, page, sort, filter, search) => {
                 .limit(limit)
                 .skip((page - 1) * limit);
 
-            // Sắp xếp theo yêu cầu
             if (sort) {
                 const objectSort = {};
                 objectSort[sort[1]] = sort[0] === 'asc' ? 1 : -1;
                 articleQuery = articleQuery.sort(objectSort);
             }
 
-            // Lấy danh sách sản phẩm theo query
             const allArticle = await articleQuery;
 
             resolve({

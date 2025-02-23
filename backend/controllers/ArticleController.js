@@ -2,9 +2,9 @@ const ArticleService = require('../services/ArticleService')
 
 const createArticle = async (req, res) => {
     try {
-        const { title, slug, content, imageUrl, author, source, categoryId } = req.body
+        const { title, content, imageUrl, author, source, categoryId } = req.body
 
-        if (!title || !slug || !content || !imageUrl || !author) {
+        if (!title || !content || !imageUrl || !author) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The input is require'
