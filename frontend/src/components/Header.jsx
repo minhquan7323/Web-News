@@ -1,8 +1,9 @@
 import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Input, List, ListItem, Text, useDisclosure, VStack } from '@chakra-ui/react'
 import { HamburgerIcon } from '@chakra-ui/icons'
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useUser, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react"
+import Logo from './Logo'
 
 const Header = () => {
     const { isOpen, onClose, onOpen } = useDisclosure()
@@ -10,8 +11,6 @@ const Header = () => {
     const [newsSearch, setnewsSearch] = useState([])
     const navigate = useNavigate()
     const { user } = useUser()
-
-    console.log(user?.id);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -24,6 +23,14 @@ const Header = () => {
         }
     }, [])
 
+    const handleClickNav = (type) => {
+        if (type === 'admin') {
+            navigate('/system/admin')
+        } else if (type === 'home') {
+            navigate('/')
+        }
+    }
+    const adminPath = useLocation().pathname.startsWith('/system/admin')
 
     return (
         <>
@@ -32,52 +39,66 @@ const Header = () => {
                 position="fixed"
                 justifyContent="space-between"
                 alignItems="center"
-                // bg={isScrolled ? '#1a202c' : 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0))'}
-                bg={isScrolled ? '#ffffff' : 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0))'}
+                bg={isScrolled ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.3)'}
+                backdropFilter="blur(20px)" // Làm mờ nền
                 w="100%"
                 p="5px 10px"
-                shadow={isScrolled ? '0 0 10px 1px rgba(0, 0, 0, 0.13)' : 'none'}
-                transition="background-color 0.3s ease, box-shadow 0.3s ease"
+                shadow={'0 0 10px 1px rgba(0, 0, 0, 0.2)'}
                 zIndex="1002"
             >
 
                 <Box display="flex" alignItems="center">
-                    <Button variant='ghost' display={{ base: 'flex', sm: 'none' }} onClick={onOpen} m='7px'>
-                        <HamburgerIcon boxSize={6} color='teal' />
+                    <Button variant="ghost" display={{ base: "flex", sm: "none" }} onClick={onOpen} m="7px">
+                        <HamburgerIcon boxSize={8} color="teal" />
                     </Button>
+
                     <Link to="/">
-                        <Text
+                        {/* <Text
                             display={{ base: 'none', sm: 'flex' }}
                             fontSize='4xl' color='teal'
                             fontWeight='bold'
                             textTransform='uppercase' px={2}
                         >
                             NEWS
-                        </Text>
+                        </Text> */}
+                        <Logo logo='news' />
                     </Link>
-                    <Link to="/favorite">
-                        <Text
-                            color={isScrolled ? 'black' : 'white'}
-                            transition="color 0.3s ease" _hover={{ textDecoration: "none" }} fontWeight='bold' display={{ base: 'none', sm: 'flex' }} px={4} >
-                            Favorite List
-                        </Text>
-                    </Link>
+                    {!adminPath ? (
+                        <Link to="/favorite">
+                            <Text
+                                transition="color 0.3s ease" _hover={{ textDecoration: "none" }} fontWeight='bold' display={{ base: 'none', sm: 'flex' }} px={4} >
+                                Favorite List
+                            </Text>
+                        </Link>
+                    ) : (null)}
                 </Box>
 
 
 
                 <Box display="flex" alignItems="center">
-                    <Button colorScheme="teal" size="md" onClick={onOpen} marginRight={5}>
-                        <i className="fas fa-magnifying-glass"></i>
-                    </Button>
+                    {!adminPath ? (
+                        <>
+                            <Button colorScheme="teal" size="md" onClick={onOpen} marginRight={5}>
+                                <i className="fas fa-magnifying-glass"></i>
+                            </Button>
+                            <Button colorScheme="teal" size="md" marginRight={5} onClick={() => handleClickNav('admin')}>
+                                Admin
+                            </Button>
+                        </>
 
+                    ) : (
+                        <Button colorScheme="teal" size="md" marginRight={5} onClick={() => handleClickNav('home')}>
+                            Home
+                        </Button>
+                    )}
                     <Box p={2}>
                         <SignedOut>
                             <SignInButton />
                         </SignedOut>
                         <SignedIn>
-                            <UserButton />
+                            <UserButton appearance={{ elements: { avatarBox: { width: "40px", height: "40px" } } }} />
                         </SignedIn>
+
                     </Box>
                 </Box>
             </Box>

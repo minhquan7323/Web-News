@@ -8,7 +8,8 @@ const articleSchema = new mongoose.Schema(
         imageUrl: { type: String, required: true },
         author: { type: String, required: true },
         source: [{ type: String }],
-        categoryId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }]
+        categoryId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
+        read: { type: Number, required: true, default: 0 }
     },
     { timestamps: true }
 )

@@ -6,7 +6,7 @@ const Home = () => {
     const [news, setNews] = useState([])
 
     const fetchNews = async () => {
-        const urlSearch = `https://newsapi.org/v2/everything?q=tesla&from=2025-01-22&sortBy=publishedAt&apiKey=${import.meta.env.VITE_NEWS_API_KEY}`
+        const urlSearch = `https://newsapi.org/v2/everything?q=tesla&from=2025-01-24&sortBy=publishedAt&apiKey=${import.meta.env.VITE_NEWS_API_KEY}`
         try {
             const res = await axios.get(urlSearch)
             setNews(res.data.articles)
@@ -16,8 +16,6 @@ const Home = () => {
     }
     const fetchGetDetailsArticle = async (articleId) => {
         // if (articleId) {
-        console.log('cc');
-
         const res = await ArticleService.getDetailsArticle('67b8a4b8890843722000d625')
         console.log(res.data);
 
@@ -26,7 +24,7 @@ const Home = () => {
     }
     useEffect(() => {
         fetchNews()
-        fetchGetDetailsArticle()
+        // fetchGetDetailsArticle()
     }, [])
 
     // const gridTemplate = useBreakpointValue({
@@ -66,8 +64,8 @@ const Home = () => {
                                 <>
                                     {/* Card lớn (tràn cột) */}
                                     <Link href={news[0].url} isExternal _hover={{ textDecoration: "none" }}>
-                                        <Card w="100%" boxShadow="lg" cursor="pointer" _hover={{ transform: "scale(1.02)", transition: "0.2s" }}>
-                                            <Image src={news[0].urlToImage || "https://via.placeholder.com/150"} alt={news[0].title} borderTopRadius="5px" objectFit="cover" h="auto" maxH="500px" w="100%" />
+                                        <Card w="100%" boxShadow="lg" cursor="pointer" >
+                                            <Image src={news[0].urlToImage || "https://via.placeholder.com/150"} alt={news[0].title} borderTopRadius="5px" objectFit="cover" h="auto" maxH="500px" w="100%" transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }} />
                                             <CardBody padding={3}>
                                                 <Stack spacing={3}>
                                                     <Heading size="lg">{news[0].title}</Heading>
@@ -85,8 +83,8 @@ const Home = () => {
                                         {news.slice(1, 4).map((article, index) => (
                                             <React.Fragment key={index}>
                                                 <Link href={article.url} isExternal _hover={{ textDecoration: "none" }}>
-                                                    <Box boxShadow="sm" cursor="pointer" _hover={{ transform: "scale(1.05)", transition: "0.2s" }}>
-                                                        <Image src={article.urlToImage || "https://via.placeholder.com/100"} alt={article.title} borderRadius="5px" objectFit="cover" h="auto" maxH="100px" w="90%" />
+                                                    <Box boxShadow="sm" cursor="pointer" >
+                                                        <Image src={article.urlToImage || "https://via.placeholder.com/100"} alt={article.title} borderRadius="5px" objectFit="cover" h="auto" maxH="100px" w="90%" transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }} />
                                                     </Box>
                                                 </Link>
 
@@ -121,8 +119,8 @@ const Home = () => {
                                     {/* 2 Card lớn trên cùng */}
                                     {news.slice(6, 8).map((article, index) => (
                                         <Link key={index} href={article.url} isExternal _hover={{ textDecoration: "none" }}>
-                                            <Card w="100%" boxShadow="lg" mb={4} cursor="pointer" _hover={{ transform: "scale(1.02)", transition: "0.2s" }}>
-                                                <Image src={article.urlToImage || "https://via.placeholder.com/150"} alt={article.title} borderTopRadius="5px" objectFit="cover" h="100%" maxH="500px" w="100%" />
+                                            <Card w="100%" boxShadow="lg" mb={4} cursor="pointer" >
+                                                <Image src={article.urlToImage || "https://via.placeholder.com/150"} alt={article.title} borderTopRadius="5px" objectFit="cover" h="100%" maxH="500px" w="100%" transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }} />
                                                 <CardBody padding={3}>
                                                     <Stack spacing={3}>
                                                         <Heading size="md">{article.title}</Heading>
@@ -140,8 +138,8 @@ const Home = () => {
                                     <Grid templateColumns="repeat(3, 1fr)" gap={4}>
                                         {news.slice(8, 11).map((article, index) => (
                                             <Link key={index} href={article.url} isExternal _hover={{ textDecoration: "none" }}>
-                                                <Card boxShadow="sm" cursor="pointer" _hover={{ transform: "scale(1.05)", transition: "0.2s" }} h="100%">
-                                                    <Image src={article.urlToImage || "https://via.placeholder.com/100"} alt={article.title} borderRadius="5px" objectFit="cover" h="100%" maxH="200px" w="100%" />
+                                                <Card boxShadow="sm" cursor="pointer" h="100%">
+                                                    <Image src={article.urlToImage || "https://via.placeholder.com/100"} alt={article.title} borderRadius="5px" objectFit="cover" h="100%" maxH="200px" w="100%" transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }} />
                                                     <CardBody padding={2}>
                                                         <Text fontSize="sx" noOfLines={2}>{article.title}</Text>
                                                     </CardBody>
@@ -167,8 +165,8 @@ const Home = () => {
                                     {/* 2 Card lớn trên cùng */}
                                     {news.slice(6, 8).map((article, index) => (
                                         <Link key={index} href={article.url} isExternal _hover={{ textDecoration: "none" }}>
-                                            <Card w="100%" boxShadow="lg" mb={4} cursor="pointer" _hover={{ transform: "scale(1.02)", transition: "0.2s" }}>
-                                                <Image src={article.urlToImage || "https://via.placeholder.com/150"} alt={article.title} borderTopRadius="5px" objectFit="cover" h="100%" maxH="500px" w="100%" />
+                                            <Card w="100%" boxShadow="lg" mb={4} cursor="pointer" >
+                                                <Image src={article.urlToImage || "https://via.placeholder.com/150"} alt={article.title} borderTopRadius="5px" objectFit="cover" h="100%" maxH="500px" w="100%" transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }} />
                                                 <CardBody padding={3}>
                                                     <Stack spacing={3}>
                                                         <Heading size="md">{article.title}</Heading>
@@ -186,8 +184,8 @@ const Home = () => {
                                     <Grid templateColumns="repeat(3, 1fr)" gap={4}>
                                         {news.slice(8, 11).map((article, index) => (
                                             <Link key={index} href={article.url} isExternal _hover={{ textDecoration: "none" }}>
-                                                <Card boxShadow="sm" cursor="pointer" _hover={{ transform: "scale(1.05)", transition: "0.2s" }} h="100%">
-                                                    <Image src={article.urlToImage || "https://via.placeholder.com/100"} alt={article.title} borderRadius="5px" objectFit="cover" h="100%" maxH="200px" w="100%" />
+                                                <Card boxShadow="sm" cursor="pointer" h="100%">
+                                                    <Image src={article.urlToImage || "https://via.placeholder.com/100"} alt={article.title} borderRadius="5px" objectFit="cover" h="100%" maxH="200px" w="100%" transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }} />
                                                     <CardBody padding={2}>
                                                         <Text fontSize="sx" noOfLines={2}>{article.title}</Text>
                                                     </CardBody>
@@ -205,8 +203,8 @@ const Home = () => {
                                 <>
                                     {/* Card lớn (tràn cột) */}
                                     <Link href={news[0].url} isExternal _hover={{ textDecoration: "none" }}>
-                                        <Card w="100%" boxShadow="lg" cursor="pointer" _hover={{ transform: "scale(1.02)", transition: "0.2s" }}>
-                                            <Image src={news[0].urlToImage || "https://via.placeholder.com/150"} alt={news[0].title} borderTopRadius="5px" objectFit="cover" h="auto" maxH="500px" w="100%" />
+                                        <Card w="100%" boxShadow="lg" cursor="pointer" >
+                                            <Image src={news[0].urlToImage || "https://via.placeholder.com/150"} alt={news[0].title} borderTopRadius="5px" objectFit="cover" h="auto" maxH="500px" w="100%" transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }} />
                                             <CardBody padding={3}>
                                                 <Stack spacing={3}>
                                                     <Heading size="lg">{news[0].title}</Heading>
@@ -224,8 +222,8 @@ const Home = () => {
                                         {news.slice(1, 4).map((article, index) => (
                                             <React.Fragment key={index}>
                                                 <Link href={article.url} isExternal _hover={{ textDecoration: "none" }}>
-                                                    <Box boxShadow="sm" cursor="pointer" _hover={{ transform: "scale(1.05)", transition: "0.2s" }} h="100%">
-                                                        <Image src={article.urlToImage || "https://via.placeholder.com/100"} alt={article.title} borderRadius="5px" objectFit="cover" h="auto" maxH="100px" w="90%" />
+                                                    <Box boxShadow="sm" cursor="pointer" h="100%">
+                                                        <Image src={article.urlToImage || "https://via.placeholder.com/100"} alt={article.title} borderRadius="5px" objectFit="cover" h="auto" maxH="100px" w="90%" transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }} />
                                                     </Box>
                                                 </Link>
 
@@ -261,8 +259,8 @@ const Home = () => {
                         <>
                             {news.slice(22, 29).map((article, index) => (
                                 <Link key={index} href={article.url} isExternal _hover={{ textDecoration: "none" }}>
-                                    <Card w="100%" boxShadow="lg" mb={4} cursor="pointer" _hover={{ transform: "scale(1.02)", transition: "0.2s" }}>
-                                        <Image src={article.urlToImage || "https://via.placeholder.com/150"} alt={article.title} borderTopRadius="5px" objectFit="cover" h="auto" maxH="500px" w="100%" />
+                                    <Card w="100%" boxShadow="lg" mb={4} cursor="pointer" >
+                                        <Image src={article.urlToImage || "https://via.placeholder.com/150"} alt={article.title} borderTopRadius="5px" objectFit="cover" h="auto" maxH="500px" w="100%" transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }} />
                                         <CardBody padding={3}>
                                             <Heading size="sm">{article.title}</Heading>
                                             <Text fontSize="xs" color="gray.600">
@@ -280,7 +278,7 @@ const Home = () => {
             <Grid templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }} gap={6} mt={4}>
                 {news.slice(15, 23).map((article, index) => (
                     <Link key={index} href={article.url} isExternal _hover={{ textDecoration: "none" }}>
-                        <Card boxShadow="lg" cursor="pointer" _hover={{ transform: "scale(1.02)", transition: "0.2s" }} h="100%">
+                        <Card boxShadow="lg" cursor="pointer" h="100%">
                             <Image
                                 src={article.urlToImage || "https://via.placeholder.com/150"}
                                 alt={article.title}
@@ -288,6 +286,7 @@ const Home = () => {
                                 objectFit="cover"
                                 h="150px"
                                 w="100%"
+                                transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}
                             />
                             <CardBody padding={3} display="flex" flexDirection="column" h="100%">
                                 <Stack spacing={3} flex="1">
