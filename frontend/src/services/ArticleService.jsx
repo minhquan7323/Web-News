@@ -37,21 +37,13 @@ export const getAllTypeArticle = async () => {
     return res.data
 }
 
-export const createArticle = async (data, access_token) => {
-    const res = await axiosJWT.post(`${import.meta.env.VITE_API_URL}/article/create`, data, {
-        headers: {
-            token: `Bearer ${access_token}`,
-        }
-    })
+export const createArticle = async (data) => {
+    const res = await axiosJWT.post(`${import.meta.env.VITE_API_URL}/article/create`, data)
     return res.data
 }
 
-export const updateArticle = async (id, data, access_token) => {
-    const res = await axiosJWT.put(`${import.meta.env.VITE_API_URL}/article/update/${id}`, data, {
-        headers: {
-            token: `Bearer ${access_token}`,
-        }
-    })
+export const updateArticle = async (id, data) => {
+    const res = await axiosJWT.put(`${import.meta.env.VITE_API_URL}/article/update/${id}`, data)
     return res.data
 }
 

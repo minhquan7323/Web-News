@@ -6,6 +6,7 @@ import Editor from '../pages/editor'
 import DetailsArticle from '../pages/DetailsArticle'
 import NotFound from '../pages/NotFound'
 import Admin from '../pages/Admin'
+import AddArticle from '../pages/ArticleAdd'
 
 const AppRoutes = () => {
 
@@ -16,6 +17,7 @@ const AppRoutes = () => {
                 <Route path='editor' element={<Editor />} />
                 <Route path='article/details/:id' element={<DetailsArticle />} />
                 <Route path='system/admin' element={<Admin />} />
+                <Route path='system/admin/add-article' element={<AddArticle />} />
                 {/* <Route path="system/admin" element={user && isCheckAdmin ? <Admin /> : <NotFound />} /> */}
             </Route>
             <Route path="*" element={<NotFound />} />

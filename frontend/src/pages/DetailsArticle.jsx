@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react"
 import axios from "axios"
 import { Text, Image, Grid, GridItem, Box, Link, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@chakra-ui/react"
 import { ChevronRightIcon } from '@chakra-ui/icons'
+import CommentFacebook from "../components/CommentFacebook"
+import { useLocation } from "react-router-dom"
+import { initFacebookSDK } from "../utils"
 
 const DetailsArticle = () => {
     const [news, setNews] = useState([])
+    const location = useLocation()
 
     const fetchNews = async () => {
-        const urlSearch = `https://newsapi.org/v2/everything?q=tesla&from=2025-01-24&sortBy=publishedAt&apiKey=${import.meta.env.VITE_NEWS_API_KEY}`
+        const urlSearch = `https://newsapi.org/v2/everything?q=tesla&from=2025-01-25&sortBy=publishedAt&apiKey=${import.meta.env.VITE_NEWS_API_KEY}`
         try {
             const res = await axios.get(urlSearch)
             setNews(res.data.articles)
@@ -26,9 +30,12 @@ const DetailsArticle = () => {
         md: "1fr",
         lg: "9fr 3fr",
     })
+    useEffect(() => {
+        initFacebookSDK()
+    }, [])
     return (
         <>
-            {news.slice(3, 4).map((article) => (
+            {news.slice(7, 8).map((article) => (
                 <Box p={[4, 6, 8, 12]}>
                     <Breadcrumb spacing='8px' py={4} separator={<ChevronRightIcon color='gray.500' />}>
                         <BreadcrumbItem>
@@ -41,7 +48,7 @@ const DetailsArticle = () => {
                     </Breadcrumb>
                     <Grid templateColumns={gridTemplate} gap={6}>
                         <Box>
-                            <Text Text as='b' fontSize='5xl'>
+                            <Text as='b' fontSize='5xl'>
                                 {article.title}
                             </Text>
                             <Box p={8} color="gray">
@@ -118,6 +125,11 @@ const DetailsArticle = () => {
                                         ))}
                                     </Box>
                                     <Box pt={12}>
+                                        <Text as='b' fontSize={'xl'}>Comment</Text>
+                                        <CommentFacebook dataHref={import.meta.env.VITE_IS_LOCAL ?
+                                            `https://yourwebsite.com/products/${'67b8a4b8890843722000d625'}`
+                                            : window.location.href}
+                                        />
                                         <Text as="b" fontSize='2xl' textTransform="uppercase">
                                             Most read
                                         </Text>
@@ -195,7 +207,9 @@ const DetailsArticle = () => {
                                     </Grid>
                                 ))}
                             </Box>
+
                             <Box pt={12}>
+
                                 <Text as="b" borderLeft="6px solid teal" p={1} textTransform="uppercase">
                                     More from <Box as="span" color="teal">NEWS</Box>
                                 </Text>

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react"
 import axios from "axios"
 import { Card, CardBody, Text, Image, Heading, Stack, Grid, GridItem, Box, Link, useBreakpointValue, Flex, Divider, } from "@chakra-ui/react"
-import * as ArticleService from '../services/articleService'
+import * as ArticleService from '../services/ArticleService'
 const Home = () => {
     const [news, setNews] = useState([])
 
     const fetchNews = async () => {
-        const urlSearch = `https://newsapi.org/v2/everything?q=tesla&from=2025-01-24&sortBy=publishedAt&apiKey=${import.meta.env.VITE_NEWS_API_KEY}`
+        const urlSearch = `https://newsapi.org/v2/everything?q=tesla&from=2025-01-25&sortBy=publishedAt&apiKey=${import.meta.env.VITE_NEWS_API_KEY}`
         try {
             const res = await axios.get(urlSearch)
             setNews(res.data.articles)

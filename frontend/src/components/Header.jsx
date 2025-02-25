@@ -11,6 +11,7 @@ const Header = () => {
     const [newsSearch, setnewsSearch] = useState([])
     const navigate = useNavigate()
     const { user } = useUser()
+    console.log(user?.id);
 
     useEffect(() => {
         const handleScroll = () => {

@@ -4,9 +4,7 @@ const userSchema = new mongoose.Schema(
     {
         userId: { type: String, required: true, unique: true },
         isAdmin: { type: Boolean, default: false, require: true },
-        likedArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }],
-        access_token: { type: String, require: true },
-        refresh_token: { type: String, require: true }
+        likedArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }]
     },
     { timestamps: true }
 )
