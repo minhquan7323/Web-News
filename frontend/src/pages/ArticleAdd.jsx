@@ -1,22 +1,26 @@
 import { Box, Input, InputLeftAddon, InputGroup, Stack, Text, Button, HStack, Image, Flex } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { Editor } from "@tinymce/tinymce-react"
-import { uploadToCloudinary } from '../utils' // Đảm bảo hàm này hoạt động đúng
+import { uploadToCloudinary } from '../utils'
 import { useNavigate } from 'react-router-dom'
 import * as ArticleService from '../services/ArticleService'
 import { useMutationHooks } from '../hooks/useMutationHook'
 import { useMessage } from '../components/Message/Message'
+import Loading from '../components/Loading/Loading'
 
 const AddArticle = () => {
     const [imgDisplay, setImgDisplay] = useState('')
     const [stateArticle, setStateArticle] = useState({
         title: '',
         author: '',
+        description: '',
         source: '',
         content: '',
         imageUrl: ''
     })
     const { success, error } = useMessage()
+    const [isLoadingImg, setIsLoadingImg] = useState(false)
+
     const navigate = useNavigate()
 
     const mutation = useMutationHooks(async (data) => {
@@ -34,6 +38,7 @@ const AddArticle = () => {
             setStateArticle({
                 title: '',
                 author: '',
+                description: '',
                 source: '',
                 content: '',
                 imageUrl: ''
@@ -44,15 +49,19 @@ const AddArticle = () => {
     }, [data, isSuccess, isError])
 
     const handleOnChangeImgArticle = async (info) => {
-        const file = info.target.files?.[0]
-        if (!file) return
+        console.log('cc')
 
-        const uploadedImageUrl = await uploadToCloudinary(file)
-        setStateArticle({
-            ...stateArticle,
-            imageUrl: uploadedImageUrl
-        })
-        setImgDisplay(uploadedImageUrl)
+        const file = info.target.files?.[0]
+        if (file) {
+            setIsLoadingImg(true)
+            const uploadedImageUrl = await uploadToCloudinary(file)
+            setStateArticle({
+                ...stateArticle,
+                imageUrl: uploadedImageUrl
+            })
+            setImgDisplay(uploadedImageUrl)
+            setIsLoadingImg(false)
+        }
     }
 
     const handleOnchange = (e) => {
@@ -76,6 +85,7 @@ const AddArticle = () => {
         stateArticle.title !== '' &&
         stateArticle.author !== '' &&
         stateArticle.source !== '' &&
+        stateArticle.description !== '' &&
         stateArticle.content !== '' &&
         stateArticle.imageUrl !== ''
 
@@ -104,13 +114,17 @@ const AddArticle = () => {
                                 <Input placeholder='Source here' value={stateArticle.source} name="source" onChange={handleOnchange} required />
                             </InputGroup>
                         </HStack>
+                        <InputGroup>
+                            <InputLeftAddon>Description</InputLeftAddon>
+                            <Input placeholder='Description here' value={stateArticle.description} name="description" onChange={handleOnchange} required />
+                        </InputGroup>
                     </Stack>
                 </Box>
 
                 <HStack spacing={4} p={4}>
                     <Button as="label" cursor="pointer" colorScheme='orange'>
                         <i className="fa-solid fa-upload"></i>
-                        <Text as="span" paddingLeft={4}>Image to display</Text>
+                        <Text as="span" paddingLeft={4} display={{ base: 'none', md: 'flex' }}>Display</Text>
                         <Input
                             type="file"
                             accept="image/*"
@@ -118,7 +132,9 @@ const AddArticle = () => {
                             hidden
                         />
                     </Button>
-                    <Image src={imgDisplay} objectFit="cover" h="auto" w="400px" />
+                    <Loading isLoading={isLoadingImg}>
+                        <Image src={imgDisplay} objectFit="cover" h="auto" w="400px" />
+                    </Loading>
                 </HStack>
                 <Box p={4}>
                     <Editor
@@ -127,19 +143,25 @@ const AddArticle = () => {
                         init={{
                             height: 500,
                             menubar: true,
-                            plugins: "advlist autolink lists link image charmap preview anchor",
-                            toolbar: "undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image",
+                            plugins: "advlist autolink lists link image charmap preview anchor media",
+                            toolbar: "undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image media",
                             image_uploadtab: true,
-                            file_picker_types: "image",
+                            file_picker_types: "image media",
                             file_picker_callback: async (callback, value, meta) => {
                                 const input = document.createElement("input")
                                 input.setAttribute("type", "file")
-                                input.setAttribute("accept", "image/*")
+
+                                if (meta.filetype === "image") {
+                                    input.setAttribute("accept", "image/*")
+                                } else if (meta.filetype === "media") {
+                                    input.setAttribute("accept", "video/*")
+                                }
+
                                 input.onchange = async function () {
                                     const file = this.files[0]
                                     if (file) {
-                                        const imageUrl = await uploadToCloudinary(file)
-                                        callback(imageUrl, { title: file.name })
+                                        const fileUrl = await uploadToCloudinary(file)
+                                        callback(fileUrl, { title: file.name })
                                     }
                                 }
                                 input.click()

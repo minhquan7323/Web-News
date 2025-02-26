@@ -1,9 +1,5 @@
 import axios from "axios"
 
-import * as UserService from './UserService'
-
-export const axiosJWT = UserService.axiosJWT
-
 export const getAllArticle = async (search, types, limit, page, sort) => {
     let res = {}
     let filterParams = []
@@ -38,12 +34,12 @@ export const getAllTypeArticle = async () => {
 }
 
 export const createArticle = async (data) => {
-    const res = await axiosJWT.post(`${import.meta.env.VITE_API_URL}/article/create`, data)
+    const res = await axios.post(`${import.meta.env.VITE_API_URL}/article/create`, data)
     return res.data
 }
 
 export const updateArticle = async (id, data) => {
-    const res = await axiosJWT.put(`${import.meta.env.VITE_API_URL}/article/update/${id}`, data)
+    const res = await axios.put(`${import.meta.env.VITE_API_URL}/article/update/${id}`, data)
     return res.data
 }
 
@@ -53,7 +49,7 @@ export const getDetailsArticle = async (id) => {
 }
 
 export const deleteArticle = async (id, access_token) => {
-    const res = await axiosJWT.delete(`${import.meta.env.VITE_API_URL}/article/delete/${id}`, {
+    const res = await axios.delete(`${import.meta.env.VITE_API_URL}/article/delete/${id}`, {
         headers: {
             token: `Bearer ${access_token}`,
         }
@@ -62,7 +58,7 @@ export const deleteArticle = async (id, access_token) => {
 }
 
 export const deleteManyArticles = async (ids, access_token) => {
-    const res = await axiosJWT.post(`${import.meta.env.VITE_API_URL}/article/deletemany`, ids, {
+    const res = await axios.post(`${import.meta.env.VITE_API_URL}/article/deletemany`, ids, {
         headers: {
             token: `Bearer ${access_token}`,
         }

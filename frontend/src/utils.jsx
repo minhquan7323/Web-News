@@ -3,34 +3,48 @@ import imageCompression from 'browser-image-compression'
 
 export const uploadToCloudinary = async (file) => {
     try {
-        const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1024,
-            useWebWorker: true,
+        const data = new FormData();
+        let fileToUpload = file;
+
+        // Nếu là ảnh → Nén trước khi upload
+        if (file.type.startsWith("image/")) {
+            const options = {
+                maxSizeMB: 1,
+                maxWidthOrHeight: 1024,
+                useWebWorker: true,
+            };
+            fileToUpload = await imageCompression(file, options);
         }
-        const compressedFile = await imageCompression(file, options)
 
-        const data = new FormData()
-        data.append('file', compressedFile)
-        data.append('upload_preset', `${import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET}`)
-        data.append('cloud_name', `${import.meta.env.VITE_CLOUDINARY_CLOUDNAME}`)
+        data.append("file", fileToUpload);
+        data.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
 
-        const response = await fetch(`${import.meta.env.VITE_CLOUDINARY}`, {
-            method: 'POST',
+        const resourceType = file.type.startsWith("video/") ? "video" : "image";
+        data.append("resource_type", resourceType);
+
+        const response = await fetch(`${import.meta.env.VITE_CLOUDINARY}/upload`, {
+            method: "POST",
             body: data,
-        })
+        });
 
-        const result = await response.json()
-        if (!result.url) {
-            throw new Error('No URL returned from Cloudinary')
+        const result = await response.json();
+        if (!result.secure_url) {
+            throw new Error("No URL returned from Cloudinary");
         }
 
-        return result.url
+        // Nếu là video, ép URL về dạng `.mp4`
+        if (resourceType === "video") {
+            return result.secure_url.replace("/upload/", "/upload/f_mp4/");
+        }
+
+        return result.secure_url;
     } catch (error) {
-        console.error('Error uploading image:', error)
-        throw error
+        console.error("Error uploading file:", error);
+        throw error;
     }
-}
+};
+
+
 export const initFacebookSDK = () => {
     if (window.FB) {
         window.FB.XFBML.parse();

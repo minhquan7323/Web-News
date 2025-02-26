@@ -1,10 +1,9 @@
 const Article = require('../models/ArticleModel')
 const Category = require('../models/CategoryModel')
-const slugify = require("slugify")
 
 const createArticle = (newArticle) => {
     return new Promise(async (resolve, reject) => {
-        const { title, content, imageUrl, author, source, categoryId } = newArticle
+        const { title, content, description, imageUrl, author, source, categoryId } = newArticle
         try {
             const checkArticle = await Article.findOne({ title: title })
             if (checkArticle !== null) {
@@ -13,9 +12,8 @@ const createArticle = (newArticle) => {
                     message: 'The name of Article is already'
                 })
             }
-            const slug = slugify(title, { lower: true, strict: true })
             const newArticle = await Article.create({
-                title, slug, content, imageUrl, author, source, categoryId
+                title, content, description, imageUrl, author, source, categoryId
             })
             if (newArticle) {
                 resolve({
