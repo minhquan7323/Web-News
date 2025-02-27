@@ -8,7 +8,7 @@ import { useMutationHooks } from '../hooks/useMutationHook'
 import { useMessage } from '../components/Message/Message'
 import Loading from '../components/Loading/Loading'
 
-const AddArticle = () => {
+const ArticleAdd = () => {
     const [imgDisplay, setImgDisplay] = useState('')
     const [stateArticle, setStateArticle] = useState({
         title: '',
@@ -41,7 +41,7 @@ const AddArticle = () => {
                 description: '',
                 source: '',
                 content: '',
-                imageUrl: ''
+                imgDisplay: ''
             })
         } else if (isError) {
             error("Failed to create article")
@@ -182,4 +182,4 @@ const AddArticle = () => {
     )
 }
 
-export default AddArticle
+export default ArticleAdd
