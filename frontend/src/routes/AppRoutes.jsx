@@ -6,8 +6,8 @@ import Editor from '../pages/editor'
 import DetailsArticle from '../pages/DetailsArticle'
 import NotFound from '../pages/NotFound'
 import Admin from '../pages/Admin'
-import ArticleAdd from '../pages/ArticleAdd'
-import ArticleUpdate from '../pages/ArticleUpdate'
+import ArticleAdd from '../pages/Admin/ArticleAdd'
+import ArticleUpdate from '../pages/Admin/ArticleUpdate'
 
 const AppRoutes = () => {
 

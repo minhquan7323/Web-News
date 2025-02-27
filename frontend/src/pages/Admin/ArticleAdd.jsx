@@ -1,15 +1,15 @@
-import { Box, Input, InputLeftAddon, InputGroup, Stack, Text, Button, HStack, Image, Flex } from '@chakra-ui/react'
+import { Box, Input, InputLeftAddon, InputGroup, Stack, Text, Button, HStack, Image, Flex, Textarea } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { Editor } from "@tinymce/tinymce-react"
-import { uploadToCloudinary } from '../utils'
-import { useNavigate, useParams } from 'react-router-dom'
-import * as ArticleService from '../services/ArticleService'
-import { useMutationHooks } from '../hooks/useMutationHook'
-import { useMessage } from '../components/Message/Message'
-import Loading from '../components/Loading/Loading'
+import { uploadToCloudinary } from '../../utils'
+import { useNavigate } from 'react-router-dom'
+import * as ArticleService from '../../services/ArticleService'
+import { useMutationHooks } from '../../hooks/useMutationHook'
+import { useMessage } from '../../components/Message/Message'
+import Loading from '../../components/Loading/Loading'
 
-const ArticleUpdate = () => {
-    const { id: articleId } = useParams()
+const ArticleAdd = () => {
+    const [imgDisplay, setImgDisplay] = useState('')
     const [stateArticle, setStateArticle] = useState({
         title: '',
         author: '',
@@ -20,9 +20,37 @@ const ArticleUpdate = () => {
     })
     const { success, error } = useMessage()
     const [isLoadingImg, setIsLoadingImg] = useState(false)
+
     const navigate = useNavigate()
 
+    const mutation = useMutationHooks(async (data) => {
+        const { ...rests } = data
+        const res = await ArticleService.createArticle(rests)
+        return res
+    })
+
+    const { data, isSuccess, isError } = mutation
+    const isLoading = mutation.isPending
+
+    useEffect(() => {
+        if (isSuccess && data?.status === "OK") {
+            success("Article created successfully!")
+            setStateArticle({
+                title: '',
+                author: '',
+                description: '',
+                source: '',
+                content: '',
+                imgDisplay: ''
+            })
+        } else if (isError) {
+            error("Failed to create article")
+        }
+    }, [data, isSuccess, isError])
+
     const handleOnChangeImgArticle = async (info) => {
+        console.log('cc')
+
         const file = info.target.files?.[0]
         if (file) {
             setIsLoadingImg(true)
@@ -31,64 +59,27 @@ const ArticleUpdate = () => {
                 ...stateArticle,
                 imageUrl: uploadedImageUrl
             })
+            setImgDisplay(uploadedImageUrl)
             setIsLoadingImg(false)
         }
     }
 
-    const handleOnchangeDetails = (e) => {
+    const handleOnchange = (e) => {
         setStateArticle({
             ...stateArticle,
             [e.target.name]: e.target.value
         })
     }
+
     const handleClickNav = (type) => {
         if (type === 'admin') {
             navigate('/system/admin')
         }
     }
 
-    const fetchGetDetailsArticle = async () => {
-        const res = await ArticleService.getDetailsArticle(articleId)
-        if (res.data) {
-            setStateArticle({
-                title: res.data.title,
-                author: res.data.author,
-                description: res.data.description,
-                source: res.data.source,
-                content: res.data.content,
-                imageUrl: res.data.imageUrl
-            })
-        }
+    const createArticle = () => {
+        mutation.mutate({ ...stateArticle })
     }
-    useEffect(() => {
-        fetchGetDetailsArticle()
-    }, [])
-
-    const mutationUpdate = useMutationHooks(
-        async (data) => {
-            const { id, ...rests } = data
-            const res = await ArticleService.updateArticle(id, rests)
-            return res
-        }
-    )
-    const { data: dataUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
-    const isLoadingUpdated = mutationUpdate.isPending
-
-    const updateArticle = () => {
-        mutationUpdate.mutate({
-            id: articleId,
-            ...stateArticle
-        })
-    }
-
-    useEffect(() => {
-        if (isSuccessUpdated && dataUpdated?.status === 'OK') {
-            success()
-            handleClickNav('admin')
-        } else if (isErrorUpdated) {
-            error()
-        }
-    }, [dataUpdated, isSuccessUpdated, isErrorUpdated])
 
     const isArticleFormValid =
         stateArticle.title !== '' &&
@@ -111,22 +102,22 @@ const ArticleUpdate = () => {
                     <Stack spacing={4}>
                         <InputGroup>
                             <InputLeftAddon>Title</InputLeftAddon>
-                            <Input placeholder='Title here' value={stateArticle.title} name="title" onChange={handleOnchangeDetails} required />
+                            <Input placeholder='Title here' value={stateArticle.title} name="title" onChange={handleOnchange} required />
                         </InputGroup>
                         <HStack>
                             <InputGroup>
                                 <InputLeftAddon>Author</InputLeftAddon>
-                                <Input placeholder='Author here' value={stateArticle.author} name="author" onChange={handleOnchangeDetails} required />
+                                <Input placeholder='Author here' value={stateArticle.author} name="author" onChange={handleOnchange} required />
                             </InputGroup>
                             <InputGroup>
                                 <InputLeftAddon>Source</InputLeftAddon>
-                                <Input placeholder='Source here' value={stateArticle.source} name="source" onChange={handleOnchangeDetails} required />
+                                <Input placeholder='Source here' value={stateArticle.source} name="source" onChange={handleOnchange} required />
                             </InputGroup>
                         </HStack>
-                        <InputGroup>
-                            <InputLeftAddon>Description</InputLeftAddon>
-                            <Input placeholder='Description here' value={stateArticle.description} name="description" onChange={handleOnchangeDetails} required />
-                        </InputGroup>
+                        <Box>
+                            <Text p={2}>Description</Text>
+                            <Textarea placeholder='Description here' value={stateArticle.description} name="description" onChange={handleOnchange} required />
+                        </Box>
                     </Stack>
                 </Box>
 
@@ -142,7 +133,7 @@ const ArticleUpdate = () => {
                         />
                     </Button>
                     <Loading isLoading={isLoadingImg}>
-                        <Image src={stateArticle.imageUrl} objectFit="cover" h="auto" w="400px" />
+                        <Image src={imgDisplay} objectFit="cover" h="auto" w="400px" />
                     </Loading>
                 </HStack>
                 <Box p={4}>
@@ -182,13 +173,13 @@ const ArticleUpdate = () => {
                 </Box>
             </Box>
             <Flex justify="flex-end" p={4}>
-                <Button colorScheme='green' onClick={updateArticle} disabled={!isArticleFormValid}>
-                    <i className="fa-solid fa-upload"></i>
-                    <Text as="span" paddingLeft={4}>Update</Text>
+                <Button colorScheme='green' onClick={createArticle} disabled={!isArticleFormValid}>
+                    <i className="fa-solid fa-plus"></i>
+                    <Text as="span" paddingLeft={4}>Post</Text>
                 </Button>
             </Flex>
         </Box>
     )
 }
 
-export default ArticleUpdate
+export default ArticleAdd
