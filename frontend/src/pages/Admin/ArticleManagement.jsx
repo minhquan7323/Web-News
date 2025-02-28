@@ -1,13 +1,25 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from "react-router-dom"
 import { useMutationHooks } from '../../hooks/useMutationHook'
 import * as ArticleService from '../../services/ArticleService'
 import { useQuery } from '@tanstack/react-query'
-import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Box, Button, HStack, Image, Checkbox } from '@chakra-ui/react'
+import { Box, Button, HStack, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from '@chakra-ui/react'
+import TableComponent from '../../components/Table/Table'
+import { sortByDate } from '../../utils'
+import { SearchOutlined } from '@ant-design/icons'
+import Highlighter from 'react-highlight-words'
+import { Input } from 'antd'
+import Loading from '../../components/Loading/Loading'
+import { useMessage } from '../../components/Message/Message'
 
 const ArticleManagement = () => {
+    const { success, error } = useMessage()
     const navigate = useNavigate()
     const [selectedArticles, setSelectedArticles] = useState([])
+    const [searchText, setSearchText] = useState("")
+    const [searchedColumn, setSearchedColumn] = useState("")
+    const searchInputRef = useRef(null)
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
     const handleClickNav = (type, idArticle = '') => {
         if (type === 'add-article') {
@@ -29,14 +41,6 @@ const ArticleManagement = () => {
         retryDelay: 1000,
     })
     const { isLoading: isLoadingArticles, data: articles } = queryArticle
-
-    const handleCheckboxChange = (articleId) => {
-        setSelectedArticles((prevSelected) =>
-            prevSelected.includes(articleId)
-                ? prevSelected.filter(id => id !== articleId)
-                : [...prevSelected, articleId]
-        )
-    }
 
     const mutationDelete = useMutationHooks(
         async (data) => {
@@ -61,6 +65,7 @@ const ArticleManagement = () => {
     useEffect(() => {
         if (isSuccessDeleted && dataDeleted?.status === 'OK') {
             success()
+            onClose()
         } else if (isErrorDeleted) {
             error()
         }
@@ -87,57 +92,142 @@ const ArticleManagement = () => {
             }
         })
     }
+
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm()
+        setSearchText(selectedKeys[0])
+        setSearchedColumn(dataIndex)
+    }
+
+    const handleReset = (clearFilters) => {
+        setSearchText("")
+        clearFilters()
+    }
+
+    const getColumnSearchProps = (dataIndex) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <Box p={2}>
+                <Input
+                    ref={searchInputRef}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{ marginBottom: 8, display: 'block' }}
+                />
+                <Button
+                    onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    mr={2}
+                >
+                    Search
+                </Button>
+                <Button onClick={() => handleReset(clearFilters)} >
+                    Reset
+                </Button>
+            </Box>
+        ),
+        filterIcon: (filtered) => (
+            <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+        ),
+        onFilter: (value, record) =>
+            record[dataIndex]?.toString().toLowerCase().includes(value.toLowerCase()),
+        render: (text) =>
+            searchedColumn === dataIndex ? (
+                <Highlighter
+                    highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                    searchWords={[searchText]}
+                    autoEscape
+                    textToHighlight={text ? text.toString() : ""}
+                />
+            ) : (
+                text
+            ),
+    })
+
+    const columns = [
+        {
+            title: 'Image',
+            dataIndex: 'imageUrl',
+            render: (text) => <Image src={text} alt={text} />,
+            width: 200,
+        },
+        {
+            title: 'Title',
+            dataIndex: 'title',
+            searchable: true,
+            ...getColumnSearchProps('title'),
+            ellipsis: true
+        },
+        {
+            title: 'Action',
+            dataIndex: 'action',
+            fixed: 'right',
+            align: 'center',
+            width: 200,
+            render: (_, record) => (
+                <HStack spacing={2} justifyContent="center">
+                    <Button colorScheme="blue" size="sm" p={2}
+                        onClick={() => handleClickNav('update-article', record._id)}
+                    >
+                        <i className="fa-solid fa-pen-to-square"></i>
+                    </Button>
+                    <Button colorScheme="orange" size="sm" p={2} onClick={onOpen}>
+                        <i className="fa-solid fa-trash"></i>
+                    </Button>
+
+                </HStack>
+            )
+        }
+    ]
+
+    const dataTable = articles?.length && articles?.map((article) => {
+        return {
+            ...article, key: article._id
+        }
+    })
+
     return (
         <Box>
-            <Button colorScheme='blue' onClick={() => handleClickNav('add-article')}>Add Article</Button>
-            <TableContainer pt={8}>
-                <Table variant="striped" colorScheme="gray">
-                    <Thead>
-                        <Tr>
-                            <Th color="black" w="10%"></Th>
-                            <Th color="black" w="20%">Image</Th>
-                            <Th color="black" w="50%">Title</Th>
-                            <Th color="black" w="20%" isNumeric>Action</Th>
-                        </Tr>
-                    </Thead>
-                    <Tbody>
-                        {articles && articles.length > 0 ? (
-                            articles.map((article) => (
-                                <Tr key={article._id}>
-                                    <Td>
-                                        <Checkbox
-                                            isChecked={selectedArticles.includes(article._id)}
-                                            onChange={() => handleCheckboxChange(article._id)}
-                                            borderColor="teal"
-                                        />
-                                    </Td>
-                                    <Td><Image src={article.imageUrl || "https://via.placeholder.com/100"} alt={article.title} objectFit="cover" h='80px' w='auto' minW='100px' /></Td>
-                                    <Td>{article.title}</Td>
-                                    <Td isNumeric>
-                                        <HStack spacing={2} justifyContent="flex-end">
-                                            <Button
-                                                colorScheme="blue"
-                                                size="sm"
-                                                p={2}
-                                                onClick={() => handleClickNav('update-article', article._id)}
-                                            >
-                                                <i className="fa-solid fa-pen-to-square"></i>
-                                            </Button>
-                                            <Button colorScheme="orange" size="sm" p={2}>
-                                                <i className="fa-solid fa-trash"></i>
-                                            </Button>
-                                        </HStack>
-                                    </Td>
-                                </Tr>
-                            ))
-                        ) : (
-                            <Tr>
-                                <Td colSpan={4} textAlign="center">No articles found.</Td>
-                            </Tr>
-                        )}
-                    </Tbody>
-                </Table>
-            </TableContainer>
+            <Box>
+                <Button colorScheme='blue' onClick={() => handleClickNav('add-article')}>
+                    <i className="fa-solid fa-plus"></i>
+                    <Text as="span" paddingLeft={4}>Article</Text>
+                </Button>
+
+            </Box>
+            <TableComponent
+                multiChoice={true}
+                deleteMany={deleteManyArticles}
+                columns={columns}
+                data={sortByDate(dataTable)}
+                isLoading={isLoadingArticles}
+                onRow={(record) => {
+                    return {
+                        onClick: () => {
+                            setSelectedArticles(record._id)
+                        }
+                    }
+                }}
+            />
+
+            <Modal Modal onClose={onClose} isOpen={isOpen} isCentered >
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Delete article</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <Box>
+                            Are you sure you want to delete this article?
+                        </Box>
+                    </ModalBody>
+                    <ModalFooter gap={4}>
+                        <Loading isLoading={isLoadingDeleted}>
+                            <Button colorScheme="red" onClick={deleteArticle}>Delete</Button>
+                        </Loading>
+                        <Button onClick={onClose}>Close</Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </Box>
     )
 }

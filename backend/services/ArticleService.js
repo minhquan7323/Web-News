@@ -104,20 +104,20 @@ const deleteArticle = (id) => {
     })
 }
 
-// const deleteManyProducts = (ids) => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             await Product.deleteMany({ _id: ids })
+const deleteManyArticles = (ids) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await Article.deleteMany({ _id: ids })
 
-//             resolve({
-//                 status: 'OK',
-//                 message: 'Delete products success'
-//             })
-//         } catch (e) {
-//             reject(e)
-//         }
-//     })
-// }
+            resolve({
+                status: 'OK',
+                message: 'Delete articles success'
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
 
 const allArticle = (limit, page, sort, filter, search) => {
     return new Promise(async (resolve, reject) => {
@@ -166,7 +166,7 @@ const allArticle = (limit, page, sort, filter, search) => {
             reject(e);
         }
     });
-};
+}
 
 
 // const getAllTypeProduct = async () => {
@@ -197,6 +197,6 @@ module.exports = {
     detailsArticle,
     deleteArticle,
     allArticle,
-    // deleteManyProducts,
+    deleteManyArticles,
     // getAllTypeProduct
 }

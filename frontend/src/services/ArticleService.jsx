@@ -48,20 +48,12 @@ export const getDetailsArticle = async (id) => {
     return res.data
 }
 
-export const deleteArticle = async (id, access_token) => {
-    const res = await axios.delete(`${import.meta.env.VITE_API_URL}/article/delete/${id}`, {
-        headers: {
-            token: `Bearer ${access_token}`,
-        }
-    })
+export const deleteArticle = async (id) => {
+    const res = await axios.delete(`${import.meta.env.VITE_API_URL}/article/delete/${id}`)
     return res.data
 }
 
-export const deleteManyArticles = async (ids, access_token) => {
-    const res = await axios.post(`${import.meta.env.VITE_API_URL}/article/deletemany`, ids, {
-        headers: {
-            token: `Bearer ${access_token}`,
-        }
-    })
+export const deleteManyArticles = async (ids) => {
+    const res = await axios.post(`${import.meta.env.VITE_API_URL}/article/deletemany`, ids)
     return res.data
 }

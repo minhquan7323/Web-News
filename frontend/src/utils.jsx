@@ -74,3 +74,8 @@ export const initFacebookSDK = () => {
         fjs.parentNode.insertBefore(js, fjs);
     })(document, 'script', 'facebook-jssdk');
 };
+
+export const sortByDate = (data) => {
+    if (!Array.isArray(data)) return []
+    return data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+}

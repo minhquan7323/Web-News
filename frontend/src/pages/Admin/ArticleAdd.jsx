@@ -41,16 +41,15 @@ const ArticleAdd = () => {
                 description: '',
                 source: '',
                 content: '',
-                imgDisplay: ''
+                imageUrl: ''
             })
+            setImgDisplay('')
         } else if (isError) {
             error("Failed to create article")
         }
     }, [data, isSuccess, isError])
 
     const handleOnChangeImgArticle = async (info) => {
-        console.log('cc')
-
         const file = info.target.files?.[0]
         if (file) {
             setIsLoadingImg(true)
