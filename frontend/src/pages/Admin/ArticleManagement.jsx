@@ -159,6 +159,12 @@ const ArticleManagement = () => {
             ellipsis: true
         },
         {
+            title: 'Type',
+            dataIndex: 'type',
+            width: 150,
+            render: (types) => types.map(type => type.name).join(', ')
+        },
+        {
             title: 'Action',
             dataIndex: 'action',
             fixed: 'right',

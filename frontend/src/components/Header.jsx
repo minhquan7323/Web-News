@@ -8,10 +8,10 @@ import Logo from './Logo'
 const Header = () => {
     const { isOpen, onClose, onOpen } = useDisclosure()
     const [isScrolled, setIsScrolled] = useState(false)
-    const [newsSearch, setnewsSearch] = useState([])
+    const [newsSearch, setNewsSearch] = useState([])
     const navigate = useNavigate()
     const { user } = useUser()
-    console.log(user?.id);
+    // console.log(user?.id);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -33,6 +33,15 @@ const Header = () => {
     }
     const adminPath = useLocation().pathname.startsWith('/system/admin')
 
+    const onSearch = () => {
+        if (newsSearch.trim()) {
+            navigate('/search', { state: { query: newsSearch } })
+            setNewsSearch('')
+            onClose()
+        }
+    }
+
+    const validSearch = newsSearch != ''
     return (
         <>
             <Box
@@ -54,14 +63,6 @@ const Header = () => {
                     </Button>
 
                     <Link to="/">
-                        {/* <Text
-                            display={{ base: 'none', sm: 'flex' }}
-                            fontSize='4xl' color='teal'
-                            fontWeight='bold'
-                            textTransform='uppercase' px={2}
-                        >
-                            NEWS
-                        </Text> */}
                         <Logo logo='news' />
                     </Link>
                     {!adminPath ? (
@@ -106,7 +107,7 @@ const Header = () => {
 
             <Drawer onClose={onClose} isOpen={isOpen} size='full'>
                 <DrawerOverlay />
-                <DrawerContent bg="#1a202c">
+                <DrawerContent>
                     <DrawerCloseButton color='teal' />
                     <DrawerHeader>
                         <Link to="/">
@@ -123,16 +124,18 @@ const Header = () => {
                             <Input
                                 placeholder='Search'
                                 mr={2}
-                                color='white'
+                                color='teal'
                                 value={newsSearch}
-                                onChange={(e) => setnewsSearch(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
+                                onChange={(e) => setNewsSearch(e.target.value)}
+                                onKeyDown={(k) => {
+                                    if (k.key === "Enter") {
                                         onSearch()
                                     }
                                 }}
                             />
-
+                            <Button colorScheme='teal' size='md' onClick={onSearch} disabled={!validSearch}>
+                                <i className="fas fa-magnifying-glass"></i>
+                            </Button>
                         </Box>
 
                         <Divider borderColor="teal" />
@@ -144,8 +147,6 @@ const Header = () => {
                                         <Text
                                             _hover={{ textDecoration: "none" }}
                                             px={4}
-                                            sx={{ color: "white !important" }}
-                                            color="white"
                                         >
                                             Favorite List
                                         </Text>

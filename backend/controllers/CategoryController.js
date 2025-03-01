@@ -22,16 +22,16 @@ const createCategory = async (req, res) => {
 
 const updateCategory = async (req, res) => {
     try {
-        const categoryId = req.params.id
+        const type = req.params.id
         const data = req.body
 
-        if (!categoryId) {
+        if (!type) {
             return res.status(200).json({
                 status: 'ERR',
-                message: 'The categoryID is required'
+                message: 'The type is required'
             })
         }
-        const response = await CategoryService.updateCategory(categoryId, data)
+        const response = await CategoryService.updateCategory(type, data)
         return res.status(200).json(response)
     } catch (e) {
         return res.status(404).json({
@@ -53,14 +53,14 @@ const getAllCategory = async (req, res) => {
 
 const getDetailsCategory = async (req, res) => {
     try {
-        const categoryId = req.params.id
-        if (!categoryId) {
+        const type = req.params.id
+        if (!type) {
             return res.status(200).json({
                 status: 'ERR',
-                message: 'The categoryID is required'
+                message: 'The type is required'
             })
         }
-        const response = await CategoryService.getDetailsCategory(categoryId)
+        const response = await CategoryService.getDetailsCategory(type)
         return res.status(200).json(response)
     } catch (e) {
         return res.status(404).json({

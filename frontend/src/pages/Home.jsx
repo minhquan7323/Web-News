@@ -6,7 +6,7 @@ const Home = () => {
     const [news, setNews] = useState([])
 
     const fetchNews = async () => {
-        const urlSearch = `https://newsapi.org/v2/everything?q=tesla&from=2025-01-27&sortBy=publishedAt&apiKey=${import.meta.env.VITE_NEWS_API_KEY}`
+        const urlSearch = `https://newsapi.org/v2/everything?q=tesla&from=2025-02-28&sortBy=publishedAt&apiKey=${import.meta.env.VITE_NEWS_API_KEY}`
         try {
             const res = await axios.get(urlSearch)
             setNews(res.data.articles)

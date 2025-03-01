@@ -1,8 +1,8 @@
 import { Text } from "@chakra-ui/react"
 import React, { useState, useEffect } from "react"
 
-const Logo = ({ logo }) => {
-    const letters = logo.toUpperCase().split("")
+const Logo = ({ logo = "", fontSize = '4xl' }) => {
+    const letters = logo.toUpperCase().split("").map(char => (/\w/.test(char) ? char : "\u00A0"))
 
     const colors = ["#4db6ac", "#009688", "#00796b", "#004d40"]
 
@@ -14,12 +14,12 @@ const Logo = ({ logo }) => {
         }, 400)
 
         return () => clearInterval(interval)
-    }, [])
+    }, [letters.length])
 
     return (
         <Text
             display={{ base: "none", sm: "flex" }}
-            fontSize="4xl"
+            fontSize={fontSize}
             fontWeight="bold"
             textTransform="uppercase"
             px={2}
@@ -41,4 +41,5 @@ const Logo = ({ logo }) => {
         </Text>
     )
 }
+
 export default Logo

@@ -3,7 +3,7 @@ const Category = require('../models/CategoryModel')
 
 const createArticle = (newArticle) => {
     return new Promise(async (resolve, reject) => {
-        const { title, content, description, imageUrl, author, source, categoryId } = newArticle
+        const { title, content, description, imageUrl, author, source, type } = newArticle
         try {
             const checkArticle = await Article.findOne({ title: title })
             if (checkArticle !== null) {
@@ -13,7 +13,7 @@ const createArticle = (newArticle) => {
                 })
             }
             const newArticle = await Article.create({
-                title, content, description, imageUrl, author, source, categoryId
+                title, content, description, imageUrl, author, source, type
             })
             if (newArticle) {
                 resolve({
@@ -60,7 +60,7 @@ const updateArticle = (id, data) => {
 const detailsArticle = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const article = await Article.findOne({ _id: id }).populate('categoryId', 'name');
+            const article = await Article.findOne({ _id: id }).populate('type', 'name');
 
             if (!article) {
                 return resolve({
@@ -120,11 +120,12 @@ const deleteManyArticles = (ids) => {
 }
 
 const allArticle = (limit, page, sort, filter, search) => {
+
     return new Promise(async (resolve, reject) => {
         try {
             const query = {};
             if (search) {
-                query['name'] = { '$regex': search, '$options': 'i' };
+                query['title'] = { '$regex': search, '$options': 'i' };
             }
 
             if (filter && Array.isArray(filter)) {
@@ -141,7 +142,7 @@ const allArticle = (limit, page, sort, filter, search) => {
             const totalArticleFilter = await Article.countDocuments(query);
 
             let articleQuery = Article.find(query)
-                .populate('categoryId', 'name')
+                .populate('type', 'name')
                 .limit(limit)
                 .skip((page - 1) * limit);
 
