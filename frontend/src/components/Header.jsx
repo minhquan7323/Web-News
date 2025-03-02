@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useUser, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react"
 import Logo from './Logo'
+import * as UserService from '../services/UserService'
 
 const Header = () => {
     const { isOpen, onClose, onOpen } = useDisclosure()
@@ -11,8 +12,7 @@ const Header = () => {
     const [newsSearch, setNewsSearch] = useState([])
     const navigate = useNavigate()
     const { user } = useUser()
-    // console.log(user?.id);
-
+    const [isAdmin, setIsAdmin] = useState('')
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 0)
@@ -40,6 +40,26 @@ const Header = () => {
             onClose()
         }
     }
+
+    const handleSignIn = async (userId) => {
+        if (userId) {
+            const res = await UserService.signInUser(userId)
+            return res
+        }
+    }
+
+    const handleGetDetailsUser = async (userId) => {
+        const res = await UserService.getDetailsUser(userId)
+        setIsAdmin(res.data.isAdmin)
+        return res
+    }
+
+    useEffect(() => {
+        if (user) {
+            handleSignIn(user.id)
+            handleGetDetailsUser(user.id)
+        }
+    }, [user])
 
     const validSearch = newsSearch != ''
     return (
@@ -83,9 +103,11 @@ const Header = () => {
                             <Button colorScheme="teal" size="md" onClick={onOpen} marginRight={5}>
                                 <i className="fas fa-magnifying-glass"></i>
                             </Button>
-                            <Button colorScheme="teal" size="md" marginRight={5} onClick={() => handleClickNav('admin')}>
-                                Admin
-                            </Button>
+                            {isAdmin ? (
+                                <Button colorScheme="teal" size="md" marginRight={5} onClick={() => handleClickNav('admin')}>
+                                    Admin
+                                </Button>
+                            ) : (null)}
                         </>
 
                     ) : (
@@ -95,7 +117,9 @@ const Header = () => {
                     )}
                     <Box p={2}>
                         <SignedOut>
+                            {/* <Button colorScheme="blue" size="md"> */}
                             <SignInButton />
+                            {/* </Button> */}
                         </SignedOut>
                         <SignedIn>
                             <UserButton appearance={{ elements: { avatarBox: { width: "40px", height: "40px" } } }} />

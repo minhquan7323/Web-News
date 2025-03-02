@@ -1,44 +1,62 @@
-const { genneralAccessToken, genneralRefreshToken } = require('./JwtService')
 const User = require('../models/UserModel')
 
-const loginUser = (userLogin) => {
+const loginUser = async (UserId) => {
     return new Promise(async (resolve, reject) => {
-        const { id } = userLogin
+        const { userId } = UserId
+
         try {
-            const checkUser = await User.findOne({
-                id: id
+            let user = await User.findOne({
+                userId: userId
             })
 
-            if (checkUser === null) {
+            if (!user) {
+                user = new User({ userId })
+                await user.save()
                 resolve({
-                    status: 'ERR',
-                    message: 'The user is not defined'
+                    status: 'OK',
+                    message: 'New user created',
+                    user
+                })
+            } else {
+                resolve({
+                    status: 'OK',
+                    // message: 'User already exists',
+                    user
                 })
             }
-
-            const access_token = await genneralAccessToken({
-                id: checkUser.id,
-                isAdmin: checkUser.isAdmin
+        } catch (e) {
+            reject({
+                status: 'ERR',
+                message: 'Server error',
+                error: e.message
             })
-
-            const refresh_token = await genneralRefreshToken({
-                id: checkUser.id,
-                isAdmin: checkUser.isAdmin
-            })
-
-            resolve({
-                status: 'OK',
-                message: 'SUCCESS',
-                access_token,
-                refresh_token
-            })
-        }
-        catch (e) {
-            reject(e)
         }
     })
 }
 
+const getDetailsUser = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const user = await User.findOne({ userId: userId });
+
+            if (user === null) {
+                return resolve({
+                    status: 'OK',
+                    message: 'The user is not defined'
+                });
+            }
+
+            resolve({
+                status: 'OK',
+                message: 'Success',
+                data: user
+            });
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
 module.exports = {
-    loginUser
+    loginUser,
+    getDetailsUser
 }

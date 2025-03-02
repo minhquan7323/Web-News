@@ -13,7 +13,7 @@ const DetailsArticle = () => {
     const { id: articleId } = useParams()
 
     const fetchNews = async () => {
-        const urlSearch = `https://newsapi.org/v2/everything?q=tesla&from=2025-01-27&sortBy=publishedAt&apiKey=${import.meta.env.VITE_NEWS_API_KEY}`
+        const urlSearch = `https://newsapi.org/v2/everything?q=tesla&from=2025-02-03&sortBy=publishedAt&apiKey=${import.meta.env.VITE_NEWS_API_KEY}`
         try {
             const res = await axios.get(urlSearch)
             setNews(res.data.articles)
@@ -53,7 +53,7 @@ const DetailsArticle = () => {
                 </BreadcrumbItem>
 
                 <BreadcrumbItem isCurrentPage>
-                    <BreadcrumbLink href='#'>Category here</BreadcrumbLink>
+                    <BreadcrumbLink href='#'>Details</BreadcrumbLink>
                 </BreadcrumbItem>
             </Breadcrumb>
             <Grid templateColumns={gridTemplate} gap={6}>
@@ -78,7 +78,7 @@ const DetailsArticle = () => {
                     <Box>
                         <Box>
                             <Box>
-                                <Image src={articleDetails.imageUrl || "https://via.placeholder.com/100"} alt={articleDetails.title} objectFit="cover" h="auto" w="100%" />
+                                <Image src={articleDetails.imageUrl} alt={articleDetails.title} objectFit="cover" h="auto" w="100%" />
                                 <Box p={4}>
                                     <Text>👁️ {articleDetails.read || 0} views</Text>
                                     <Text fontSize='24px' align='center'>{articleDetails.description}</Text>
@@ -97,7 +97,7 @@ const DetailsArticle = () => {
                         <Box border="1px solid" borderColor="teal" p={4} mt={10}>
                             <Text as='b' fontSize={'xl'}>Comment</Text>
                             <CommentFacebook dataHref={import.meta.env.VITE_IS_LOCAL ?
-                                `https://yourwebsite.com/products/${'67b8a4b8890843722000d625'}`
+                                `https://yourwebsite.com/products/${articleDetails._id}`
                                 : window.location.href}
                             />
                         </Box>
@@ -124,7 +124,7 @@ const DetailsArticle = () => {
                                             </Text>
                                         </Link>
                                         <Link href={article.url} isExternal transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}>
-                                            <Image src={article.urlToImage || "https://via.placeholder.com/100"} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
+                                            <Image src={article.urlToImage} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
                                         </Link>
                                         {index < news.slice(1, 5).length - 2 && (
                                             <GridItem key={index} colSpan={2}>
@@ -186,7 +186,7 @@ const DetailsArticle = () => {
                         {news.slice(3, 6).map((article, index) => (
                             <Grid key={index} templateColumns="2fr 2fr" gap={4} mt={4}>
                                 <Link href={article.url} isExternal transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}>
-                                    <Image src={article.urlToImage || "https://via.placeholder.com/100"} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
+                                    <Image src={article.urlToImage} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
                                 </Link>
                                 <Link href={article.url} isExternal>
                                     <Text
@@ -223,7 +223,7 @@ const DetailsArticle = () => {
                         {news.slice(3, 6).map((article, index) => (
                             <Grid key={index} templateColumns="2fr 2fr" gap={4} mt={4}>
                                 <Link href={article.url} isExternal transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}>
-                                    <Image src={article.urlToImage || "https://via.placeholder.com/100"} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
+                                    <Image src={article.urlToImage} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
                                 </Link>
                                 <Link href={article.url} isExternal>
                                     <Text

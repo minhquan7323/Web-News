@@ -1,6 +1,6 @@
-const User = require("../models/User")
+const User = require("../models/UserModel")
+const UserService = require('../services/UserService')
 
-// Thêm bài viết vào danh sách yêu thích
 const addLike = async (req, res) => {
     try {
         const { userId, articleId } = req.body // Lấy dữ liệu từ request
@@ -21,7 +21,6 @@ const addLike = async (req, res) => {
     }
 }
 
-// Xóa bài viết khỏi danh sách yêu thích
 const removeLike = async (req, res) => {
     try {
         const { userId, articleId } = req.body
@@ -42,4 +41,42 @@ const removeLike = async (req, res) => {
     }
 }
 
-module.exports = { addLike, removeLike }
+const loginUser = async (req, res) => {
+    const { userId } = req.body
+
+    if (!userId) {
+        return res.status(400).json({ message: "Missing userId" });
+    }
+
+    try {
+        const response = await UserService.loginUser(req.body)
+        res.status(200).json(response)
+    } catch (error) {
+        res.status(500).json(error)
+    }
+}
+
+const getDetailsUser = async (req, res) => {
+    try {
+        const userId = req.params.id
+        if (!userId) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'The userID is required'
+            })
+        }
+        const response = await UserService.getDetailsUser(userId)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        })
+    }
+}
+
+module.exports = {
+    addLike,
+    removeLike,
+    loginUser,
+    getDetailsUser
+}

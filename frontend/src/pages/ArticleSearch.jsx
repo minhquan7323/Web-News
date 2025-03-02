@@ -109,7 +109,7 @@ const ArticleSearch = () => {
                             <Box py={4}>
                                 <Link href={item.url}>
                                     <Grid templateColumns="2fr 3fr" gap={4}>
-                                        <Image src={item.imageUrl || "https://via.placeholder.com/100"} alt={item.title}
+                                        <Image src={item.imageUrl} alt={item.title}
                                             objectFit="cover" h='auto' minH="80px" maxH='200px'
                                             w="100%" minW='100px'
                                             transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}
