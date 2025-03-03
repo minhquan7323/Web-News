@@ -1,31 +1,41 @@
-# Giai đoạn 1: Build ứng dụng frontend
+# Sử dụng Node.js phiên bản 18.20.4
 FROM node:18.20.4 AS build
 
+# Thiết lập thư mục làm việc
 WORKDIR /app
 
+# Copy package.json và package-lock.json để cài đặt dependencies trước
 COPY package*.json ./
 
+# Cài đặt dependencies
 RUN npm install
 
+# Copy toàn bộ mã nguồn vào container
 COPY . .
 
-# Cài đặt mkcert (thêm apt-utils để tránh lỗi)
+# Cài đặt các công cụ cần thiết và mkcert
 RUN apt-get update && apt-get install -y apt-utils libnss3 wget curl && \
     curl -L -o /usr/local/bin/mkcert https://github.com/FiloSottile/mkcert/releases/latest/download/mkcert-linux-amd64 && \
-    chmod +x /usr/local/bin/mkcert
+    chmod +x /usr/local/bin/mkcert && \
+    ls -lah /usr/local/bin/mkcert  # Kiểm tra file mkcert có tồn tại không
 
-# Tạo chứng chỉ SSL
+# Chạy lệnh tạo chứng chỉ tự ký (có thể bỏ qua nếu không cần HTTPS)
 RUN mkcert -install
-RUN mkcert -key-file localhost-key.pem -cert-file localhost-cert.pem localhost
 
+# Build dự án React/Vue/Angular
 RUN npm run build
 
-# Giai đoạn 2: Dùng Nginx để chạy frontend
-FROM nginx:alpine
+# --- Phase 2: Dùng Nginx để chạy frontend ---
+FROM nginx:alpine AS production
 
+# Copy file cấu hình Nginx (nếu có)
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy mã nguồn đã build từ bước trước vào thư mục Nginx phục vụ web
 COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Mở cổng 80 cho container
 EXPOSE 80
 
+# Khởi chạy Nginx
 CMD ["nginx", "-g", "daemon off;"]
