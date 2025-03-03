@@ -13,15 +13,6 @@ RUN npm install
 # Copy toàn bộ mã nguồn vào container
 COPY . .
 
-# Cài đặt các công cụ cần thiết và mkcert
-RUN apt-get update && apt-get install -y apt-utils libnss3 wget curl && \
-    curl -L -o /usr/local/bin/mkcert https://github.com/FiloSottile/mkcert/releases/latest/download/mkcert-linux-amd64 && \
-    chmod +x /usr/local/bin/mkcert && \
-    ls -lah /usr/local/bin/mkcert  # Kiểm tra file mkcert có tồn tại không
-
-# Chạy lệnh tạo chứng chỉ tự ký (có thể bỏ qua nếu không cần HTTPS)
-RUN mkcert -install
-
 # Build dự án React/Vue/Angular
 RUN npm run build
 

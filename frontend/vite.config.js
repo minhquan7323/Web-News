@@ -9,10 +9,4 @@ export default defineConfig({
       input: './index.html',
     }
   },
-  server: {
-    https: {
-      key: fs.readFileSync('localhost-key.pem'),
-      cert: fs.readFileSync('localhost-cert.pem')
-    }
-  }
 })

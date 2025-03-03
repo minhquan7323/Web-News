@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react"
 import axios from "axios"
 import { Text, Image, Grid, GridItem, Box, Link, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack } from "@chakra-ui/react"
 import { ChevronRightIcon } from '@chakra-ui/icons'
-import CommentFacebook from "../components/CommentFacebook"
+// import CommentFacebook from "../components/CommentFacebook"
 import { useParams } from "react-router-dom"
 import * as ArticleService from '../services/ArticleService'
 import { useQuery } from '@tanstack/react-query'
-import { initFacebookSDK } from "../utils"
+// import { initFacebookSDK } from "../utils"
 import { useMutationHooks } from '../hooks/useMutationHook'
 import NewsList from "../components/NewsList"
 
@@ -50,9 +50,9 @@ const DetailsArticle = () => {
     const upNextArticles = allArticles.filter(article => article._id !== articleId)
         .sort(() => Math.random() - 0.5).slice(0, 4)
 
-    useEffect(() => {
-        initFacebookSDK()
-    }, [])
+    // useEffect(() => {
+    //     initFacebookSDK()
+    // }, [])
     useEffect(() => {
         if (articleDetails?._id && typeof articleDetails.read === 'number' && !isUpdatedRead) {
             mutationUpdate.mutate({
@@ -122,10 +122,10 @@ const DetailsArticle = () => {
                         <Box width={'100%'}>
                             <Box border="1px solid" borderColor="teal" p={2} mt={10}>
                                 <Text as='b' fontSize={'xl'}>Comment</Text>
-                                <CommentFacebook dataHref={import.meta.env.VITE_IS_LOCAL ?
+                                {/* <CommentFacebook dataHref={import.meta.env.VITE_IS_LOCAL ?
                                     `https://yourwebsite.com/products/${articleDetails._id}`
                                     : window.location.href}
-                                />
+                                /> */}
                             </Box>
                         </Box>
                         <Box px={[4, 6, 8, 12]}>
