@@ -8,6 +8,8 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+RUN mkcert -install
+RUN mkcert -key-file localhost-key.pem -cert-file localhost-cert.pem localhost
 
 RUN npm run build
 
