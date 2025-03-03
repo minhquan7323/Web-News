@@ -170,27 +170,27 @@ const allArticle = (limit, page, sort, filter, search) => {
 }
 
 
-// const getAllTypeProduct = async () => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             const allCategories = await Category.find()
-//             const allTypesInProducts = await Product.distinct('type')
-//             resolve({
-//                 status: 'OK',
-//                 message: 'Success',
-//                 data: {
-//                     categories: allCategories,
-//                     types: allTypesInProducts,
-//                 }
-//             })
-//         } catch (e) {
-//             reject({
-//                 status: 'ERROR',
-//                 message: e.message || 'Failed to fetch data',
-//             })
-//         }
-//     })
-// }
+const getAllTypeArticle = async () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const allCategories = await Category.find()
+            const allTypesInArticles = await Article.distinct('type')
+            resolve({
+                status: 'OK',
+                message: 'Success',
+                data: {
+                    categories: allCategories,
+                    types: allTypesInArticles,
+                }
+            })
+        } catch (e) {
+            reject({
+                status: 'ERROR',
+                message: e.message || 'Failed to fetch data',
+            })
+        }
+    })
+}
 
 module.exports = {
     createArticle,
@@ -199,5 +199,5 @@ module.exports = {
     deleteArticle,
     allArticle,
     deleteManyArticles,
-    // getAllTypeProduct
+    getAllTypeArticle
 }

@@ -108,16 +108,18 @@ const allArticle = async (req, res) => {
     }
 }
 
-// const getAllTypeProduct = async (req, res) => {
-//     try {
-//         const response = await ProductService.getAllTypeProduct()
-//         return res.status(200).json(response)
-//     } catch (e) {
-//         return res.status(404).json({
-//             message: e
-//         })
-//     }
-// }
+const getAllTypeArticle = async (req, res) => {
+    const { type } = req.query
+
+    try {
+        const response = await ArticleService.getAllTypeArticle(type)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        })
+    }
+}
 module.exports = {
     createArticle,
     updateArticle,
@@ -125,5 +127,5 @@ module.exports = {
     deleteArticle,
     allArticle,
     deleteManyArticles,
-    // getAllTypeProduct
+    getAllTypeArticle
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import axios from "axios"
-import { Text, Image, Grid, GridItem, Box, Link, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@chakra-ui/react"
+import { Text, Image, Grid, GridItem, Box, Link, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack } from "@chakra-ui/react"
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import CommentFacebook from "../components/CommentFacebook"
 import { useParams } from "react-router-dom"
@@ -8,13 +8,10 @@ import * as ArticleService from '../services/ArticleService'
 import { useQuery } from '@tanstack/react-query'
 import { initFacebookSDK } from "../utils"
 import { useMutationHooks } from '../hooks/useMutationHook'
+import NewsList from "../components/NewsList"
 
 const DetailsArticle = () => {
-    const [news, setNews] = useState([])
     const { id: articleId } = useParams()
-    const [stateArticle, setStateArticle] = useState({
-        read: ''
-    })
     const [isUpdatedRead, setIsUpdatedRead] = useState(false)
 
     const mutationUpdate = useMutationHooks(
@@ -25,37 +22,10 @@ const DetailsArticle = () => {
         }
     )
 
-    const updateArticle = () => {
-        mutationUpdate.mutate({
-            id: articleId,
-            ...stateArticle
-        })
-    }
-
-    const fetchNews = async () => {
-        const urlSearch = `https://newsapi.org/v2/everything?q=tesla&from=2025-02-03&sortBy=publishedAt&apiKey=${import.meta.env.VITE_NEWS_API_KEY}`
-        try {
-            const res = await axios.get(urlSearch)
-            setNews(res.data.articles)
-        } catch (error) {
-            console.error("Error fetching news:", error)
-        }
-    }
-
     const fetchAllArticles = async () => {
         const res = await ArticleService.getAllArticle()
         return res.data
     }
-
-    const { data: allArticles = [] } = useQuery({
-        queryKey: ['allArticles'],
-        queryFn: fetchAllArticles,
-    })
-
-    const mostReadArticles = [...allArticles]
-        .sort((a, b) => b.read - a.read)
-        .slice(0, 10)
-
     const fetchGetDetailsArticle = async (articleId) => {
         if (articleId) {
             const res = await ArticleService.getDetailsArticle(articleId)
@@ -63,17 +33,26 @@ const DetailsArticle = () => {
         }
     }
 
+    const { data: allArticles = [] } = useQuery({
+        queryKey: ['allArticles'],
+        queryFn: fetchAllArticles,
+    })
+
     const { data: articleDetails = {} } = useQuery({
         queryKey: ['details', articleId],
         queryFn: () => fetchGetDetailsArticle(articleId),
         enabled: !!articleId,
     })
 
+    const mostReadArticles = allArticles.sort((a, b) => b.read - a.read).slice(0, 10)
+    const aloArticles = allArticles.filter(article => article.type
+        .some(category => category.name === 'cc')).slice(0, 3)
+    const upNextArticles = allArticles.filter(article => article._id !== articleId)
+        .sort(() => Math.random() - 0.5).slice(0, 4)
+
     useEffect(() => {
         initFacebookSDK()
-        fetchNews()
     }, [])
-
     useEffect(() => {
         if (articleDetails?._id && typeof articleDetails.read === 'number' && !isUpdatedRead) {
             mutationUpdate.mutate({
@@ -126,7 +105,7 @@ const DetailsArticle = () => {
                             <Box>
                                 <Image src={articleDetails.imageUrl} alt={articleDetails.title} objectFit="cover" h="auto" w="100%" />
                                 <Box p={4}>
-                                    <Text>👁️ {articleDetails.read || 0} views</Text>
+                                    <Text opacity='0.5  '>👁️ {articleDetails.read || 0} views</Text>
                                     <Text fontSize='24px' align='center'>{articleDetails.description}</Text>
                                 </Box>
                             </Box>
@@ -140,21 +119,23 @@ const DetailsArticle = () => {
                         <Box py={2}>
                             <Divider borderColor="gray.300" />
                         </Box>
-                        <Box border="1px solid" borderColor="teal" p={4} mt={10}>
-                            <Text as='b' fontSize={'xl'}>Comment</Text>
-                            <CommentFacebook dataHref={import.meta.env.VITE_IS_LOCAL ?
-                                `https://yourwebsite.com/products/${articleDetails._id}`
-                                : window.location.href}
-                            />
+                        <Box width={'100%'}>
+                            <Box border="1px solid" borderColor="teal" p={2} mt={10}>
+                                <Text as='b' fontSize={'xl'}>Comment</Text>
+                                <CommentFacebook dataHref={import.meta.env.VITE_IS_LOCAL ?
+                                    `https://yourwebsite.com/products/${articleDetails._id}`
+                                    : window.location.href}
+                                />
+                            </Box>
                         </Box>
                         <Box px={[4, 6, 8, 12]}>
                             <Box pt={12}>
                                 <Text as="b" fontSize='2xl' textTransform="uppercase">
                                     Up Next
                                 </Text>
-                                {news.slice(3, 6).map((article, index) => (
+                                {upNextArticles.map((article, index) => (
                                     <Grid key={index} templateColumns="2fr 1fr" gap={4} mt={4}>
-                                        <Link href={article.url} isExternal>
+                                        <Link href={article._id} isExternal>
                                             <Text
                                                 fontSize='lg'
                                                 lineHeight="24px"
@@ -169,10 +150,10 @@ const DetailsArticle = () => {
                                                 {article.description}
                                             </Text>
                                         </Link>
-                                        <Link href={article.url} isExternal transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}>
-                                            <Image src={article.urlToImage} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
+                                        <Link href={article._id} isExternal transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}>
+                                            <Image src={article.imageUrl} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
                                         </Link>
-                                        {index < news.slice(1, 5).length - 2 && (
+                                        {index < upNextArticles.length - 1 && (
                                             <GridItem key={index} colSpan={2}>
                                                 <Box py={2}>
                                                     <Divider borderColor="gray.300" />
@@ -195,11 +176,12 @@ const DetailsArticle = () => {
                                             <Box flex="1">
                                                 <Link href={article._id}>
                                                     <Text
-                                                        fontSize="lg"
+                                                        fontSize="sm"
                                                         lineHeight="24px"
                                                         height="72px"
                                                         overflow="hidden"
                                                         display="-webkit-box"
+                                                        width="100px"
                                                         style={{
                                                             WebkitLineClamp: 2,
                                                             WebkitBoxOrient: "vertical",
@@ -220,78 +202,10 @@ const DetailsArticle = () => {
                 </GridItem>
 
                 <GridItem>
-                    <Box>
-                        <Text as="b" borderLeft="6px solid teal" p={1} textTransform="uppercase">
-                            More from <Box as="span" color="teal">NEWS</Box>
-                        </Text>
-                        {news.slice(3, 6).map((article, index) => (
-                            <Grid key={index} templateColumns="2fr 2fr" gap={4} mt={4}>
-                                <Link href={article.url} isExternal transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}>
-                                    <Image src={article.urlToImage} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
-                                </Link>
-                                <Link href={article.url} isExternal>
-                                    <Text
-                                        fontSize="xs"
-                                        maxW="100%"
-                                        lineHeight="24px"
-                                        height="96px"
-                                        overflow="hidden"
-                                        display="-webkit-box"
-                                        style={{
-                                            WebkitLineClamp: 4,
-                                            WebkitBoxOrient: "vertical",
-                                        }}
-                                    >
-                                        {article.description}
-                                    </Text>
-                                </Link>
-                                {index < news.slice(1, 5).length - 2 && (
-                                    <GridItem key={index} colSpan={2}>
-                                        <Box py={2}>
-                                            <Divider borderColor="gray.300" />
-                                        </Box>
-                                    </GridItem>
-                                )}
-                            </Grid>
-                        ))}
-                    </Box>
-
-                    <Box pt={12}>
-
-                        <Text as="b" borderLeft="6px solid teal" p={1} textTransform="uppercase">
-                            More from <Box as="span" color="teal">NEWS</Box>
-                        </Text>
-                        {news.slice(3, 6).map((article, index) => (
-                            <Grid key={index} templateColumns="2fr 2fr" gap={4} mt={4}>
-                                <Link href={article.url} isExternal transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}>
-                                    <Image src={article.urlToImage} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
-                                </Link>
-                                <Link href={article.url} isExternal>
-                                    <Text
-                                        fontSize="xs"
-                                        maxW="100%"
-                                        lineHeight="24px"
-                                        height="96px"
-                                        overflow="hidden"
-                                        display="-webkit-box"
-                                        style={{
-                                            WebkitLineClamp: 4,
-                                            WebkitBoxOrient: "vertical",
-                                        }}
-                                    >
-                                        {article.description}
-                                    </Text>
-                                </Link>
-                                {index < news.slice(1, 5).length - 2 && (
-                                    <GridItem key={index} colSpan={2}>
-                                        <Box py={2}>
-                                            <Divider borderColor="gray.300" />
-                                        </Box>
-                                    </GridItem>
-                                )}
-                            </Grid>
-                        ))}
-                    </Box>
+                    <VStack spacing={12}>
+                        <NewsList moreFrom={'Most read'} news={mostReadArticles.slice(0, 3)} />
+                        <NewsList moreFrom={'Most cc'} news={aloArticles} />
+                    </VStack>
                 </GridItem>
             </Grid>
         </Box>

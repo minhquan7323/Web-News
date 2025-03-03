@@ -1,7 +1,7 @@
 import {
     Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton,
     DrawerContent, DrawerHeader, DrawerOverlay, HStack, Input,
-    List, ListItem, Text, useDisclosure, VStack
+    List, ListItem, Text, useBreakpointValue, useDisclosure, VStack
 } from '@chakra-ui/react'
 import { HamburgerIcon } from '@chakra-ui/icons'
 import React, { useEffect, useState } from 'react'
@@ -92,7 +92,7 @@ const Header = () => {
         retry: 2,
         retryDelay: 1000
     })
-
+    const visibleCategories = useBreakpointValue({ base: 2, sm: 2, md: 3, lg: 5 })
     return (
         <>
             <Box
@@ -118,7 +118,7 @@ const Header = () => {
 
                     {!adminPath && (
                         <HStack>
-                            {categories?.map((category) => (
+                            {categories?.slice(0, visibleCategories).map((category) => (
                                 <Link to="/" key={category._id}>
                                     <Text
                                         transition="color 0.3s ease"
