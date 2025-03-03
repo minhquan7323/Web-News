@@ -8,6 +8,13 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+
+# Cài đặt mkcert
+RUN apt-get update && apt-get install -y libnss3 wget && \
+    wget -q -O /usr/local/bin/mkcert https://github.com/FiloSottile/mkcert/releases/latest/download/mkcert-linux-amd64 && \
+    chmod +x /usr/local/bin/mkcert
+
+# Tạo chứng chỉ SSL
 RUN mkcert -install
 RUN mkcert -key-file localhost-key.pem -cert-file localhost-cert.pem localhost
 
@@ -17,7 +24,6 @@ RUN npm run build
 FROM nginx:alpine
 
 COPY --from=build /app/dist /usr/share/nginx/html
-
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
