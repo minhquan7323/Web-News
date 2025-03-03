@@ -35,7 +35,7 @@ const Home = () => {
             <Grid templateColumns="2fr 1fr" gap={6} mt={6}>
                 <GridItem>
                     {articles?.slice(0, 1).map((article) => (
-                        <Link key={article._id} href={article.url} isExternal _hover={{ textDecoration: "none" }}>
+                        <Link key={article._id} href={article.url} _hover={{ textDecoration: "none" }}>
                             <Image src={article.imageUrl || "https://via.placeholder.com/150"} alt={article.title} borderRadius="5px" objectFit="cover" h="100%" maxH="500px" w="100%" transition="opacity 0.2s ease-in-out" _hover={{ opacity: 0.7 }} />
                             <Stack spacing={3}>
                                 <Text fontSize='3xl'>

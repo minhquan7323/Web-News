@@ -135,7 +135,7 @@ const DetailsArticle = () => {
                                 </Text>
                                 {upNextArticles.map((article, index) => (
                                     <Grid key={index} templateColumns="2fr 1fr" gap={4} mt={4}>
-                                        <Link href={article._id} isExternal>
+                                        <Link href={article._id} >
                                             <Text
                                                 fontSize='lg'
                                                 lineHeight="24px"
@@ -150,7 +150,7 @@ const DetailsArticle = () => {
                                                 {article.description}
                                             </Text>
                                         </Link>
-                                        <Link href={article._id} isExternal transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}>
+                                        <Link href={article._id} transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}>
                                             <Image src={article.imageUrl} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
                                         </Link>
                                         {index < upNextArticles.length - 1 && (

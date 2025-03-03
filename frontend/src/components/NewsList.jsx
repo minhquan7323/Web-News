@@ -9,10 +9,10 @@ const NewsList = ({ moreFrom, news, templateColumnss = "2fr 2fr" }) => {
             </Text>
             {news.map((article, index) => (
                 <Grid key={index} templateColumns={templateColumnss} gap={4} mt={6}>
-                    <Link href={article._id} isExternal transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}>
+                    <Link href={article._id} transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}>
                         <Image src={article.imageUrl} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
                     </Link>
-                    <Link href={article._id} isExternal>
+                    <Link href={article._id} >
                         <Text
                             fontSize="xs"
                             maxW="100%"
