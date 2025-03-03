@@ -1,60 +1,60 @@
 const User = require('../models/UserModel')
 
-const loginUser = async (UserId) => {
+const loginUser = async (userId) => {
     return new Promise(async (resolve, reject) => {
-        const { userId } = UserId
-
         try {
-            let user = await User.findOne({
-                userId: userId
-            })
+            let user = await User.findOne({ userId });
 
             if (!user) {
-                user = new User({ userId })
-                await user.save()
-                resolve({
+                // Nếu user chưa tồn tại, tạo user mới
+                user = new User({ userId });
+                await user.save();
+                return resolve({
                     status: 'OK',
                     message: 'New user created',
                     user
-                })
-            } else {
-                resolve({
-                    status: 'OK',
-                    // message: 'User already exists',
-                    user
-                })
+                });
             }
+
+            // Nếu user đã tồn tại, trả về user hiện tại
+            resolve({
+                status: 'OK',
+                message: 'User logged in successfully',
+                user
+            });
+
         } catch (e) {
             reject({
                 status: 'ERR',
                 message: 'Server error',
                 error: e.message
-            })
+            });
         }
-    })
-}
+    });
+};
+
 
 const getDetailsUser = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const user = await User.findOne({ userId: userId });
+            const user = await User.findOne({ userId: userId })
 
             if (user === null) {
                 return resolve({
                     status: 'OK',
                     message: 'The user is not defined'
-                });
+                })
             }
 
             resolve({
                 status: 'OK',
                 message: 'Success',
                 data: user
-            });
+            })
         } catch (e) {
-            reject(e);
+            reject(e)
         }
-    });
+    })
 }
 module.exports = {
     loginUser,

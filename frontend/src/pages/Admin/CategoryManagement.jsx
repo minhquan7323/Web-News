@@ -11,6 +11,7 @@ import { sortByDate } from '../../utils'
 import { Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from '@chakra-ui/react'
 import { useMessage } from '../../components/Message/Message'
 import Loading from '../../components/Loading/Loading'
+
 const CategoryManagement = () => {
     const [searchText, setSearchText] = useState("")
     const [searchedColumn, setSearchedColumn] = useState("")

@@ -8,11 +8,20 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
     integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <title></title>
+  <title>NEWS</title>
 </head>
 
 <body>
   <div id="root"></div>
+  <script type="module">
+    const fbId = import.meta.env.VITE_FB_ID;
+    if (fbId) {
+      const metaTag = document.createElement("meta");
+      metaTag.setAttribute("property", "fb:admins");
+      metaTag.setAttribute("content", fbId);
+      document.head.appendChild(metaTag);
+    }
+  </script>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 

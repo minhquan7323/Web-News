@@ -4,13 +4,33 @@ import { Text, Image, Grid, GridItem, Box, Link, useBreakpointValue, Divider, Br
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import CommentFacebook from "../components/CommentFacebook"
 import { useParams } from "react-router-dom"
-import { initFacebookSDK } from "../utils"
 import * as ArticleService from '../services/ArticleService'
 import { useQuery } from '@tanstack/react-query'
+import { initFacebookSDK } from "../utils"
+import { useMutationHooks } from '../hooks/useMutationHook'
 
 const DetailsArticle = () => {
     const [news, setNews] = useState([])
     const { id: articleId } = useParams()
+    const [stateArticle, setStateArticle] = useState({
+        read: ''
+    })
+    const [isUpdatedRead, setIsUpdatedRead] = useState(false)
+
+    const mutationUpdate = useMutationHooks(
+        async (data) => {
+            const { id, ...rests } = data
+            const res = await ArticleService.updateArticle(id, rests)
+            return res
+        }
+    )
+
+    const updateArticle = () => {
+        mutationUpdate.mutate({
+            id: articleId,
+            ...stateArticle
+        })
+    }
 
     const fetchNews = async () => {
         const urlSearch = `https://newsapi.org/v2/everything?q=tesla&from=2025-02-03&sortBy=publishedAt&apiKey=${import.meta.env.VITE_NEWS_API_KEY}`
@@ -21,12 +41,28 @@ const DetailsArticle = () => {
             console.error("Error fetching news:", error)
         }
     }
+
+    const fetchAllArticles = async () => {
+        const res = await ArticleService.getAllArticle()
+        return res.data
+    }
+
+    const { data: allArticles = [] } = useQuery({
+        queryKey: ['allArticles'],
+        queryFn: fetchAllArticles,
+    })
+
+    const mostReadArticles = [...allArticles]
+        .sort((a, b) => b.read - a.read)
+        .slice(0, 10)
+
     const fetchGetDetailsArticle = async (articleId) => {
         if (articleId) {
             const res = await ArticleService.getDetailsArticle(articleId)
             return res.data
         }
     }
+
     const { data: articleDetails = {} } = useQuery({
         queryKey: ['details', articleId],
         queryFn: () => fetchGetDetailsArticle(articleId),
@@ -34,9 +70,19 @@ const DetailsArticle = () => {
     })
 
     useEffect(() => {
-        fetchNews()
         initFacebookSDK()
+        fetchNews()
     }, [])
+
+    useEffect(() => {
+        if (articleDetails?._id && typeof articleDetails.read === 'number' && !isUpdatedRead) {
+            mutationUpdate.mutate({
+                id: articleDetails._id,
+                read: articleDetails.read + 1,
+            })
+            setIsUpdatedRead(true)
+        }
+    }, [articleDetails?._id])
 
     const gridTemplate = useBreakpointValue({
         base: "1fr",
@@ -141,39 +187,34 @@ const DetailsArticle = () => {
                                     Most read
                                 </Text>
                                 <Grid templateColumns="1fr 1fr" gap={4} mt={4}>
-                                    {[0, 1, 2, 3, 4].map((i) => (
-                                        <React.Fragment key={i}>
-                                            {[i, i + 5].map((j) => (
-                                                <Box key={j} display="flex" alignItems="flex-start" gap={2}>
-                                                    <Text fontSize="2xl" color="teal" fontWeight="bold" minWidth="30px">
-                                                        {j + 1}
+                                    {mostReadArticles.map((article, index) => (
+                                        <Box key={article._id} display="flex" alignItems="flex-start" gap={2}>
+                                            <Text fontSize="2xl" color="teal" fontWeight="bold" minWidth="30px">
+                                                {index + 1}
+                                            </Text>
+                                            <Box flex="1">
+                                                <Link href={article._id}>
+                                                    <Text
+                                                        fontSize="lg"
+                                                        lineHeight="24px"
+                                                        height="72px"
+                                                        overflow="hidden"
+                                                        display="-webkit-box"
+                                                        style={{
+                                                            WebkitLineClamp: 2,
+                                                            WebkitBoxOrient: "vertical",
+                                                        }}
+                                                    >
+                                                        {article.title}
                                                     </Text>
-                                                    <Box flex="1">
-                                                        <Link href={news[11 + j]?.url} isExternal>
-                                                            <Text
-                                                                fontSize="lg"
-                                                                lineHeight="24px"
-                                                                height="72px"
-                                                                overflow="hidden"
-                                                                display="-webkit-box"
-                                                                style={{
-                                                                    WebkitLineClamp: 2,
-                                                                    WebkitBoxOrient: "vertical",
-                                                                }}
-                                                            >
-                                                                {news[11 + j]?.description}
-                                                            </Text>
-                                                        </Link>
-                                                        {/* Không hiển thị Divider nếu j là 4 */}
-                                                        {j !== 4 && j < 9 && <Divider borderColor="gray.300" pt={4} />}
-                                                    </Box>
-                                                </Box>
-                                            ))}
-                                        </React.Fragment>
+                                                </Link>
+                                                {index < mostReadArticles.length - 1 && <Divider borderColor="gray.300" pt={4} />}
+                                            </Box>
+                                        </Box>
                                     ))}
                                 </Grid>
-
                             </Box>
+
                         </Box>
                     </Box>
                 </GridItem>
@@ -191,7 +232,7 @@ const DetailsArticle = () => {
                                 <Link href={article.url} isExternal>
                                     <Text
                                         fontSize="xs"
-                                        maxW="200px"
+                                        maxW="100%"
                                         lineHeight="24px"
                                         height="96px"
                                         overflow="hidden"
@@ -228,7 +269,7 @@ const DetailsArticle = () => {
                                 <Link href={article.url} isExternal>
                                     <Text
                                         fontSize="xs"
-                                        maxW="200px"
+                                        maxW="100%"
                                         lineHeight="24px"
                                         height="96px"
                                         overflow="hidden"

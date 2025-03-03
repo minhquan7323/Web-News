@@ -9,7 +9,7 @@ const articleSchema = new mongoose.Schema(
         author: { type: String, required: true },
         source: [{ type: String }],
         type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
-        read: { type: Number, required: true, default: 0 }
+        read: { type: Number, default: 0 }
     },
     { timestamps: true }
 )
