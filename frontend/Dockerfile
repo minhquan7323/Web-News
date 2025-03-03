@@ -9,8 +9,8 @@ RUN npm install
 
 COPY . .
 
-# Cài đặt mkcert
-RUN apt-get update && apt-get install -y libnss3 wget && \
+# Cài đặt mkcert (thêm apt-utils để tránh lỗi)
+RUN apt-get update && apt-get install -y apt-utils libnss3 wget && \
     wget -q -O /usr/local/bin/mkcert https://github.com/FiloSottile/mkcert/releases/latest/download/mkcert-linux-amd64 && \
     chmod +x /usr/local/bin/mkcert
 
