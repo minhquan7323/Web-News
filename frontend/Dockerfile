@@ -8,8 +8,7 @@ RUN npm install
 
 COPY . .
 
-RUN node --max-old-space-size=4096 /usr/local/bin/npm run build
-
+RUN NODE_OPTIONS=--max-old-space-size=8192 /usr/local/bin/npm run build
 
 FROM nginx:alpine AS production
 
