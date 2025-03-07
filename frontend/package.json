@@ -17,6 +17,7 @@
     "@clerk/clerk-react": "^5.23.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@reduxjs/toolkit": "^2.6.0",
     "@tanstack/react-query": "^5.66.9",
     "@tanstack/react-query-devtools": "^5.66.9",
     "@tinymce/tinymce-react": "^6.0.0",
@@ -27,7 +28,10 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-highlight-words": "^0.21.0",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.1",
+    "redux": "^5.0.1",
+    "redux-persist": "^6.0.0",
     "tinymce": "^7.7.0"
   },
   "devDependencies": {

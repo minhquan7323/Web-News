@@ -11,15 +11,18 @@ import Logo from './Logo'
 import * as UserService from '../services/UserService'
 import * as CategoryService from '../services/CategoryService'
 import { useQuery } from '@tanstack/react-query'
+import { useDispatch, useSelector } from 'react-redux'
+import { resetUser, updateUser } from '../redux/userSlice'
 
 const Header = () => {
+    const user = useSelector((state) => state?.user)
     const { isOpen, onClose, onOpen } = useDisclosure()
     const [isScrolled, setIsScrolled] = useState(false)
     const [newsSearch, setNewsSearch] = useState('')
     const navigate = useNavigate()
-    const { user } = useUser()
+    const { user: userClerk } = useUser()
+    const dispatch = useDispatch()
     const { signOut } = useAuth()
-    const [isAdmin, setIsAdmin] = useState(false)
     const location = useLocation()
 
     useEffect(() => {
@@ -42,21 +45,19 @@ const Header = () => {
 
     const handleGetDetailsUser = async (userId) => {
         const res = await UserService.getDetailsUser(userId)
-        setIsAdmin(res.data.isAdmin)
+        dispatch(updateUser({
+            fullName: userClerk.fullName,
+            imageUrl: userClerk.imageUrl,
+            ...res?.data
+        }))
+
     }
 
     useEffect(() => {
-        if (user) {
-            handleGetDetailsUser(user.id)
-            if (!user) {
-                window.FB?.getLoginStatus((response) => {
-                    if (response.status !== "connected") {
-                        window.FB.login()
-                    }
-                })
-            }
+        if (userClerk) {
+            handleGetDetailsUser(userClerk.id)
         }
-    }, [user])
+    }, [userClerk])
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -64,21 +65,7 @@ const Header = () => {
 
     const handleLogout = async () => {
         await signOut()
-
-        if (window.FB) {
-            window.FB.getLoginStatus((response) => {
-                if (response.status === "connected") {
-                    window.FB.logout(() => {
-                        localStorage.removeItem('fblo_:appId')
-                        setTimeout(() => window.FB.XFBML.parse(), 1000)
-                    })
-                }
-            })
-        }
-
-        setTimeout(() => {
-            window.location.reload()
-        }, 1500)
+        dispatch(resetUser())
     }
 
     const fetchAllCategory = async () => {
@@ -138,10 +125,12 @@ const Header = () => {
                 <Box display="flex" alignItems="center">
                     {!adminPath ? (
                         <>
-                            <Button colorScheme="teal" size="md" onClick={onOpen} marginRight={5}>
-                                <i className="fas fa-magnifying-glass"></i>
-                            </Button>
-                            {isAdmin && (
+                            <Box display={{ base: 'none', sm: 'flex' }}>
+                                <Button colorScheme="teal" size="md" onClick={onOpen} marginRight={5}>
+                                    <i className="fas fa-magnifying-glass"></i>
+                                </Button>
+                            </Box>
+                            {user.isAdmin && (
                                 <Button colorScheme="teal" size="md" marginRight={5} onClick={() => handleClickNav('admin')}>
                                     Admin
                                 </Button>

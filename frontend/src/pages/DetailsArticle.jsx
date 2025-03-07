@@ -1,19 +1,36 @@
 import React, { useEffect, useState } from "react"
-import axios from "axios"
-import { Text, Image, Grid, GridItem, Box, Link, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack } from "@chakra-ui/react"
+import { Text, Image, Grid, GridItem, Box, Link, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Input, Button, Avatar, HStack } from "@chakra-ui/react"
 import { ChevronRightIcon } from '@chakra-ui/icons'
 // import CommentFacebook from "../components/CommentFacebook"
 import { useParams } from "react-router-dom"
+import { SendOutlined } from '@ant-design/icons'
 import * as ArticleService from '../services/ArticleService'
+import * as CommentService from '../services/CommentService'
 import { useQuery } from '@tanstack/react-query'
 // import { initFacebookSDK } from "../utils"
 import { useMutationHooks } from '../hooks/useMutationHook'
 import NewsList from "../components/NewsList"
+import { useSelector } from "react-redux"
 
 const DetailsArticle = () => {
+    const user = useSelector((state) => state?.user)
     const { id: articleId } = useParams()
     const [isUpdatedRead, setIsUpdatedRead] = useState(false)
+    const [upNextArticles, setUpNextArticles] = useState([])
+    const [stateComment, setStateComment] = useState({
+        userId: user?.userId || '',
+        articleId: articleId || '',
+        content: ''
+    })
 
+    const mutation = useMutationHooks(async (data) => {
+        const { ...rests } = data
+        console.log(data);
+
+        const res = await CommentService.createComment(rests)
+        console.log(res);
+        return res
+    })
     const mutationUpdate = useMutationHooks(
         async (data) => {
             const { id, ...rests } = data
@@ -32,23 +49,30 @@ const DetailsArticle = () => {
             return res.data
         }
     }
+    const fetchAllComments = async () => {
+        const res = await CommentService.getCommentsByPost(articleId)
+        return res.data
+    }
 
     const { data: allArticles = [] } = useQuery({
         queryKey: ['allArticles'],
         queryFn: fetchAllArticles,
     })
-
     const { data: articleDetails = {} } = useQuery({
         queryKey: ['details', articleId],
         queryFn: () => fetchGetDetailsArticle(articleId),
         enabled: !!articleId,
     })
+    const { data: allComments = [] } = useQuery({
+        queryKey: ['allComments'],
+        queryFn: fetchAllComments,
+    })
 
     const mostReadArticles = allArticles.sort((a, b) => b.read - a.read).slice(0, 10)
     const aloArticles = allArticles.filter(article => article.type
         .some(category => category.name === 'cc')).slice(0, 3)
-    const upNextArticles = allArticles.filter(article => article._id !== articleId)
-        .sort(() => Math.random() - 0.5).slice(0, 4)
+    // const upNextArticles = allArticles.filter(article => article._id !== articleId)
+    // .sort(() => Math.random() - 0.5).slice(0, 4)
 
     // useEffect(() => {
     //     initFacebookSDK()
@@ -61,7 +85,26 @@ const DetailsArticle = () => {
             })
             setIsUpdatedRead(true)
         }
-    }, [articleDetails?._id])
+    }, [articleDetails?._id, isUpdatedRead])
+
+    useEffect(() => {
+        setUpNextArticles(allArticles.filter(article => article._id !== articleId)
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 4))
+    }, [allArticles])
+
+    const handleComment = () => {
+        if (!stateComment.content.trim()) return
+        mutation.mutate(stateComment)
+        setStateComment({ ...stateComment, content: '' })
+    }
+
+    const handleOnchange = (e) => {
+        setStateComment({
+            ...stateComment,
+            [e.target.name]: e.target.value
+        })
+    }
 
     const gridTemplate = useBreakpointValue({
         base: "1fr",
@@ -105,7 +148,7 @@ const DetailsArticle = () => {
                             <Box>
                                 <Image src={articleDetails.imageUrl} alt={articleDetails.title} objectFit="cover" h="auto" w="100%" />
                                 <Box p={4}>
-                                    <Text opacity='0.5  '>👁️ {articleDetails.read || 0} views</Text>
+                                    <Text opacity='0.5'>👁️ {articleDetails.read || 0} views</Text>
                                     <Text fontSize='24px' align='center'>{articleDetails.description}</Text>
                                 </Box>
                             </Box>
@@ -126,6 +169,26 @@ const DetailsArticle = () => {
                                     `https://yourwebsite.com/products/${articleDetails._id}`
                                     : window.location.href}
                                 /> */}
+                                <VStack align='left' overflow='auto' height='200px' my={4}>
+                                    {allComments.map((comment) => (
+                                        <Box key={comment._id}>
+                                            <HStack align='top'>
+                                                <Avatar name={user.fullName} src={user.imageUrl} />
+                                                <VStack align='left' w='100%'>
+                                                    <Text fontWeight='bold'>{user.fullName}</Text>
+                                                    <HStack justifyContent='space-between'>
+                                                        <Text>ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ </Text>
+                                                        <Text fontSize='sm' color='gray.400'>{new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+                                                    </HStack>
+                                                </VStack>
+                                            </HStack>
+                                        </Box>
+                                    ))}
+                                </VStack>
+                                <Box display='flex' gap={2}>
+                                    <Input placeholder="Comment here" value={stateComment.content} name="content" onChange={handleOnchange} />
+                                    <Button colorScheme="teal" onClick={() => handleComment()}><SendOutlined /></Button>
+                                </Box>
                             </Box>
                         </Box>
                         <Box px={[4, 6, 8, 12]}>
