@@ -42,10 +42,10 @@ const removeLike = async (req, res) => {
 }
 
 const loginUser = async (req, res) => {
-    const { userId } = req.body
+    const { userId, imageUrl, fullName, isAdmin } = req.body
 
-    if (!userId) {
-        return res.status(400).json({ message: "Missing userId" });
+    if (!userId && !imageUrl && !fullName && !isAdmin) {
+        return res.status(400).json({ message: "The input is require" });
     }
 
     try {

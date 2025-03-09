@@ -17,12 +17,7 @@ export const userSlice = createSlice({
             state.imageUrl = imageUrl
             state.fullName = fullName
         },
-        resetUser: (state) => {
-            state.userId = ''
-            state.isAdmin = ''
-            state.imageUrl = ''
-            state.fullName = ''
-        }
+        resetUser: () => ({ ...initialState })
     }
 })
 

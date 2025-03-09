@@ -13,15 +13,7 @@
 
 <body>
   <div id="root"></div>
-  <script type="module">
-    const fbId = import.meta.env.VITE_FB_ID;
-    if (fbId) {
-      const metaTag = document.createElement("meta");
-      metaTag.setAttribute("property", "fb:admins");
-      metaTag.setAttribute("content", fbId);
-      document.head.appendChild(metaTag);
-    }
-  </script>
+  <canvas id="bg"></canvas>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 

@@ -30,27 +30,29 @@ const Home = () => {
     })
     const { isLoading: isLoadingArticles, data: articles } = queryArticle
 
+    const gridTemplate = useBreakpointValue({
+        base: "1fr",
+        lg: "2fr 1fr",
+    })
     return (
         <Box p={4} paddingTop={10}>
-            <Grid templateColumns="2fr 1fr" gap={6} mt={6}>
-                <GridItem>
+            <Grid templateColumns={gridTemplate} gap={6} mt={6}>
+                <GridItem alignSelf="start">
                     {articles?.slice(0, 1).map((article) => (
-                        <Link key={article._id} href={article.url} _hover={{ textDecoration: "none" }}>
+                        <Link key={article._id} onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }}>
                             <Image src={article.imageUrl || "https://via.placeholder.com/150"} alt={article.title} borderRadius="5px" objectFit="cover" h="100%" maxH="500px" w="100%" transition="opacity 0.2s ease-in-out" _hover={{ opacity: 0.7 }} />
                             <Stack spacing={3}>
-                                <Text fontSize='3xl'>
-                                    {article.title}
-                                </Text>
-                                <Text fontSize="sm" color="gray.400">
-                                    {article.source} - {new Date(article.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </Text>
-                                <Text noOfLines={2}>
-                                    {article.description}
-                                </Text>
+                                <Text fontSize='3xl' _hover={{ textDecoration: "underline" }}>{article.title}</Text>
+                                <Stack spacing={1}>
+                                    <Text fontSize="sm" color="gray.400">
+                                        {article.source} - {new Date(article.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                    </Text>
+                                </Stack>
+                                <Text noOfLines={2}>{article.description}</Text>
                             </Stack>
                         </Link>
                     ))}
-                    {/* <VStack alignItems="start" spacing={4} w="100%">
+                    <VStack alignItems="start" spacing={4} w="100%" pt={8}>
                         {articles?.map((article, index) => (
                             <React.Fragment key={article._id}>
                                 <Box onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }} cursor='pointer'>
@@ -82,14 +84,15 @@ const Home = () => {
                                 )}
                             </React.Fragment>
                         ))}
-                    </VStack> */}
+                    </VStack>
                 </GridItem>
-                <GridItem>
+
+                <GridItem alignSelf="start">
                     <VStack alignItems="start" spacing={4} w="100%">
                         {articles?.map((article, index) => (
                             <React.Fragment key={article._id}>
                                 <Box onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }} cursor='pointer'>
-                                    <HStack alignItems="start" >
+                                    <HStack alignItems="start">
                                         <Image
                                             src={article.imageUrl}
                                             alt={article.title}

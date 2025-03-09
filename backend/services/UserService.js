@@ -1,38 +1,44 @@
 const User = require('../models/UserModel')
 
-const loginUser = async (userId) => {
+const loginUser = async (userData) => {
     return new Promise(async (resolve, reject) => {
         try {
+            const { userId, imageUrl, fullName, isAdmin = false } = userData
+
+            if (!userId || !fullName || !imageUrl) {
+                return reject({
+                    status: "ERR",
+                    message: "the input is required"
+                })
+            }
+
             let user = await User.findOne({ userId });
 
             if (!user) {
-                // Nếu user chưa tồn tại, tạo user mới
-                user = new User({ userId });
+                user = new User({ userId, imageUrl, fullName, isAdmin })
                 await user.save();
                 return resolve({
-                    status: 'OK',
-                    message: 'New user created',
+                    status: "OK",
+                    message: "create new user success",
                     user
-                });
+                })
             }
 
-            // Nếu user đã tồn tại, trả về user hiện tại
             resolve({
-                status: 'OK',
-                message: 'User logged in successfully',
+                status: "OK",
+                message: "Login success",
                 user
-            });
+            })
 
         } catch (e) {
             reject({
-                status: 'ERR',
-                message: 'Server error',
+                status: "ERR",
+                message: "Lỗi server",
                 error: e.message
-            });
+            })
         }
-    });
-};
-
+    })
+}
 
 const getDetailsUser = (userId) => {
     return new Promise(async (resolve, reject) => {

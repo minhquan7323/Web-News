@@ -1,34 +1,31 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import { Text, Image, Grid, GridItem, Box, Link, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Input, Button, Avatar, HStack } from "@chakra-ui/react"
 import { ChevronRightIcon } from '@chakra-ui/icons'
-// import CommentFacebook from "../components/CommentFacebook"
 import { useParams } from "react-router-dom"
 import { SendOutlined } from '@ant-design/icons'
 import * as ArticleService from '../services/ArticleService'
 import * as CommentService from '../services/CommentService'
 import { useQuery } from '@tanstack/react-query'
-// import { initFacebookSDK } from "../utils"
 import { useMutationHooks } from '../hooks/useMutationHook'
 import NewsList from "../components/NewsList"
 import { useSelector } from "react-redux"
 
 const DetailsArticle = () => {
     const user = useSelector((state) => state?.user)
+    const commentsEndRef = useRef(null)
     const { id: articleId } = useParams()
     const [isUpdatedRead, setIsUpdatedRead] = useState(false)
+    const [randomCategories, setRandomCategories] = useState([])
     const [upNextArticles, setUpNextArticles] = useState([])
     const [stateComment, setStateComment] = useState({
-        userId: user?.userId || '',
-        articleId: articleId || '',
+        userId: user.userId,
+        articleId: articleId,
         content: ''
     })
 
     const mutation = useMutationHooks(async (data) => {
         const { ...rests } = data
-        console.log(data);
-
         const res = await CommentService.createComment(rests)
-        console.log(res);
         return res
     })
     const mutationUpdate = useMutationHooks(
@@ -63,20 +60,34 @@ const DetailsArticle = () => {
         queryFn: () => fetchGetDetailsArticle(articleId),
         enabled: !!articleId,
     })
-    const { data: allComments = [] } = useQuery({
+    const { data: allComments = [], refetch: refetchComments } = useQuery({
         queryKey: ['allComments'],
         queryFn: fetchAllComments,
     })
 
-    const mostReadArticles = allArticles.sort((a, b) => b.read - a.read).slice(0, 10)
-    const aloArticles = allArticles.filter(article => article.type
-        .some(category => category.name === 'cc')).slice(0, 3)
-    // const upNextArticles = allArticles.filter(article => article._id !== articleId)
-    // .sort(() => Math.random() - 0.5).slice(0, 4)
+    const mostReadArticles = useMemo(() =>
+        [...allArticles].sort((a, b) => b.read - a.read).slice(0, 10),
+        [allArticles]
+    )
 
-    // useEffect(() => {
-    //     initFacebookSDK()
-    // }, [])
+
+    useEffect(() => {
+        if (allArticles.length > 0) {
+            const categories = [...new Set(allArticles.flatMap(article => article.type.map(category => category.name)))]
+            const shuffledCategories = categories.sort(() => 0.5 - Math.random()).slice(0, 2)
+            setRandomCategories(shuffledCategories)
+        }
+    }, [allArticles])
+
+    const categorizedArticles = useMemo(() => {
+        return randomCategories.map(category => ({
+            category,
+            articles: allArticles.filter(article =>
+                article.type.some(cat => cat.name === category)
+            ).slice(0, 3)
+        }))
+    }, [allArticles, randomCategories])
+
     useEffect(() => {
         if (articleDetails?._id && typeof articleDetails.read === 'number' && !isUpdatedRead) {
             mutationUpdate.mutate({
@@ -88,20 +99,41 @@ const DetailsArticle = () => {
     }, [articleDetails?._id, isUpdatedRead])
 
     useEffect(() => {
-        setUpNextArticles(allArticles.filter(article => article._id !== articleId)
+        const filteredArticles = allArticles
+            .filter(article => article._id !== articleId)
             .sort(() => Math.random() - 0.5)
-            .slice(0, 4))
-    }, [allArticles])
+            .slice(0, 4)
+        setUpNextArticles(filteredArticles)
+
+    }, [allArticles, articleId])
+
+
+    const scrollToBottom = () => {
+        if (commentsEndRef.current) {
+            commentsEndRef.current.scrollTop = commentsEndRef.current.scrollHeight
+        }
+    }
 
     const handleComment = () => {
         if (!stateComment.content.trim()) return
-        mutation.mutate(stateComment)
+        mutation.mutate(stateComment, {
+            onSettled: () => {
+                refetchComments().then(() => {
+                    setTimeout(scrollToBottom, 100)
+                })
+            }
+        })
         setStateComment({ ...stateComment, content: '' })
     }
 
+    useEffect(() => {
+        scrollToBottom()
+    }, [allComments])
+
     const handleOnchange = (e) => {
         setStateComment({
-            ...stateComment,
+            userId: user.userId,
+            articleId: articleId,
             [e.target.name]: e.target.value
         })
     }
@@ -169,26 +201,45 @@ const DetailsArticle = () => {
                                     `https://yourwebsite.com/products/${articleDetails._id}`
                                     : window.location.href}
                                 /> */}
-                                <VStack align='left' overflow='auto' height='200px' my={4}>
-                                    {allComments.map((comment) => (
-                                        <Box key={comment._id}>
-                                            <HStack align='top'>
-                                                <Avatar name={user.fullName} src={user.imageUrl} />
-                                                <VStack align='left' w='100%'>
-                                                    <Text fontWeight='bold'>{user.fullName}</Text>
-                                                    <HStack justifyContent='space-between'>
-                                                        <Text>ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ ádasđ </Text>
-                                                        <Text fontSize='sm' color='gray.400'>{new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
-                                                    </HStack>
-                                                </VStack>
-                                            </HStack>
-                                        </Box>
-                                    ))}
-                                </VStack>
-                                <Box display='flex' gap={2}>
-                                    <Input placeholder="Comment here" value={stateComment.content} name="content" onChange={handleOnchange} />
-                                    <Button colorScheme="teal" onClick={() => handleComment()}><SendOutlined /></Button>
-                                </Box>
+                                {allComments.length > 0 ? (
+                                    <VStack align='left' overflow='auto' height='200px' my={4} ref={commentsEndRef}>
+                                        {allComments.map((comment) => (
+                                            <Box key={comment._id}>
+                                                <HStack align='top'>
+                                                    <Avatar name={comment.fullName} src={comment.imageUrl} />
+                                                    <VStack align='left' w='100%'>
+                                                        <Text fontWeight='bold'>{comment.fullName}</Text>
+                                                        <HStack justifyContent='space-between'>
+                                                            <Text>{comment.content}</Text>
+                                                            <Text fontSize='sm' color='gray.400'>
+                                                                {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                            </Text>
+                                                        </HStack>
+                                                    </VStack>
+                                                </HStack>
+                                            </Box>
+                                        ))}
+                                    </VStack>
+                                ) : (
+                                    <VStack overflow='auto' height='200px' my={4} ref={commentsEndRef} justify="center" align="center">
+                                        <Text fontSize='2xl' color='gray.400'>
+                                            No comments yet
+                                        </Text>
+                                    </VStack>
+                                )}
+                                {user?.userId ? (
+                                    <Box display='flex' gap={2}>
+                                        <Input placeholder="Comment here" value={stateComment.content}
+                                            name="content" onChange={handleOnchange}
+                                            onKeyDown={(e) => e.key === "Enter" && handleComment()}
+                                        />
+                                        <Button colorScheme="teal" onClick={() => handleComment()}><SendOutlined /></Button>
+                                    </Box>
+                                ) : (
+                                    <Box>
+                                        Sign in to comment
+                                    </Box>
+                                )}
                             </Box>
                         </Box>
                         <Box px={[4, 6, 8, 12]}>
@@ -266,8 +317,9 @@ const DetailsArticle = () => {
 
                 <GridItem>
                     <VStack spacing={12}>
-                        <NewsList moreFrom={'Most read'} news={mostReadArticles.slice(0, 3)} />
-                        <NewsList moreFrom={'Most cc'} news={aloArticles} />
+                        {categorizedArticles.map(({ category, articles }, index) => (
+                            <NewsList key={index} moreFrom={category} news={articles} />
+                        ))}
                     </VStack>
                 </GridItem>
             </Grid>

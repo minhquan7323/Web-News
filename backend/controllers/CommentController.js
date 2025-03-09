@@ -15,6 +15,7 @@ const getCommentsByPost = async (req, res) => {
     try {
         const { articleId } = req.params
         const response = await CommentService.getCommentsByPost(articleId)
+
         return res.status(200).json(response)
     } catch (e) {
         return res.status(500).json({

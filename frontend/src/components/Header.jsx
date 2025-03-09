@@ -13,6 +13,7 @@ import * as CategoryService from '../services/CategoryService'
 import { useQuery } from '@tanstack/react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { resetUser, updateUser } from '../redux/userSlice'
+import { persistor, store } from '../redux/store'
 
 const Header = () => {
     const user = useSelector((state) => state?.user)
@@ -24,6 +25,7 @@ const Header = () => {
     const dispatch = useDispatch()
     const { signOut } = useAuth()
     const location = useLocation()
+
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 0)
@@ -43,29 +45,54 @@ const Header = () => {
         }
     }
 
-    const handleGetDetailsUser = async (userId) => {
-        const res = await UserService.getDetailsUser(userId)
-        dispatch(updateUser({
-            fullName: userClerk.fullName,
-            imageUrl: userClerk.imageUrl,
-            ...res?.data
-        }))
+    const handleLoginWithAPI = async (userClerk) => {
+        if (!userClerk) return
 
+        const data = {
+            userId: userClerk.id,
+            fullName: userClerk.fullName,
+            imageUrl: userClerk.imageUrl
+        }
+
+        const res = await UserService.signInUser(data)
+
+        if (res && res.user) {
+            dispatch(updateUser({
+                userId: res.user.userId,
+                fullName: res.user.fullName,
+                imageUrl: res.user.imageUrl,
+                isAdmin: res.user.isAdmin
+            }))
+        }
     }
 
     useEffect(() => {
         if (userClerk) {
-            handleGetDetailsUser(userClerk.id)
+            handleLoginWithAPI(userClerk)
         }
     }, [userClerk])
+
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }, [location.pathname])
 
     const handleLogout = async () => {
-        await signOut()
         dispatch(resetUser())
+
+        await signOut()
+
+        persistor.pause()
+        persistor.flush().then(() => {
+            persistor.purge()
+        })
+
+        localStorage.removeItem('persist:root')
+        sessionStorage.clear()
+
+        setTimeout(() => {
+            window.location.reload()
+        }, 500)
     }
 
     const fetchAllCategory = async () => {
@@ -142,7 +169,7 @@ const Header = () => {
                         </Button>
                     )}
                     <Box p={2}>
-                        <SignedOut onClick={handleLogout}>
+                        <SignedOut onClick={() => handleLogout()}>
                             <SignInButton />
                         </SignedOut>
                         <SignedIn>

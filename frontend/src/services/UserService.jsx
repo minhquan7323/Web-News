@@ -1,7 +1,7 @@
 import axios from "axios"
 
-export const signInUser = async (userId) => {
-    const res = await axios.post(`${import.meta.env.VITE_API_URL}/user/login`, { userId })
+export const signInUser = async (data) => {
+    const res = await axios.post(`${import.meta.env.VITE_API_URL}/user/login`, data)
     return res.data
 }
 

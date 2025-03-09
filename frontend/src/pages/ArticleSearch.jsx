@@ -87,11 +87,7 @@ const ArticleSearch = () => {
                         color='teal'
                         value={newsSearch}
                         onChange={(e) => setNewsSearch(e.target.value)}
-                        onKeyDown={(k) => {
-                            if (k.key === "Enter") {
-                                onSearch()
-                            }
-                        }}
+                        onKeyDown={(e) => e.key === "Enter" && onSearch()}
                     />
                     <Button colorScheme='teal' size='md' onClick={onSearch} disabled={!validSearch}>
                         <i className="fas fa-magnifying-glass"></i>
