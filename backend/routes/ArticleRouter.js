@@ -10,5 +10,5 @@ router.delete('/delete/:id', articleController.deleteArticle)
 router.get('/getall', articleController.allArticle)
 router.post('/deletemany', articleController.deleteManyArticles)
 router.get('/getalltypearticle', articleController.getAllTypeArticle)
-
+router.get('/featured', articleController.getFeaturedArticles)
 module.exports = router

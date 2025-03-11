@@ -8,16 +8,17 @@ import * as CategoryService from '../../services/CategoryService'
 import { useMutationHooks } from '../../hooks/useMutationHook'
 import { useMessage } from '../../components/Message/Message'
 import Loading from '../../components/Loading/Loading'
-import { useQuery } from '@tanstack/react-query'
 
 const ArticleAdd = () => {
     const [imgDisplay, setImgDisplay] = useState('')
+    const [stateCategory, setStateCategory] = useState([])
     const [stateArticle, setStateArticle] = useState({
         title: '',
         author: '',
         description: '',
         source: '',
         content: '',
+        featured: '',
         imageUrl: '',
         type: []
     })
@@ -45,6 +46,7 @@ const ArticleAdd = () => {
                 description: '',
                 source: '',
                 content: '',
+                featured: '',
                 imageUrl: '',
                 type: []
             }))
@@ -91,22 +93,26 @@ const ArticleAdd = () => {
         })
     }
 
+    const handleCheckboxFeaturedChange = () => {
+        setStateArticle((prev) => ({
+            ...prev,
+            featured: !prev.featured
+        }))
+    }
+
     const createArticle = () => {
         mutation.mutate({ ...stateArticle })
     }
 
     const fetchAllCategory = async () => {
         const res = await CategoryService.getAllCategory()
+        setStateCategory(res.data)
         return res
     }
 
-    const queryCategory = useQuery({
-        queryKey: ['categories'],
-        queryFn: fetchAllCategory,
-        retry: 3,
-        retryDelay: 1000,
-    })
-    const { isLoading: isLoadingCategories, data: categories } = queryCategory
+    useEffect(() => {
+        fetchAllCategory()
+    }, [])
 
     const isArticleFormValid =
         stateArticle.title !== '' &&
@@ -123,6 +129,7 @@ const ArticleAdd = () => {
         md: "1fr 1fr 1fr",
         lg: "1fr 1fr 1fr",
     })
+
     return (
         <Box pt={16}>
             <Box>
@@ -157,8 +164,7 @@ const ArticleAdd = () => {
                 <Box p={4}>
                     <Text p={2} fontWeight='bold'>Category</Text>
                     <Grid templateColumns={gridTemplate} gap={2}>
-
-                        {categories?.data?.map((type) => (
+                        {stateCategory?.map((type) => (
                             <Box key={type._id} display="flex" alignItems="center" gap={4}>
                                 <Checkbox
                                     id={`type-${type._id}`}
@@ -172,10 +178,17 @@ const ArticleAdd = () => {
                                     {type.name}
                                 </Text>
                             </Box>
-
                         ))}
                     </Grid>
                 </Box>
+                <HStack p={4}>
+                    <Text p={2} fontWeight='bold'>Featured</Text>
+                    <Checkbox
+                        name="featured"
+                        isChecked={stateArticle.featured}
+                        onChange={handleCheckboxFeaturedChange}
+                    />
+                </HStack>
                 <HStack spacing={4} p={4}>
                     <Button as="label" cursor="pointer" colorScheme='orange'>
                         <i className="fa-solid fa-upload"></i>
@@ -226,14 +239,14 @@ const ArticleAdd = () => {
                         onEditorChange={(content) => setStateArticle({ ...stateArticle, content })}
                     />
                 </Box>
-            </Box >
+            </Box>
             <Flex justify="flex-end" p={4}>
                 <Button colorScheme='green' onClick={createArticle} disabled={!isArticleFormValid}>
                     <i className="fa-solid fa-plus"></i>
                     <Text as="span" paddingLeft={4}>Post</Text>
                 </Button>
             </Flex>
-        </Box >
+        </Box>
     )
 }
 

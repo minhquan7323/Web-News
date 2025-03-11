@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react"
-import { Card, CardBody, Text, Image, Heading, Stack, Grid, GridItem, Box, Link, useBreakpointValue, Flex, Divider, HStack, VStack, } from "@chakra-ui/react"
+import { Text, Image, Stack, Grid, GridItem, Box, Link, useBreakpointValue, Divider, HStack, VStack, } from "@chakra-ui/react"
 import * as ArticleService from '../services/ArticleService'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 import { useQuery } from "@tanstack/react-query"
+import { sortByDate } from "../utils"
+
 const Home = () => {
-    const fetchGetDetailsArticle = async (articleId) => {
-        const res = await ArticleService.getDetailsArticle('67b8a4b8890843722000d625')
-        console.log(res.data);
-
-        return res.data
-        // }
-    }
-
+    const [featuredArticle, setFeaturedArticle] = useState([])
     const navigate = useNavigate()
     const handleDetailsArticle = (id) => {
         navigate(`/article/details/${id}`)
@@ -30,6 +25,15 @@ const Home = () => {
     })
     const { isLoading: isLoadingArticles, data: articles } = queryArticle
 
+    const fetchFeaturedArticle = async () => {
+        const res = await ArticleService.getFeaturedArticle()
+        setFeaturedArticle(res.data)
+    }
+
+    useEffect(() => {
+        fetchFeaturedArticle()
+    }, [])
+
     const gridTemplate = useBreakpointValue({
         base: "1fr",
         lg: "2fr 1fr",
@@ -38,7 +42,7 @@ const Home = () => {
         <Box p={4} paddingTop={10}>
             <Grid templateColumns={gridTemplate} gap={6} mt={6}>
                 <GridItem alignSelf="start">
-                    {articles?.slice(0, 1).map((article) => (
+                    {sortByDate(articles)?.slice(0, 1).map((article) => (
                         <Link key={article._id} onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }}>
                             <Image src={article.imageUrl || "https://via.placeholder.com/150"} alt={article.title} borderRadius="5px" objectFit="cover" h="100%" maxH="500px" w="100%" transition="opacity 0.2s ease-in-out" _hover={{ opacity: 0.7 }} />
                             <Stack spacing={3}>
@@ -53,7 +57,7 @@ const Home = () => {
                         </Link>
                     ))}
                     <VStack alignItems="start" spacing={4} w="100%" pt={8}>
-                        {articles?.map((article, index) => (
+                        {articles?.slice(1, articles.length).map((article, index) => (
                             <React.Fragment key={article._id}>
                                 <Box onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }} cursor='pointer'>
                                     <HStack alignItems="start" >
@@ -89,7 +93,7 @@ const Home = () => {
 
                 <GridItem alignSelf="start">
                     <VStack alignItems="start" spacing={4} w="100%">
-                        {articles?.map((article, index) => (
+                        {featuredArticle?.map((article, index) => (
                             <React.Fragment key={article._id}>
                                 <Box onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }} cursor='pointer'>
                                     <HStack alignItems="start">
@@ -113,7 +117,7 @@ const Home = () => {
                                         </Stack>
                                     </HStack>
                                 </Box>
-                                {index < articles.length - 1 && (
+                                {index < featuredArticle.length - 1 && (
                                     <Box py={2} w="100%">
                                         <Divider borderColor="gray.300" />
                                     </Box>

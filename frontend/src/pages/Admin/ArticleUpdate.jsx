@@ -1,19 +1,23 @@
-import { Box, Input, InputLeftAddon, InputGroup, Stack, Text, Button, HStack, Image, Flex, Textarea } from '@chakra-ui/react'
+import { Box, Input, InputLeftAddon, InputGroup, Stack, Text, Button, HStack, Image, Flex, Textarea, Grid, Checkbox, useBreakpointValue } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { Editor } from "@tinymce/tinymce-react"
 import { uploadToCloudinary } from '../../utils'
 import { useNavigate, useParams } from 'react-router-dom'
 import * as ArticleService from '../../services/ArticleService'
 import { useMutationHooks } from '../../hooks/useMutationHook'
+import * as CategoryService from '../../services/CategoryService'
 import { useMessage } from '../../components/Message/Message'
 import Loading from '../../components/Loading/Loading'
 
 const ArticleUpdate = () => {
     const { id: articleId } = useParams()
+    const [stateCategory, setStateCategory] = useState([])
     const [stateArticle, setStateArticle] = useState({
         title: '',
         author: '',
         description: '',
+        type: [],
+        featured: '',
         source: '',
         content: '',
         imageUrl: ''
@@ -46,7 +50,22 @@ const ArticleUpdate = () => {
             navigate('/system/admin')
         }
     }
+    const handleCheckboxChange = (type) => {
+        setStateArticle((prev) => {
+            const isChecked = prev.type.includes(type)
+            const newTypes = isChecked
+                ? prev.type.filter(t => t !== type)
+                : [...prev.type, type]
+            return { ...prev, type: newTypes }
+        })
 
+    }
+    const handleCheckboxFeaturedChange = () => {
+        setStateArticle((prev) => ({
+            ...prev,
+            featured: !prev.featured
+        }))
+    }
     const fetchGetDetailsArticle = async () => {
         const res = await ArticleService.getDetailsArticle(articleId)
         if (res.data) {
@@ -55,13 +74,22 @@ const ArticleUpdate = () => {
                 author: res.data.author,
                 description: res.data.description,
                 source: res.data.source,
+                type: res.data.type.map(t => t._id),
                 content: res.data.content,
+                featured: res.data.featured,
                 imageUrl: res.data.imageUrl
             })
         }
     }
+    const fetchAllCategory = async () => {
+        const res = await CategoryService.getAllCategory()
+        setStateCategory(res.data)
+        return res
+    }
+
     useEffect(() => {
         fetchGetDetailsArticle()
+        fetchAllCategory()
     }, [])
 
     const mutationUpdate = useMutationHooks(
@@ -98,6 +126,13 @@ const ArticleUpdate = () => {
         stateArticle.content !== '' &&
         stateArticle.imageUrl !== ''
 
+    const gridTemplate = useBreakpointValue({
+        base: "1fr",
+        sm: "1fr",
+        md: "1fr",
+        lg: "9fr 3fr",
+    })
+
     return (
         <Box pt={16}>
             <Box>
@@ -129,7 +164,34 @@ const ArticleUpdate = () => {
                         </Box>
                     </Stack>
                 </Box>
-
+                <Box p={4}>
+                    <Text p={2} fontWeight='bold'>Category</Text>
+                    <Grid templateColumns={gridTemplate} gap={2}>
+                        {stateCategory?.map((type) => (
+                            <Box key={type._id} display="flex" alignItems="center" gap={4}>
+                                <Checkbox
+                                    id={`type-${type._id}`}
+                                    name="type"
+                                    value={type._id}
+                                    className="form-check-input"
+                                    isChecked={stateArticle.type.includes(type._id)}
+                                    onChange={() => handleCheckboxChange(type._id)}
+                                />
+                                <Text as='span' htmlFor={`type-${type._id}`}>
+                                    {type.name}
+                                </Text>
+                            </Box>
+                        ))}
+                    </Grid>
+                </Box>
+                <HStack p={4}>
+                    <Text p={2} fontWeight='bold'>Featured</Text>
+                    <Checkbox
+                        name="featured"
+                        isChecked={stateArticle.featured}
+                        onChange={handleCheckboxFeaturedChange}
+                    />
+                </HStack>
                 <HStack spacing={4} p={4}>
                     <Button as="label" cursor="pointer" colorScheme='orange'>
                         <i className="fa-solid fa-upload"></i>

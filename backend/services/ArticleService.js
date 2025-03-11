@@ -3,7 +3,7 @@ const Category = require('../models/CategoryModel')
 
 const createArticle = (newArticle) => {
     return new Promise(async (resolve, reject) => {
-        const { title, content, description, imageUrl, author, source, type } = newArticle
+        const { title, content, description, imageUrl, author, source, type, featured } = newArticle
         try {
             const checkArticle = await Article.findOne({ title: title })
             if (checkArticle !== null) {
@@ -13,7 +13,7 @@ const createArticle = (newArticle) => {
                 })
             }
             const newArticle = await Article.create({
-                title, content, description, imageUrl, author, source, type
+                title, content, description, imageUrl, author, source, type, featured
             })
             if (newArticle) {
                 resolve({
@@ -169,7 +169,6 @@ const allArticle = (limit, page, sort, filter, search) => {
     });
 }
 
-
 const getAllTypeArticle = async () => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -186,7 +185,25 @@ const getAllTypeArticle = async () => {
         } catch (e) {
             reject({
                 status: 'ERROR',
-                message: e.message || 'Failed to fetch data',
+                message: e.message,
+            })
+        }
+    })
+}
+
+const getFeaturedArticles = async () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const articles = await Article.find({ featured: true })
+            resolve({
+                status: 'OK',
+                message: 'Success',
+                data: articles
+            })
+        } catch (e) {
+            reject({
+                status: 'ERROR',
+                message: e.message,
             })
         }
     })
@@ -199,5 +216,6 @@ module.exports = {
     deleteArticle,
     allArticle,
     deleteManyArticles,
-    getAllTypeArticle
+    getAllTypeArticle,
+    getFeaturedArticles
 }

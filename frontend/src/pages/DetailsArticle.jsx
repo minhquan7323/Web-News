@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
-import { Text, Image, Grid, GridItem, Box, Link, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Input, Button, Avatar, HStack } from "@chakra-ui/react"
+import { Text, Image, Grid, GridItem, Box, Link, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Input, Button, Avatar, HStack, Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverHeader } from "@chakra-ui/react"
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import { useParams } from "react-router-dom"
 import { SendOutlined } from '@ant-design/icons'
@@ -50,6 +50,10 @@ const DetailsArticle = () => {
         const res = await CommentService.getCommentsByPost(articleId)
         return res.data
     }
+    const fetchDeleteComment = async (commentId) => {
+        const res = await CommentService.deleteComment(commentId)
+        return res.data
+    }
 
     const { data: allArticles = [] } = useQuery({
         queryKey: ['allArticles'],
@@ -69,7 +73,6 @@ const DetailsArticle = () => {
         [...allArticles].sort((a, b) => b.read - a.read).slice(0, 10),
         [allArticles]
     )
-
 
     useEffect(() => {
         if (allArticles.length > 0) {
@@ -138,6 +141,11 @@ const DetailsArticle = () => {
         })
     }
 
+    const handleDeleteComment = async (commentId) => {
+        await fetchDeleteComment(commentId)
+        refetchComments()
+    }
+
     const gridTemplate = useBreakpointValue({
         base: "1fr",
         sm: "1fr",
@@ -195,14 +203,14 @@ const DetailsArticle = () => {
                             <Divider borderColor="gray.300" />
                         </Box>
                         <Box width={'100%'}>
-                            <Box border="1px solid" borderColor="teal" p={2} mt={10}>
-                                <Text as='b' fontSize={'xl'}>Comment</Text>
+                            <Box backgroundColor='gray.50' borderRadius='5px' p={2} mt={10}>
+                                <Text as='b' fontSize={'xl'} textTransform='uppercase'>Comment</Text>
                                 {/* <CommentFacebook dataHref={import.meta.env.VITE_IS_LOCAL ?
                                     `https://yourwebsite.com/products/${articleDetails._id}`
                                     : window.location.href}
                                 /> */}
                                 {allComments.length > 0 ? (
-                                    <VStack align='left' overflow='auto' height='200px' my={4} ref={commentsEndRef}>
+                                    <VStack align='left' overflow='auto' height='250px' my={4} ref={commentsEndRef}>
                                         {allComments.map((comment) => (
                                             <Box key={comment._id}>
                                                 <HStack align='top'>
@@ -212,10 +220,35 @@ const DetailsArticle = () => {
                                                         <HStack justifyContent='space-between'>
                                                             <Text>{comment.content}</Text>
                                                             <Text fontSize='sm' color='gray.400'>
-                                                                {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                                {new Date(comment.createdAt).toLocaleString()}
+                                                                {/* {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} */}
                                                             </Text>
                                                         </HStack>
                                                     </VStack>
+                                                    <Box pr={2}>
+                                                        {user?.isAdmin ? (
+                                                            <Popover>
+                                                                <PopoverTrigger>
+                                                                    <Button size="xs" colorScheme="blue">
+                                                                        <i className="fa-solid fa-ellipsis"></i>
+                                                                    </Button>
+                                                                </PopoverTrigger>
+                                                                <PopoverContent>
+                                                                    <PopoverArrow />
+                                                                    <PopoverHeader>Manage comment</PopoverHeader>
+                                                                    <PopoverCloseButton />
+                                                                    <PopoverBody p={2}>
+                                                                        <VStack align="stretch">
+                                                                            <Text fontWeight="bold">Do you want to delete this comment?</Text>
+                                                                            <HStack justifyContent="flex-end">
+                                                                                <Button colorScheme="red" onClick={() => handleDeleteComment(comment._id)}>Delete</Button>
+                                                                            </HStack>
+                                                                        </VStack>
+                                                                    </PopoverBody>
+                                                                </PopoverContent>
+                                                            </Popover>
+                                                        ) : (null)}
+                                                    </Box>
                                                 </HStack>
                                             </Box>
                                         ))}
@@ -236,7 +269,7 @@ const DetailsArticle = () => {
                                         <Button colorScheme="teal" onClick={() => handleComment()}><SendOutlined /></Button>
                                     </Box>
                                 ) : (
-                                    <Box>
+                                    <Box textAlign='center' fontWeight='bold' color='red'>
                                         Sign in to comment
                                     </Box>
                                 )}
@@ -295,7 +328,7 @@ const DetailsArticle = () => {
                                                         height="72px"
                                                         overflow="hidden"
                                                         display="-webkit-box"
-                                                        width="100px"
+                                                        width="auto"
                                                         style={{
                                                             WebkitLineClamp: 2,
                                                             WebkitBoxOrient: "vertical",

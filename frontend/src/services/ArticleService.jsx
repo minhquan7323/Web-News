@@ -57,3 +57,8 @@ export const deleteManyArticles = async (ids) => {
     const res = await axios.post(`${import.meta.env.VITE_API_URL}/article/deletemany`, ids)
     return res.data
 }
+
+export const getFeaturedArticle = async () => {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/article/featured`)
+    return res.data
+}

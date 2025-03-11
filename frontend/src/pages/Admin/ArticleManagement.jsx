@@ -159,6 +159,12 @@ const ArticleManagement = () => {
             ellipsis: true
         },
         {
+            title: 'Featured',
+            dataIndex: 'featured',
+            width: 150,
+            render: (featured) => featured ? (<Text>true</Text>) : (<Text>false</Text>)
+        },
+        {
             title: 'Type',
             dataIndex: 'type',
             width: 150,
