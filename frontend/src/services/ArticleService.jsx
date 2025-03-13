@@ -22,9 +22,8 @@ export const getAllArticle = async (search, types, limit, page, sort) => {
     return res.data
 }
 
-export const getTypeArticle = async (types) => {
-    const filterParams = types.map(type => `filter=type&filter=${type}`).join('&')
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/article/getall?${filterParams}`)
+export const getArticleByType = async (types) => {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/article/type/${types}`)
     return res.data
 }
 

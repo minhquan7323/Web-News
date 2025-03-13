@@ -26,7 +26,6 @@ const Header = () => {
     const { signOut } = useAuth()
     const location = useLocation()
 
-
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 0)
         window.addEventListener('scroll', handleScroll)
@@ -99,6 +98,10 @@ const Header = () => {
         const res = await CategoryService.getAllCategory()
         return res.data
     }
+    const handleTypeArticle = (typeId) => {
+        navigate(`/type/${typeId}`)
+    }
+
 
     const { data: categories } = useQuery({
         queryKey: ['categories'],
@@ -106,6 +109,7 @@ const Header = () => {
         retry: 2,
         retryDelay: 1000
     })
+
     const visibleCategories = useBreakpointValue({ base: 2, sm: 2, md: 3, lg: 5 })
     return (
         <>
@@ -133,7 +137,7 @@ const Header = () => {
                     {!adminPath && (
                         <HStack>
                             {categories?.slice(0, visibleCategories).map((category) => (
-                                <Link to="/" key={category._id}>
+                                <Box cursor='pointer' onClick={() => handleTypeArticle(category._id)} key={category._id}>
                                     <Text
                                         transition="color 0.3s ease"
                                         _hover={{ textDecoration: "none" }}
@@ -143,7 +147,7 @@ const Header = () => {
                                     >
                                         {category.name}
                                     </Text>
-                                </Link>
+                                </Box>
                             ))}
                         </HStack>
                     )}

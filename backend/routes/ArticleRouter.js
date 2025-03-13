@@ -11,4 +11,6 @@ router.get('/getall', articleController.allArticle)
 router.post('/deletemany', articleController.deleteManyArticles)
 router.get('/getalltypearticle', articleController.getAllTypeArticle)
 router.get('/featured', articleController.getFeaturedArticles)
+router.get('/type/:id', articleController.getArticleByType)
+
 module.exports = router

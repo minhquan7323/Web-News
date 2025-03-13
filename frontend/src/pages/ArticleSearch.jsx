@@ -20,14 +20,7 @@ const ArticleSearch = () => {
         return res?.data || []
     }
 
-    const {
-        data,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-        isLoading,
-        refetch
-    } = useInfiniteQuery({
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, refetch } = useInfiniteQuery({
         queryKey: ['articles', query],
         queryFn: fetchAllArticle,
         initialPageParam: 1,
@@ -67,6 +60,10 @@ const ArticleSearch = () => {
         }
     }, [query, refetch])
 
+    const handleDetailsArticle = (id) => {
+        navigate(`/article/details/${id}`)
+    }
+
     const validSearch = newsSearch != ''
     return (
         <Box p={[4, 6, 8, 12]} pt={[12, 12, 12, 12]}>
@@ -95,17 +92,20 @@ const ArticleSearch = () => {
                 </Box>
                 <Divider borderColor="teal" />
             </Box>
+            <Box pt={4}>
+                <Text fontSize='xl' fontWeight='bold'>Search with "<Text as='span' color='teal'>{query}</Text>"</Text>
+            </Box>
             {isLoading ? (
                 <Spinner size='xl' />
             ) : data?.pages.map((page, pageIndex) => (
-                page.map((item, index) => {
-                    const isLastItem = pageIndex === data.pages.length - 1 && index === page.length - 1
+                page.map((article, index) => {
+                    const isLastArticle = pageIndex === data.pages.length - 1 && index === page.length - 1
                     return (
-                        <Box key={item._id} ref={isLastItem ? lastArticleRef : null}>
+                        <Box key={article._id} ref={isLastArticle ? lastArticleRef : null}>
                             <Box py={4}>
-                                <Link href={item.url}>
+                                <Link onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }}>
                                     <Grid templateColumns="2fr 3fr" gap={4}>
-                                        <Image src={item.imageUrl} alt={item.title}
+                                        <Image src={article.imageUrl} alt={article.title}
                                             objectFit="cover" h='auto' minH="80px" maxH='200px'
                                             w="100%" minW='100px'
                                             transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}
@@ -123,16 +123,19 @@ const ArticleSearch = () => {
                                                     WebkitLineClamp: 2,
                                                     WebkitBoxOrient: "vertical",
                                                 }}
+                                                _hover={{ textDecoration: "underline" }}
                                             >
-                                                {item.title}
+                                                {article.title}
                                             </Text>
-                                            <Text fontSize='sm' color='gray'>{new Date(item.updatedAt).toLocaleString()}</Text>
-                                            <Text>{item.description}</Text>
+                                            <Text fontSize='sm' color='gray'>{new Date(article.updatedAt).toLocaleString()}</Text>
+                                            <Text>{article.description}</Text>
                                         </VStack>
+
                                     </Grid>
                                 </Link>
                             </Box>
-                            {!isLastItem && <Divider borderColor="gray.300" />}
+                            {pageIndex < data.pages.length - 1 && <Divider borderColor="gray.300" pt={4} />}
+                            {/* {!isLastArticle && <Divider borderColor="gray.300" />} */}
                             {/* {!(pageIndex === data.pages.length - 1 && index === page.length - 1) ? (
                                 <Box py={2}>
                                     <Divider borderColor="gray.300" />

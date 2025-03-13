@@ -60,24 +60,24 @@ const updateArticle = (id, data) => {
 const detailsArticle = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const article = await Article.findOne({ _id: id }).populate('type', 'name');
+            const article = await Article.findOne({ _id: id }).populate('type', 'name')
 
             if (!article) {
                 return resolve({
                     status: 'ERR',
                     message: 'The article is not defined'
-                });
+                })
             }
 
             resolve({
                 status: 'OK',
                 message: 'Success',
                 data: article
-            });
+            })
         } catch (e) {
-            reject(e);
+            reject(e)
         }
-    });
+    })
 }
 
 const deleteArticle = (id) => {
@@ -123,32 +123,32 @@ const allArticle = (limit, page, sort, filter, search) => {
 
     return new Promise(async (resolve, reject) => {
         try {
-            const query = {};
+            const query = {}
             if (search) {
-                query['title'] = { '$regex': search, '$options': 'i' };
+                query['title'] = { '$regex': search, '$options': 'i' }
             }
 
             if (filter && Array.isArray(filter)) {
                 filter.forEach((f, index) => {
                     if (index % 2 === 0) {
                         if (f === 'type') {
-                            query['type'] = { '$in': filter[index + 1].split(',') };
+                            query['type'] = { '$in': filter[index + 1].split(',') }
                         }
                     }
-                });
+                })
             }
 
-            const totalArticle = await Article.countDocuments();
-            const totalArticleFilter = await Article.countDocuments(query);
+            const totalArticle = await Article.countDocuments()
+            const totalArticleFilter = await Article.countDocuments(query)
 
             let articleQuery = Article.find(query)
                 .populate('type', 'name')
                 .limit(limit)
-                .skip((page - 1) * limit);
+                .skip((page - 1) * limit)
 
             if (sort) {
-                const objectSort = {};
-                objectSort[sort[1]] = sort[0] === 'asc' ? 1 : -1;
+                const objectSort = {}
+                objectSort[sort[1]] = sort[0] === 'asc' ? 1 : -1
                 articleQuery = articleQuery.sort(objectSort);
             }
 
@@ -209,6 +209,31 @@ const getFeaturedArticles = async () => {
     })
 }
 
+const getArticleByType = (typeId) => {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+            if (!typeId) {
+                return resolve({
+                    status: 'ERR',
+                    message: 'Type ID is required'
+                });
+            }
+
+            const articles = await Article.find({ type: typeId }).populate('type', 'name')
+
+            resolve({
+                status: 'OK',
+                message: 'Success',
+                data: articles,
+                total: articles.length
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 module.exports = {
     createArticle,
     updateArticle,
@@ -217,5 +242,6 @@ module.exports = {
     allArticle,
     deleteManyArticles,
     getAllTypeArticle,
-    getFeaturedArticles
+    getFeaturedArticles,
+    getArticleByType
 }

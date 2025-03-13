@@ -108,6 +108,19 @@ const allArticle = async (req, res) => {
     }
 }
 
+const getArticleByType = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const response = await ArticleService.getArticleByType(id)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        })
+    }
+}
+
 const getAllTypeArticle = async (req, res) => {
     const { type } = req.query
 
@@ -140,5 +153,6 @@ module.exports = {
     allArticle,
     deleteManyArticles,
     getAllTypeArticle,
-    getFeaturedArticles
+    getFeaturedArticles,
+    getArticleByType
 }

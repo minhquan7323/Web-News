@@ -10,6 +10,7 @@ import ArticleUpdate from '../pages/Admin/ArticleUpdate'
 import ArticleSearch from '../pages/ArticleSearch'
 import * as UserService from '../services/UserService'
 import { useUser } from '@clerk/clerk-react'
+import ArticleList from '../pages/ArticleList'
 
 const AppRoutes = () => {
     const [isAdmin, setIsAdmin] = useState('')
@@ -32,6 +33,7 @@ const AppRoutes = () => {
                 <Route index element={<Home />} />
                 <Route path='article/details/:id' element={<DetailsArticle />} />
                 <Route path='search' element={<ArticleSearch />} />
+                <Route path='type/:id' element={<ArticleList />} />
                 {isAdmin && (
                     <>
                         <Route path='system/admin' element={<Admin />} />
