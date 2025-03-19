@@ -14,6 +14,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { resetUser, updateUser } from '../redux/userSlice'
 import { persistor, store } from '../redux/store'
+import ThemeSwitcher from './ThemeSwitcher'
 
 const Header = () => {
     const user = useSelector((state) => state?.user)
@@ -118,7 +119,9 @@ const Header = () => {
                 position="fixed"
                 justifyContent="space-between"
                 alignItems="center"
-                bg="rgba(255, 255, 255, 0.3)"
+                // bg="rgba(255, 255, 255, 0.3)"
+                // bg={theme.colors.background}
+                // color={theme.colors.text}
                 backdropFilter="blur(20px)"
                 w="100%"
                 p="5px 10px"
@@ -133,7 +136,6 @@ const Header = () => {
                     <Link to="/">
                         <Logo logo="news" />
                     </Link>
-
                     {!adminPath && (
                         <HStack>
                             {categories?.slice(0, visibleCategories).map((category) => (
@@ -180,6 +182,7 @@ const Header = () => {
                             <UserButton appearance={{ elements: { avatarBox: { width: "40px", height: "40px" } } }} />
                         </SignedIn>
                     </Box>
+                    <ThemeSwitcher />
                 </Box>
             </Box>
 
@@ -221,7 +224,7 @@ const Header = () => {
 
                         <Divider borderColor="teal" />
 
-                        <VStack as="ul" spacing={4} align="start" w="full" p={10}>
+                        {/* <VStack as="ul" spacing={4} align="start" w="full" p={10}>
                             <List spacing={4} styleType="disc">
                                 <ListItem>
                                     <Link to="/favorite" onClick={onClose}>
@@ -231,7 +234,7 @@ const Header = () => {
                                     </Link>
                                 </ListItem>
                             </List>
-                        </VStack>
+                        </VStack> */}
                     </DrawerBody>
                 </DrawerContent>
             </Drawer>

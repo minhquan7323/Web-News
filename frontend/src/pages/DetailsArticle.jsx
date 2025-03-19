@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
-import { Text, Image, Grid, GridItem, Box, Link, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Input, Button, Avatar, HStack, Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverHeader } from "@chakra-ui/react"
+import { Text, Image, Grid, GridItem, Box, Link, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Input, Button, Avatar, HStack, Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverHeader, useColorModeValue } from "@chakra-ui/react"
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import { useParams } from "react-router-dom"
 import { SendOutlined } from '@ant-design/icons'
@@ -203,7 +203,8 @@ const DetailsArticle = () => {
                             <Divider borderColor="gray.300" />
                         </Box>
                         <Box width={'100%'}>
-                            <Box backgroundColor='gray.50' borderRadius='5px' p={2} mt={10}>
+                            <Box
+                                backgroundColor={useColorModeValue("gray.50", "gray.700")} borderRadius="5px" p={2}>
                                 <Text as='b' fontSize={'xl'} textTransform='uppercase'>Comment</Text>
                                 {/* <CommentFacebook dataHref={import.meta.env.VITE_IS_LOCAL ?
                                     `https://yourwebsite.com/products/${articleDetails._id}`
@@ -356,7 +357,7 @@ const DetailsArticle = () => {
                     </VStack>
                 </GridItem>
             </Grid>
-        </Box>
+        </Box >
     )
 }
 
