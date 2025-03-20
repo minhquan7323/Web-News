@@ -36,8 +36,21 @@ const deleteComment = async (req, res) => {
     }
 }
 
+const updateComment = async (req, res) => {
+    try {
+        const { commentId } = req.params
+        const response = await CommentService.updateComment(commentId, req.body)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(500).json({
+            message: e.message
+        })
+    }
+}
+
 module.exports = {
     createComment,
     getCommentsByPost,
-    deleteComment
+    deleteComment,
+    updateComment
 }

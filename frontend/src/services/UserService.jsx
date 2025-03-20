@@ -6,7 +6,7 @@ export const signInUser = async (data) => {
 }
 
 export const getDetailsUser = async (userId) => {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/getdetailsuser/${userId}`)
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/details/${userId}`)
     return res.data
 }
 
@@ -17,33 +17,6 @@ export const getDetailsUser = async (userId) => {
 
 // export const signOutUser = async () => {
 //     const res = await axios.post(`${import.meta.env.VITE_API_URL}/user/signout`)
-//     return res.data
-// }
-
-// export const getDetailsUser = async (id, access_token) => {
-//     const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/getdetailsuser/${id}`, {
-//         headers: {
-//             token: `Bearer ${access_token}`,
-//         }
-//     })
-//     return res.data
-// }
-
-// export const getAllUser = async (access_token) => {
-//     const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/getalluser`, {
-//         headers: {
-//             token: `Bearer ${access_token}`,
-//         }
-//     })
-//     return res.data
-// }
-
-// export const updateUser = async (id, data, access_token) => {
-//     const res = await axios.put(`${import.meta.env.VITE_API_URL}/user/updateuser/${id}`, data, {
-//         headers: {
-//             token: `Bearer ${access_token}`,
-//         }
-//     })
 //     return res.data
 // }
 
@@ -64,3 +37,13 @@ export const getDetailsUser = async (userId) => {
 //     })
 //     return res.data
 // }
+
+export const getAllUser = async () => {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/getall`)
+    return res.data
+}
+
+export const updateUser = async (userId, data) => {
+    const res = await axios.put(`${import.meta.env.VITE_API_URL}/user/update/${userId}`, data)
+    return res.data
+}

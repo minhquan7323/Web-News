@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
-import { Text, Image, Grid, GridItem, Box, Link, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Input, Button, Avatar, HStack, Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverHeader, useColorModeValue } from "@chakra-ui/react"
+import { Text, Image, Grid, GridItem, Box, Link, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Input, Button, Avatar, HStack, useColorModeValue } from "@chakra-ui/react"
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import { useParams } from "react-router-dom"
 import { SendOutlined } from '@ant-design/icons'
@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useMutationHooks } from '../hooks/useMutationHook'
 import NewsList from "../components/NewsList"
 import { useSelector } from "react-redux"
+import CommentPopover from '../components/CommentPopover'
 
 const DetailsArticle = () => {
     const user = useSelector((state) => state?.user)
@@ -32,6 +33,13 @@ const DetailsArticle = () => {
         async (data) => {
             const { id, ...rests } = data
             const res = await ArticleService.updateArticle(id, rests)
+            return res
+        }
+    )
+    const mutationUpdateComment = useMutationHooks(
+        async (data) => {
+            const { commentId, ...rests } = data
+            const res = await CommentService.updateComment(commentId, rests)
             return res
         }
     )
@@ -146,6 +154,17 @@ const DetailsArticle = () => {
         refetchComments()
     }
 
+    const handleApproveComment = async (commentId) => {
+        mutationUpdateComment.mutate(
+            { commentId, pending: false },
+            {
+                onSettled: () => {
+                    refetchComments()
+                }
+            }
+        )
+    }
+
     const gridTemplate = useBreakpointValue({
         base: "1fr",
         sm: "1fr",
@@ -213,45 +232,38 @@ const DetailsArticle = () => {
                                 {allComments.length > 0 ? (
                                     <VStack align='left' overflow='auto' height='250px' my={4} ref={commentsEndRef}>
                                         {allComments.map((comment) => (
-                                            <Box key={comment._id}>
-                                                <HStack align='top'>
-                                                    <Avatar name={comment.fullName} src={comment.imageUrl} />
-                                                    <VStack align='left' w='100%'>
-                                                        <Text fontWeight='bold'>{comment.fullName}</Text>
-                                                        <HStack justifyContent='space-between'>
-                                                            <Text>{comment.content}</Text>
-                                                            <Text fontSize='sm' color='gray.400'>
-                                                                {new Date(comment.createdAt).toLocaleString()}
-                                                                {/* {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} */}
-                                                            </Text>
+                                            (!comment.pending || user?.isAdmin || comment.userId === user?.userId) && (
+                                                <Box key={comment._id}>
+                                                    <HStack align='top'>
+                                                        <HStack flex={1} opacity={comment.pending ? 0.5 : 1} transition="opacity 0.3s ease">
+                                                            <Avatar name={comment.fullName} src={comment.imageUrl} />
+                                                            <VStack align='left' w='100%'>
+                                                                <HStack w='100%' justifyContent='space-between'>
+                                                                    <Text fontWeight='bold'>{comment.fullName}</Text>
+                                                                    {!user?.isAdmin && comment.pending && (
+                                                                        <Text fontSize="sm" color="yellow.500">Waiting for approval</Text>
+                                                                    )}
+                                                                </HStack>
+                                                                <HStack justifyContent='space-between'>
+                                                                    <Text>{comment.content}</Text>
+                                                                    <Text fontSize='sm' color='gray.400'>
+                                                                        {new Date(comment.createdAt).toLocaleString()}
+                                                                    </Text>
+                                                                </HStack>
+                                                            </VStack>
                                                         </HStack>
-                                                    </VStack>
-                                                    <Box pr={2}>
-                                                        {user?.isAdmin ? (
-                                                            <Popover>
-                                                                <PopoverTrigger>
-                                                                    <Button size="xs" colorScheme="blue">
-                                                                        <i className="fa-solid fa-ellipsis"></i>
-                                                                    </Button>
-                                                                </PopoverTrigger>
-                                                                <PopoverContent>
-                                                                    <PopoverArrow />
-                                                                    <PopoverHeader>Manage comment</PopoverHeader>
-                                                                    <PopoverCloseButton />
-                                                                    <PopoverBody p={2}>
-                                                                        <VStack align="stretch">
-                                                                            <Text fontWeight="bold">Do you want to delete this comment?</Text>
-                                                                            <HStack justifyContent="flex-end">
-                                                                                <Button colorScheme="red" onClick={() => handleDeleteComment(comment._id)}>Delete</Button>
-                                                                            </HStack>
-                                                                        </VStack>
-                                                                    </PopoverBody>
-                                                                </PopoverContent>
-                                                            </Popover>
-                                                        ) : (null)}
-                                                    </Box>
-                                                </HStack>
-                                            </Box>
+                                                        <Box pr={2}>
+                                                            {user?.isAdmin && (
+                                                                <CommentPopover
+                                                                    comment={comment}
+                                                                    onDelete={handleDeleteComment}
+                                                                    onApprove={handleApproveComment}
+                                                                />
+                                                            )}
+                                                        </Box>
+                                                    </HStack>
+                                                </Box>
+                                            )
                                         ))}
                                     </VStack>
                                 ) : (
@@ -347,7 +359,7 @@ const DetailsArticle = () => {
 
                         </Box>
                     </Box>
-                </GridItem>
+                </GridItem >
 
                 <GridItem>
                     <VStack spacing={12}>
@@ -356,7 +368,7 @@ const DetailsArticle = () => {
                         ))}
                     </VStack>
                 </GridItem>
-            </Grid>
+            </Grid >
         </Box >
     )
 }

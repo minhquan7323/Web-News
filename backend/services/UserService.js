@@ -12,11 +12,11 @@ const loginUser = async (userData) => {
                 })
             }
 
-            let user = await User.findOne({ userId });
+            let user = await User.findOne({ userId })
 
             if (!user) {
                 user = new User({ userId, imageUrl, fullName, isAdmin })
-                await user.save();
+                await user.save()
                 return resolve({
                     status: "OK",
                     message: "create new user success",
@@ -62,7 +62,50 @@ const getDetailsUser = (userId) => {
         }
     })
 }
+
+const updateUser = (userId, data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const user = await User.findOne({ userId: userId })
+            if (user === null) {
+                resolve({
+                    status: 'OK',
+                    message: 'The user is not defined'
+                })
+            }
+
+            const updateUser = await User.findOneAndUpdate({ userId }, data, { new: true })
+
+            resolve({
+                status: 'OK',
+                message: 'Update user success',
+                data: updateUser
+            })
+        }
+        catch (e) {
+            reject(e)
+        }
+    })
+}
+
+const getAllUser = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const allUser = await User.find()
+            resolve({
+                status: 'OK',
+                message: 'Success',
+                data: allUser
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 module.exports = {
     loginUser,
-    getDetailsUser
+    getDetailsUser,
+    updateUser,
+    getAllUser
 }

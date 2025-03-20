@@ -70,6 +70,7 @@ const getCommentsByPost = async (articleId) => {
                     articleId: 1,
                     content: 1,
                     createdAt: 1,
+                    pending: 1,
                     userId: "$user.userId",
                     fullName: { $ifNull: ["$user.fullName", "Unknown User"] },
                     imageUrl: { $ifNull: ["$user.imageUrl", "default-avatar.jpg"] }
@@ -110,8 +111,47 @@ const deleteComment = (commentId) => {
     })
 }
 
+const updateComment = (commentId, data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!commentId) {
+                return resolve({
+                    status: "ERR",
+                    message: "Comment ID is required",
+                })
+            }
+
+            const checkComment = await Comment.findById(commentId)
+            if (!checkComment) {
+                return resolve({
+                    status: "ERR",
+                    message: "Comment not found",
+                })
+            }
+
+            const updatedComment = await Comment.findByIdAndUpdate(
+                commentId,
+                data,
+                { new: true }
+            )
+
+            resolve({
+                status: "OK",
+                message: "Comment updated successfully",
+                data: updatedComment
+            })
+        } catch (e) {
+            reject({
+                status: "ERR",
+                message: e.message
+            })
+        }
+    })
+}
+
 module.exports = {
     createComment,
     getCommentsByPost,
     deleteComment,
+    updateComment
 }
