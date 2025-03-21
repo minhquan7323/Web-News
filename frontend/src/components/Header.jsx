@@ -103,7 +103,6 @@ const Header = () => {
         navigate(`/type/${typeId}`)
     }
 
-
     const { data: categories } = useQuery({
         queryKey: ['categories'],
         queryFn: fetchAllCategory,
@@ -119,9 +118,6 @@ const Header = () => {
                 position="fixed"
                 justifyContent="space-between"
                 alignItems="center"
-                // bg="rgba(255, 255, 255, 0.3)"
-                // bg={theme.colors.background}
-                // color={theme.colors.text}
                 backdropFilter="blur(20px)"
                 w="100%"
                 p="5px 10px"
@@ -151,6 +147,17 @@ const Header = () => {
                                     </Text>
                                 </Box>
                             ))}
+                            <Box cursor='pointer' onClick={() => navigate('/watch-later')}>
+                                <Text
+                                    transition="color 0.3s ease"
+                                    _hover={{ textDecoration: "none" }}
+                                    fontWeight="bold"
+                                    display={{ base: 'none', sm: 'flex' }}
+                                    px={4}
+                                >
+                                    Watch Later
+                                </Text>
+                            </Box>
                         </HStack>
                     )}
                 </Box>

@@ -103,9 +103,105 @@ const getAllUser = () => {
     })
 }
 
+const addWatchLater = (userId, articleId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const user = await User.findOneAndUpdate(
+                { userId: userId },
+                { $addToSet: { watchLater: articleId } },
+                { new: true }
+            )
+
+            if (!user) {
+                return reject({
+                    status: "ERR",
+                    message: "User not found"
+                })
+            }
+
+            resolve({
+                status: "OK",
+                message: "Added to watch later",
+                data: user
+            })
+        } catch (error) {
+            reject({
+                status: "ERR",
+                message: "Server error",
+                error: error.message
+            })
+        }
+    })
+}
+
+const removeWatchLater = (userId, articleId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const user = await User.findOneAndUpdate(
+                { userId: userId },
+                { $pull: { watchLater: articleId } },
+                { new: true }
+            )
+
+            if (!user) {
+                return reject({
+                    status: "ERR",
+                    message: "User not found"
+                })
+            }
+
+            resolve({
+                status: "OK",
+                message: "Removed from watch later",
+                data: user
+            })
+        } catch (error) {
+            reject({
+                status: "ERR",
+                message: "Server error",
+                error: error.message
+            })
+        }
+    })
+}
+
+const getWatchLater = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const user = await User.findOne({ userId: userId })
+                .populate({
+                    path: 'watchLater',
+                    select: 'title description imageUrl author type read createdAt updatedAt'
+                })
+
+            if (!user) {
+                return reject({
+                    status: "ERR",
+                    message: "User not found"
+                })
+            }
+
+            resolve({
+                status: "OK",
+                message: "Get watch later list successfully",
+                data: user.watchLater
+            })
+        } catch (error) {
+            reject({
+                status: "ERR",
+                message: "Server error",
+                error: error.message
+            })
+        }
+    })
+}
+
 module.exports = {
     loginUser,
     getDetailsUser,
     updateUser,
-    getAllUser
+    getAllUser,
+    addWatchLater,
+    removeWatchLater,
+    getWatchLater
 }

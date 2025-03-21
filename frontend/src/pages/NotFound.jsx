@@ -5,7 +5,7 @@ import Logo from '../components/Logo'
 
 const NotFound = () => {
     return (
-        <Box position="relative" height="100vh" width="100vw" bgColor='blue.100'>
+        <Box position="fixed" top="0" left="0" right="0" bottom="0" bgColor='blue.100'>
             <Text
                 position="absolute"
                 top="50%"
@@ -20,7 +20,7 @@ const NotFound = () => {
                 404
             </Text>
 
-            <VStack height="100vh" align="center" justify="center" position="relative" zIndex={1}>
+            <VStack height="100%" align="center" justify="center" position="relative" zIndex={1}>
                 <Logo logo="PAGE NOT FOUND" fontSize='10vw' />
                 <Button colorScheme="teal" variant="outline">
                     <Link to="/">

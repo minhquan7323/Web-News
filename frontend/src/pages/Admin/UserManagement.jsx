@@ -99,26 +99,12 @@ const UserManagement = () => {
     })
 
     const columns = [
-        {
-            title: 'User ID',
-            dataIndex: 'userId',
-            searchable: true,
-            ...getColumnSearchProps('userId'),
-            ellipsis: true
-        },
-        {
-            title: 'Full Name',
-            dataIndex: 'fullName',
-            searchable: true,
-            ...getColumnSearchProps('fullName'),
-            ellipsis: true
-        },
+
         {
             title: 'Avatar',
             dataIndex: 'imageUrl',
-            searchable: true,
-            ...getColumnSearchProps('imageUrl'),
             ellipsis: true,
+            width: 80,
             render: (imageUrl) => (
                 <Image
                     src={imageUrl}
@@ -128,6 +114,13 @@ const UserManagement = () => {
                     objectFit="cover"
                 />
             )
+        },
+        {
+            title: 'Full Name',
+            dataIndex: 'fullName',
+            searchable: true,
+            ...getColumnSearchProps('fullName'),
+            ellipsis: true
         },
         {
             title: 'Admin',
