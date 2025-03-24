@@ -16,11 +16,7 @@ const CategoryForm = ({ open, onClose, onSubmit, formData, setFormData, editingC
     }
 
     const getAvailableParentCategories = () => {
-        if (!editingCategory) {
-            // khi thêm mới, cho phép chọn tất cả categories làm parent
-            return categories
-        }
-        // khi edit, loại bỏ category hiện tại và các category con của nó
+        if (!editingCategory) return categories
         const getAllChildrenIds = (categoryId) => {
             const children = categories.filter(cat => cat.parentId === categoryId)
             return [categoryId, ...children.flatMap(child => getAllChildrenIds(child._id))]
@@ -28,6 +24,8 @@ const CategoryForm = ({ open, onClose, onSubmit, formData, setFormData, editingC
         const excludedIds = getAllChildrenIds(editingCategory._id)
         return categories.filter(cat => !excludedIds.includes(cat._id))
     }
+
+    const isValid = formData.name.trim() !== ''
 
     return (
         <Modal isOpen={isOpen} onClose={handleClose} isCentered>
@@ -56,9 +54,8 @@ const CategoryForm = ({ open, onClose, onSubmit, formData, setFormData, editingC
                                     name="parentId"
                                     value={formData.parentId}
                                     onChange={handleChange}
-                                    placeholder="Select parent category"
                                 >
-                                    <option value="">No parent</option>
+                                    <option value="">Root</option>
                                     {getAvailableParentCategories().map(category => (
                                         <option key={category._id} value={category._id}>
                                             {category.name}
@@ -73,7 +70,7 @@ const CategoryForm = ({ open, onClose, onSubmit, formData, setFormData, editingC
                         <Button variant="ghost" mr={3} onClick={handleClose}>
                             Cancel
                         </Button>
-                        <Button colorScheme="blue" type="submit">
+                        <Button colorScheme="blue" onClick={onSubmit} isDisabled={!isValid}>
                             {editingCategory ? 'Update' : 'Add new'}
                         </Button>
                     </ModalFooter>

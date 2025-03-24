@@ -1,33 +1,30 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Button, VStack, Card, CardBody, Text } from '@chakra-ui/react'
+import { Box, Button, VStack, Card, CardBody, Text, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure } from '@chakra-ui/react'
 import * as CategoryService from '../../services/CategoryService'
 import CategoryItem from '../../components/CategoryItem'
 import CategoryForm from '../../components/CategoryForm'
 import { useMessage } from '../../components/Message/Message'
-import { useMutationHooks } from '../../hooks/useMutationHook'
-import { useQuery } from '@tanstack/react-query'
 
 const CategoryManagement = () => {
+    const [categories, setCategories] = useState([])
     const [open, setOpen] = useState(false)
     const [editingCategory, setEditingCategory] = useState(null)
     const [formData, setFormData] = useState({
         name: '',
         parentId: '',
     })
+    const [deleteCategoryId, setDeleteCategoryId] = useState(null)
     const { success, error } = useMessage()
+    const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure()
+
+    useEffect(() => {
+        fetchAllCategory()
+    }, [])
 
     const fetchAllCategory = async () => {
         const res = await CategoryService.getAllCategory()
-        return res.data
+        setCategories(res.data)
     }
-
-    const queryCategory = useQuery({
-        queryKey: ['categories'],
-        queryFn: fetchAllCategory,
-        retry: 2,
-        retryDelay: 1000
-    })
-    const { isLoading: isLoadingCategories, data: categories = [] } = queryCategory
 
     const handleOpen = (category = null) => {
         if (category) {
@@ -66,62 +63,44 @@ const CategoryManagement = () => {
         return false
     }
 
-    const mutation = useMutationHooks(async (data) => {
-        const res = await CategoryService.createCategory(data)
-        return res
-    })
-    const mutationUpdate = useMutationHooks(async (data) => {
-        const { id, ...rests } = data
-        const res = await CategoryService.updateCategory(id, rests)
-        return res
-    })
-    const mutationDelete = useMutationHooks(async (id) => {
-        const res = await CategoryService.deleteCategory(id)
-        return res
-    })
-
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
+            let response
             if (editingCategory) {
-                mutationUpdate.mutate({ id: editingCategory._id, ...formData }, {
-                    onSettled: () => {
-                        success('Category updated successfully!')
-                        handleClose()
-                    }
-                })
+                response = await CategoryService.updateCategory(editingCategory._id, formData)
             } else {
-                mutation.mutate(formData, {
-                    onSettled: () => {
-                        success('Category added successfully')
-                        handleClose()
-                    }
-                })
+                response = await CategoryService.createCategory(formData)
             }
+
+            if (response?.data.status === 'OK') {
+                success(editingCategory ? 'Category updated successfully!' : 'Category added successfully')
+                fetchAllCategory()
+                handleClose()
+            } else {
+                error(response?.data.message || 'Category name already exists')
+            }
+        } catch (error) {
+            error(response?.data.message || 'Failed to add or update category')
+        }
+    }
+
+    const handleDeleteClick = (id) => {
+        setDeleteCategoryId(id)
+        onDeleteOpen()
+    }
+
+    const handleDelete = async () => {
+        try {
+            await CategoryService.deleteCategory(deleteCategoryId)
+            success('Category deleted successfully')
+            fetchAllCategory()
+            onDeleteClose()
+            setDeleteCategoryId(null)
         } catch (e) {
-            error('Failed to save category')
+            error('Failed to delete category')
         }
     }
-
-    const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this category?')) {
-            try {
-                mutationDelete.mutate(id, {
-                    onSettled: () => {
-                        success('Category deleted successfully')
-                    }
-                })
-            } catch (e) {
-                error('Failed to delete category')
-            }
-        }
-    }
-
-    useEffect(() => {
-        return () => {
-            queryCategory.refetch()
-        }
-    }, [handleSubmit, handleDelete])
 
     return (
         <Box>
@@ -131,7 +110,6 @@ const CategoryManagement = () => {
                         <i className="fa-solid fa-plus"></i>
                         <Text as="span" paddingLeft={4}>Category</Text>
                     </Button>
-
                 </Box>
 
                 <Card>
@@ -144,7 +122,7 @@ const CategoryManagement = () => {
                                         key={category._id}
                                         category={category}
                                         onEdit={handleOpen}
-                                        onDelete={handleDelete}
+                                        onDelete={handleDeleteClick}
                                         categories={categories}
                                     />
                                 ))}
@@ -161,6 +139,26 @@ const CategoryManagement = () => {
                     editingCategory={editingCategory}
                     categories={categories}
                 />
+
+                <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} isCentered>
+                    <ModalOverlay />
+                    <ModalContent>
+                        <ModalHeader>Delete Category</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                            Are you sure you want to delete this category? This action cannot be undone.
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button variant="ghost" mr={3} onClick={onDeleteClose}>
+                                Cancel
+                            </Button>
+                            <Button colorScheme="red" onClick={handleDelete}>
+                                Delete
+                            </Button>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
+
             </VStack>
         </Box>
     )

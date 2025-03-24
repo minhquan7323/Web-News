@@ -58,6 +58,19 @@ const updateCategory = (id, data) => {
                 return
             }
 
+            const checkNameCategory = await Category.findOne({
+                name: data.name,
+                _id: { $ne: id }
+            })
+
+            if (checkNameCategory !== null) {
+                resolve({
+                    status: 'ERR',
+                    message: 'Category name already exists'
+                })
+                return
+            }
+
             if (data.parentId) {
                 if (data.parentId === id) {
                     resolve({
