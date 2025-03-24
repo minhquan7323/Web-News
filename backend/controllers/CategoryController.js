@@ -2,7 +2,7 @@ const CategoryService = require('../services/CategoryService')
 
 const createCategory = async (req, res) => {
     try {
-        const { name } = req.body
+        const { name, parentId } = req.body
 
         if (!name) {
             return res.status(200).json({
@@ -68,9 +68,29 @@ const getDetailsCategory = async (req, res) => {
         })
     }
 }
+
+const deleteCategory = async (req, res) => {
+    try {
+        const categoryId = req.params.id
+        if (!categoryId) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'The category ID is required'
+            })
+        }
+        const response = await CategoryService.deleteCategory(categoryId)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        })
+    }
+}
+
 module.exports = {
     createCategory,
     updateCategory,
     getAllCategory,
-    getDetailsCategory
+    getDetailsCategory,
+    deleteCategory
 }

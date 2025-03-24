@@ -19,3 +19,8 @@ export const updateUser = async (userId, data) => {
     const res = await axios.put(`${import.meta.env.VITE_API_URL}/user/update/${userId}`, data)
     return res.data
 }
+
+export const getWatchLater = async (userId) => {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/watch-later/${userId}`)
+    return res.data
+}
