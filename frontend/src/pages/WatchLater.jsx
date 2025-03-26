@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import * as UserService from '../services/UserService'
 import ArticleGrid from "../components/ArticleGrid"
+import { Box } from "@chakra-ui/react"
 
 const WatchLater = () => {
     const [watchLaterList, setWatchLaterList] = useState([])
@@ -9,9 +10,7 @@ const WatchLater = () => {
 
     const fetchWatchLater = async () => {
         const res = await UserService.getWatchLater(user?.userId)
-        if (res?.status === "OK") {
-            setWatchLaterList(res.data)
-        }
+        setWatchLaterList(res.data)
     }
 
     useEffect(() => {
@@ -20,7 +19,11 @@ const WatchLater = () => {
         }
     }, [user?.userId])
 
-    return <ArticleGrid articles={watchLaterList} title={'Watch Later List'} />
+    return (
+        <Box pt={16}>
+            <ArticleGrid articles={watchLaterList} title={'Watch Later List'} />
+        </Box>
+    )
 }
 
 export default WatchLater 

@@ -139,8 +139,8 @@ const UserManagement = () => {
             render: (_, record) => (
                 <Button colorScheme="blue" size="sm" p={2}
                     onClick={() => {
-                        setRowSelected(record.userId);
-                        openEditModal();
+                        setRowSelected(record.userId)
+                        openEditModal()
                     }}
                 >
                     <i className="fas fa-edit"></i>
@@ -175,9 +175,9 @@ const UserManagement = () => {
 
     useEffect(() => {
         if (isEditOpen && rowSelected) {
-            fetchGetDetailsUser(rowSelected);
+            fetchGetDetailsUser(rowSelected)
         }
-    }, [isEditOpen, rowSelected]);
+    }, [isEditOpen, rowSelected])
 
     const handleOnchangeDetails = (e) => {
         const { name, type, checked } = e.target

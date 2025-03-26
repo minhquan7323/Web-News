@@ -1,15 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
-import { Text, Image, Grid, GridItem, Box, Link, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Input, Button, Avatar, HStack, useColorModeValue } from "@chakra-ui/react"
+import { Text, Image, Grid, GridItem, Box, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Input, Button, Avatar, HStack, useColorModeValue } from "@chakra-ui/react"
 import { ChevronRightIcon } from '@chakra-ui/icons'
-import { useParams } from "react-router-dom"
-import { SendOutlined } from '@ant-design/icons'
+import { useParams, Link } from "react-router-dom"
 import * as ArticleService from '../services/ArticleService'
 import * as CommentService from '../services/CommentService'
 import { useQuery } from '@tanstack/react-query'
 import { useMutationHooks } from '../hooks/useMutationHook'
 import NewsList from "../components/NewsList"
 import { useSelector } from "react-redux"
-import CommentPopover from '../components/CommentPopover'
+import Comment from '../components/Comment'
 
 const DetailsArticle = () => {
     const user = useSelector((state) => state?.user)
@@ -125,45 +124,9 @@ const DetailsArticle = () => {
         }
     }
 
-    const handleComment = () => {
-        if (!stateComment.content.trim()) return
-        mutation.mutate(stateComment, {
-            onSettled: () => {
-                refetchComments().then(() => {
-                    setTimeout(scrollToBottom, 100)
-                })
-            }
-        })
-        setStateComment({ ...stateComment, content: '' })
-    }
-
     useEffect(() => {
         scrollToBottom()
     }, [allComments])
-
-    const handleOnchange = (e) => {
-        setStateComment({
-            userId: user.userId,
-            articleId: articleId,
-            [e.target.name]: e.target.value
-        })
-    }
-
-    const handleDeleteComment = async (commentId) => {
-        await fetchDeleteComment(commentId)
-        refetchComments()
-    }
-
-    const handleApproveComment = async (commentId) => {
-        mutationUpdateComment.mutate(
-            { commentId, pending: false },
-            {
-                onSettled: () => {
-                    refetchComments()
-                }
-            }
-        )
-    }
 
     const gridTemplate = useBreakpointValue({
         base: "1fr",
@@ -176,11 +139,11 @@ const DetailsArticle = () => {
         <Box p={[4, 6, 8, 12]} pt={[12, 12, 12, 12]}>
             <Breadcrumb spacing='8px' py={4} separator={<ChevronRightIcon color='gray.500' />}>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href='/'><Text as='b'>Home</Text></BreadcrumbLink>
+                    <BreadcrumbLink as={Link} to='/'><Text as='b'>Home</Text></BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem isCurrentPage>
-                    <BreadcrumbLink href='#'>Details</BreadcrumbLink>
+                    <BreadcrumbLink as={Link} to='#'>Details</BreadcrumbLink>
                 </BreadcrumbItem>
             </Breadcrumb>
             <Grid templateColumns={gridTemplate} gap={6}>
@@ -221,73 +184,12 @@ const DetailsArticle = () => {
                         <Box py={2}>
                             <Divider borderColor="gray.300" />
                         </Box>
-                        <Box width={'100%'}>
-                            <Box
-                                backgroundColor={useColorModeValue("gray.50", "gray.700")} borderRadius="5px" p={2}>
-                                <Text as='b' fontSize={'xl'} textTransform='uppercase'>Comment</Text>
-                                {/* <CommentFacebook dataHref={import.meta.env.VITE_IS_LOCAL ?
-                                    `https://yourwebsite.com/products/${articleDetails._id}`
-                                    : window.location.href}
-                                /> */}
-                                {allComments.length > 0 ? (
-                                    <VStack align='left' overflow='auto' height='250px' my={4} ref={commentsEndRef}>
-                                        {allComments.map((comment) => (
-                                            (!comment.pending || user?.isAdmin || comment.userId === user?.userId) && (
-                                                <Box key={comment._id}>
-                                                    <HStack align='top'>
-                                                        <HStack flex={1} opacity={comment.pending ? 0.5 : 1} transition="opacity 0.3s ease">
-                                                            <Avatar name={comment.fullName} src={comment.imageUrl} />
-                                                            <VStack align='left' w='100%'>
-                                                                <HStack w='100%' justifyContent='space-between'>
-                                                                    <Text fontWeight='bold'>{comment.fullName}</Text>
-                                                                    {!user?.isAdmin && comment.pending && (
-                                                                        <Text fontSize="sm" color="yellow.500">Waiting for approval</Text>
-                                                                    )}
-                                                                </HStack>
-                                                                <HStack justifyContent='space-between'>
-                                                                    <Text>{comment.content}</Text>
-                                                                    <Text fontSize='sm' color='gray.400'>
-                                                                        {new Date(comment.createdAt).toLocaleString()}
-                                                                    </Text>
-                                                                </HStack>
-                                                            </VStack>
-                                                        </HStack>
-                                                        <Box pr={2}>
-                                                            {user?.isAdmin && (
-                                                                <CommentPopover
-                                                                    comment={comment}
-                                                                    onDelete={handleDeleteComment}
-                                                                    onApprove={handleApproveComment}
-                                                                />
-                                                            )}
-                                                        </Box>
-                                                    </HStack>
-                                                </Box>
-                                            )
-                                        ))}
-                                    </VStack>
-                                ) : (
-                                    <VStack overflow='auto' height='200px' my={4} ref={commentsEndRef} justify="center" align="center">
-                                        <Text fontSize='2xl' color='gray.400'>
-                                            No comments yet
-                                        </Text>
-                                    </VStack>
-                                )}
-                                {user?.userId ? (
-                                    <Box display='flex' gap={2}>
-                                        <Input placeholder="Comment here" value={stateComment.content}
-                                            name="content" onChange={handleOnchange}
-                                            onKeyDown={(e) => e.key === "Enter" && handleComment()}
-                                        />
-                                        <Button colorScheme="teal" onClick={() => handleComment()}><SendOutlined /></Button>
-                                    </Box>
-                                ) : (
-                                    <Box textAlign='center' fontWeight='bold' color='red'>
-                                        Sign in to comment
-                                    </Box>
-                                )}
-                            </Box>
-                        </Box>
+                        <Comment
+                            articleId={articleId}
+                            user={user}
+                            allComments={allComments}
+                            refetchComments={refetchComments}
+                        />
                         <Box px={[4, 6, 8, 12]}>
                             <Box pt={12}>
                                 <Text as="b" fontSize='2xl' textTransform="uppercase">
@@ -295,7 +197,7 @@ const DetailsArticle = () => {
                                 </Text>
                                 {upNextArticles.map((article, index) => (
                                     <Grid key={index} templateColumns="2fr 1fr" gap={4} mt={4}>
-                                        <Link href={article._id} >
+                                        <Link to={`/article/details/${article._id}`}>
                                             <Text
                                                 fontSize='lg'
                                                 lineHeight="24px"
@@ -310,8 +212,10 @@ const DetailsArticle = () => {
                                                 {article.description}
                                             </Text>
                                         </Link>
-                                        <Link href={article._id} transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}>
-                                            <Image src={article.imageUrl} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
+                                        <Link to={`/article/details/${article._id}`}>
+                                            <Box transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}>
+                                                <Image src={article.imageUrl} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
+                                            </Box>
                                         </Link>
                                         {index < upNextArticles.length - 1 && (
                                             <GridItem key={index} colSpan={2}>
@@ -334,7 +238,7 @@ const DetailsArticle = () => {
                                                 {index + 1}
                                             </Text>
                                             <Box flex="1">
-                                                <Link href={article._id}>
+                                                <Link to={`/article/details/${article._id}`}>
                                                     <Text
                                                         fontSize="sm"
                                                         lineHeight="24px"
@@ -359,7 +263,7 @@ const DetailsArticle = () => {
 
                         </Box>
                     </Box>
-                </GridItem >
+                </GridItem>
 
                 <GridItem>
                     <VStack spacing={12}>
@@ -368,8 +272,8 @@ const DetailsArticle = () => {
                         ))}
                     </VStack>
                 </GridItem>
-            </Grid >
-        </Box >
+            </Grid>
+        </Box>
     )
 }
 

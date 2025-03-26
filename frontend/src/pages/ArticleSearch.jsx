@@ -1,7 +1,6 @@
-import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Box, Text, Spinner, Grid, Link, GridItem, Divider, Image, VStack, Input, Button, Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react'
+import { Box, Text, Spinner, Grid, Link, Divider, Image, VStack, Input, Button, Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react'
 import * as ArticleService from '../services/ArticleService'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { ChevronRightIcon } from '@chakra-ui/icons'

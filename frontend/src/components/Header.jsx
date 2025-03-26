@@ -134,7 +134,7 @@ const Header = () => {
                     </Link>
                     {!adminPath && (
                         <HStack>
-                            {categories?.slice(0, visibleCategories).map((category) => (
+                            {categories?.filter(category => !category.parentId).slice(0, visibleCategories).map((category) => (
                                 <Box cursor='pointer' onClick={() => handleTypeArticle(category._id)} key={category._id}>
                                     <Text
                                         transition="color 0.3s ease"

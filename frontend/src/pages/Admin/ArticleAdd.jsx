@@ -18,7 +18,7 @@ const ArticleAdd = () => {
         description: '',
         source: '',
         content: '',
-        featured: '',
+        featured: false,
         imageUrl: '',
         type: []
     })
@@ -46,7 +46,7 @@ const ArticleAdd = () => {
                 description: '',
                 source: '',
                 content: '',
-                featured: '',
+                featured: false,
                 imageUrl: '',
                 type: []
             }))
@@ -110,6 +110,10 @@ const ArticleAdd = () => {
         return res
     }
 
+    const isLeafCategory = (categoryId) => {
+        return !stateCategory.some(cat => cat.parentId === categoryId)
+    }
+
     useEffect(() => {
         fetchAllCategory()
     }, [])
@@ -164,7 +168,7 @@ const ArticleAdd = () => {
                 <Box p={4}>
                     <Text p={2} fontWeight='bold'>Category</Text>
                     <Grid templateColumns={gridTemplate} gap={2}>
-                        {stateCategory?.map((type) => (
+                        {stateCategory?.filter(type => isLeafCategory(type._id)).map((type) => (
                             <Box key={type._id} display="flex" alignItems="center" gap={4}>
                                 <Checkbox
                                     id={`type-${type._id}`}

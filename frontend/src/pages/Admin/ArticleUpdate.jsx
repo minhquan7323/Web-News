@@ -109,6 +109,10 @@ const ArticleUpdate = () => {
         })
     }
 
+    const isLeafCategory = (categoryId) => {
+        return !stateCategory.some(cat => cat.parentId === categoryId)
+    }
+
     useEffect(() => {
         if (isSuccessUpdated && dataUpdated?.status === 'OK') {
             success()
@@ -167,7 +171,7 @@ const ArticleUpdate = () => {
                 <Box p={4}>
                     <Text p={2} fontWeight='bold'>Category</Text>
                     <Grid templateColumns={gridTemplate} gap={2}>
-                        {stateCategory?.map((type) => (
+                        {stateCategory?.filter(type => isLeafCategory(type._id)).map((type) => (
                             <Box key={type._id} display="flex" alignItems="center" gap={4}>
                                 <Checkbox
                                     id={`type-${type._id}`}

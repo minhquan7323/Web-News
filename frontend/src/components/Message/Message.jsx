@@ -23,5 +23,14 @@ export const useMessage = () => {
         })
     }
 
-    return { success, error }
+    const warning = (mes = 'Warning', description = '') => {
+        toast({
+            title: mes,
+            description: description,
+            status: "warning",
+            duration: 3000,
+            isClosable: true,
+        })
+    }
+    return { success, error, warning }
 }

@@ -24,3 +24,13 @@ export const getWatchLater = async (userId) => {
     const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/watch-later/${userId}`)
     return res.data
 }
+
+export const addWatchLater = async (userId, articleId) => {
+    const res = await axios.post(`${import.meta.env.VITE_API_URL}/user/add-watch-later`, { userId, articleId })
+    return res.data
+}
+
+export const removeWatchLater = async (userId, articleId) => {
+    const res = await axios.post(`${import.meta.env.VITE_API_URL}/user/remove-watch-later`, { userId, articleId })
+    return res.data
+}
