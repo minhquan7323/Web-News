@@ -48,9 +48,21 @@ const updateComment = async (req, res) => {
     }
 }
 
+const getAllComments = async (req, res) => {
+    try {
+        const response = await CommentService.getAllComments()
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(500).json({
+            message: e.message
+        })
+    }
+}
+
 module.exports = {
     createComment,
     getCommentsByPost,
     deleteComment,
-    updateComment
+    updateComment,
+    getAllComments
 }

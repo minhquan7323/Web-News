@@ -20,3 +20,8 @@ export const updateComment = async (commentId, data) => {
     const res = await axios.put(`${import.meta.env.VITE_API_URL}/comments/${commentId}`, data)
     return res.data
 }
+
+export const getAllComments = async () => {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/comments`)
+    return res.data
+}

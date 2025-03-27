@@ -38,6 +38,9 @@ const Home = () => {
         base: "1fr",
         lg: "2fr 1fr",
     })
+
+    const visibleArticles = useBreakpointValue({ base: 0, lg: featuredArticle.length })
+
     return (
         <Box p={4} paddingTop={10}>
             <Grid templateColumns={gridTemplate} gap={6} mt={6}>
@@ -93,7 +96,7 @@ const Home = () => {
 
                 <GridItem alignSelf="start">
                     <VStack alignItems="start" spacing={4} w="100%">
-                        {featuredArticle?.map((article, index) => (
+                        {featuredArticle?.slice(0, visibleArticles).map((article, index) => (
                             <React.Fragment key={article._id}>
                                 <Box onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }} cursor='pointer'>
                                     <HStack alignItems="start">

@@ -149,9 +149,32 @@ const updateComment = (commentId, data) => {
     })
 }
 
+const getAllComments = async () => {
+    try {
+        const comments = await Comment.find()
+            .populate({
+                path: 'userId',
+                model: 'User',
+                select: 'fullName imageUrl',
+                localField: 'userId',
+                foreignField: 'userId'
+            })
+            .populate('articleId', 'title imageUrl')
+            .sort({ createdAt: -1 })
+        return {
+            status: "OK",
+            message: "Fetched comments successfully",
+            data: comments
+        }
+    } catch (e) {
+        throw e
+    }
+}
+
 module.exports = {
     createComment,
     getCommentsByPost,
     deleteComment,
-    updateComment
+    updateComment,
+    getAllComments
 }

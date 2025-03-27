@@ -171,7 +171,7 @@ const getWatchLater = (userId) => {
             const user = await User.findOne({ userId: userId })
                 .populate({
                     path: 'watchLater',
-                    select: 'title description imageUrl author type read createdAt updatedAt'
+                    select: 'title description imageUrl source author type read createdAt updatedAt'
                 })
 
             if (!user) {

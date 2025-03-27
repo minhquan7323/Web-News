@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
-import { Text, Image, Grid, GridItem, Box, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Input, Button, Avatar, HStack, useColorModeValue } from "@chakra-ui/react"
+import { Text, Image, Grid, GridItem, Box, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack } from "@chakra-ui/react"
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import { useParams, Link } from "react-router-dom"
 import * as ArticleService from '../services/ArticleService'
@@ -17,28 +17,11 @@ const DetailsArticle = () => {
     const [isUpdatedRead, setIsUpdatedRead] = useState(false)
     const [randomCategories, setRandomCategories] = useState([])
     const [upNextArticles, setUpNextArticles] = useState([])
-    const [stateComment, setStateComment] = useState({
-        userId: user.userId,
-        articleId: articleId,
-        content: ''
-    })
 
-    const mutation = useMutationHooks(async (data) => {
-        const { ...rests } = data
-        const res = await CommentService.createComment(rests)
-        return res
-    })
     const mutationUpdate = useMutationHooks(
         async (data) => {
             const { id, ...rests } = data
             const res = await ArticleService.updateArticle(id, rests)
-            return res
-        }
-    )
-    const mutationUpdateComment = useMutationHooks(
-        async (data) => {
-            const { commentId, ...rests } = data
-            const res = await CommentService.updateComment(commentId, rests)
             return res
         }
     )
@@ -47,18 +30,16 @@ const DetailsArticle = () => {
         const res = await ArticleService.getAllArticle()
         return res.data
     }
+
     const fetchGetDetailsArticle = async (articleId) => {
         if (articleId) {
             const res = await ArticleService.getDetailsArticle(articleId)
             return res.data
         }
     }
+
     const fetchAllComments = async () => {
         const res = await CommentService.getCommentsByPost(articleId)
-        return res.data
-    }
-    const fetchDeleteComment = async (commentId) => {
-        const res = await CommentService.deleteComment(commentId)
         return res.data
     }
 

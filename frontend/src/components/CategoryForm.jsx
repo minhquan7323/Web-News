@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Button, FormControl, FormLabel, Input, Select, VStack, useDisclosure, } from '@chakra-ui/react'
 
-const CategoryForm = ({ open, onClose, onSubmit, formData, setFormData, editingCategory, categories }) => {
+const CategoryForm = ({ open, onClose, onSubmit, formData, setFormData, editingCategory, categories, canBeParent }) => {
     const { isOpen, onClose: handleClose } = useDisclosure({
         isOpen: open,
         onClose: onClose,
@@ -39,7 +39,7 @@ const CategoryForm = ({ open, onClose, onSubmit, formData, setFormData, editingC
                     <ModalBody>
                         <VStack spacing={4}>
                             <FormControl isRequired>
-                                <FormLabel>Category Name</FormLabel>
+                                <FormLabel>Name</FormLabel>
                                 <Input
                                     name="name"
                                     value={formData.name}
@@ -71,7 +71,7 @@ const CategoryForm = ({ open, onClose, onSubmit, formData, setFormData, editingC
                             Cancel
                         </Button>
                         <Button colorScheme="blue" onClick={onSubmit} isDisabled={!isValid}>
-                            {editingCategory ? 'Update' : 'Add new'}
+                            {editingCategory ? 'Update' : 'Add'}
                         </Button>
                     </ModalFooter>
                 </form>

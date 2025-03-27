@@ -76,8 +76,6 @@ const ArticleList = () => {
         navigate(`/type/${categoryId}`)
     }
 
-    const visibleCategories = useBreakpointValue({ base: 2, sm: 2, md: 3, lg: 4 })
-
     return (
         <Box p={[4, 6, 8, 12]} pt={[12, 12, 12, 12]}>
             {selectedCategory && (
@@ -106,7 +104,6 @@ const ArticleList = () => {
                         <HStack spacing={4} wrap="wrap">
                             {categories
                                 ?.filter(cat => cat.parentId === typeId)
-                                .slice(0, visibleCategories)
                                 .map((category) => (
                                     <Box key={category._id} width="100%">
                                         <Text
