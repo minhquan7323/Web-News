@@ -231,17 +231,32 @@ const Header = () => {
 
                         <Divider borderColor="teal" />
 
-                        {/* <VStack as="ul" spacing={4} align="start" w="full" p={10}>
-                            <List spacing={4} styleType="disc">
-                                <ListItem>
-                                    <Link to="/favorite" onClick={onClose}>
-                                        <Text _hover={{ textDecoration: "none" }} px={4}>
-                                            Favorite List
-                                        </Text>
-                                    </Link>
-                                </ListItem>
-                            </List>
-                        </VStack> */}
+                        <HStack>
+                            {categories?.filter(category => !category.parentId).map((category) => (
+                                <Box cursor='pointer' onClick={() => handleTypeArticle(category._id)} key={category._id}>
+                                    <Text
+                                        transition="color 0.3s ease"
+                                        _hover={{ textDecoration: "none" }}
+                                        fontWeight="bold"
+                                        display={{ base: 'none', sm: 'flex' }}
+                                        px={4}
+                                    >
+                                        {category.name}
+                                    </Text>
+                                </Box>
+                            ))}
+                            <Box cursor='pointer' onClick={() => navigate('/watch-later')}>
+                                <Text
+                                    transition="color 0.3s ease"
+                                    _hover={{ textDecoration: "none" }}
+                                    fontWeight="bold"
+                                    display={{ base: 'none', sm: 'flex' }}
+                                    px={4}
+                                >
+                                    Watch Later
+                                </Text>
+                            </Box>
+                        </HStack>
                     </DrawerBody>
                 </DrawerContent>
             </Drawer>

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
-import { Text, Image, Grid, GridItem, Box, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack } from "@chakra-ui/react"
+import { Text, Image, Grid, GridItem, Box, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Skeleton } from "@chakra-ui/react"
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import { useParams, Link } from "react-router-dom"
 import * as ArticleService from '../services/ArticleService'
@@ -9,6 +9,7 @@ import { useMutationHooks } from '../hooks/useMutationHook'
 import NewsList from "../components/NewsList"
 import { useSelector } from "react-redux"
 import Comment from '../components/Comment'
+import { articleContentStyles } from '../styles/articleContentStyles'
 
 const DetailsArticle = () => {
     const user = useSelector((state) => state?.user)
@@ -43,16 +44,16 @@ const DetailsArticle = () => {
         return res.data
     }
 
-    const { data: allArticles = [] } = useQuery({
+    const { data: allArticles = [], isLoading: isLoadingArticles } = useQuery({
         queryKey: ['allArticles'],
         queryFn: fetchAllArticles,
     })
-    const { data: articleDetails = {} } = useQuery({
+    const { data: articleDetails = {}, isLoading: isLoadingDetails } = useQuery({
         queryKey: ['details', articleId],
         queryFn: () => fetchGetDetailsArticle(articleId),
         enabled: !!articleId,
     })
-    const { data: allComments = [], refetch: refetchComments } = useQuery({
+    const { data: allComments = [], refetch: refetchComments, isLoading: isLoadingComments } = useQuery({
         queryKey: ['allComments'],
         queryFn: fetchAllComments,
     })
@@ -95,9 +96,7 @@ const DetailsArticle = () => {
             .sort(() => Math.random() - 0.5)
             .slice(0, 4)
         setUpNextArticles(filteredArticles)
-
     }, [allArticles, articleId])
-
 
     const scrollToBottom = () => {
         if (commentsEndRef.current) {
@@ -115,6 +114,111 @@ const DetailsArticle = () => {
         md: "1fr",
         lg: "9fr 3fr",
     })
+
+    const renderSkeleton = () => {
+        return (
+            <Box p={[4, 6, 8, 12]} pt={[12, 12, 12, 12]}>
+                <Breadcrumb spacing='8px' py={4} separator={<ChevronRightIcon color='gray.500' />}>
+                    <BreadcrumbItem>
+                        <Skeleton height="20px" width="60px" />
+                    </BreadcrumbItem>
+                    <BreadcrumbItem>
+                        <Skeleton height="20px" width="80px" />
+                    </BreadcrumbItem>
+                </Breadcrumb>
+
+                <Grid templateColumns={gridTemplate} gap={6}>
+                    <Box>
+                        <Skeleton height="60px" mb={4} />
+                        <Box p={8} color="gray">
+                            <Skeleton height="20px" width="200px" mb={2} />
+                            <Skeleton height="20px" width="300px" />
+                        </Box>
+                    </Box>
+                </Grid>
+
+                <Grid templateColumns={gridTemplate} gap={6}>
+                    <GridItem>
+                        <Box>
+                            <Box>
+                                <Skeleton height="400px" mb={4} />
+                                <Box p={4}>
+                                    <Skeleton height="20px" width="100px" mb={4} />
+                                    <Skeleton height="24px" />
+                                </Box>
+                            </Box>
+                            <Box py={2}>
+                                <Divider borderColor="gray.300" />
+                            </Box>
+                            <Box p={6}>
+                                <Skeleton height="200px" mb={4} />
+                                <Skeleton height="200px" mb={4} />
+                                <Skeleton height="200px" />
+                            </Box>
+                        </Box>
+                        <Box py={2}>
+                            <Divider borderColor="gray.300" />
+                        </Box>
+                        <Box px={[4, 6, 8, 12]}>
+                            <Box pt={12}>
+                                <Skeleton height="32px" width="120px" mb={4} />
+                                {[1, 2, 3, 4].map((_, index) => (
+                                    <Grid key={index} templateColumns="2fr 1fr" gap={4} mt={4}>
+                                        <Skeleton height="72px" />
+                                        <Skeleton height="120px" />
+                                        {index < 3 && (
+                                            <GridItem colSpan={2}>
+                                                <Box py={2}>
+                                                    <Divider borderColor="gray.300" />
+                                                </Box>
+                                            </GridItem>
+                                        )}
+                                    </Grid>
+                                ))}
+                            </Box>
+                            <Box pt={12}>
+                                <Skeleton height="32px" width="120px" mb={4} />
+                                <Grid templateColumns="1fr 1fr" gap={4} mt={4}>
+                                    {[1, 2, 3, 4, 5].map((_, index) => (
+                                        <Box key={index} display="flex" alignItems="flex-start" gap={2}>
+                                            <Skeleton height="24px" width="30px" />
+                                            <Box flex="1">
+                                                <Skeleton height="72px" />
+                                                {index < 4 && <Divider borderColor="gray.300" pt={4} />}
+                                            </Box>
+                                        </Box>
+                                    ))}
+                                </Grid>
+                            </Box>
+                        </Box>
+                    </GridItem>
+
+                    <GridItem>
+                        <VStack spacing={12}>
+                            {[1, 2].map((_, index) => (
+                                <Box key={index} w="100%">
+                                    <Skeleton height="32px" width="150px" mb={4} />
+                                    <VStack spacing={4}>
+                                        {[1, 2, 3].map((_, i) => (
+                                            <Box key={i} w="100%">
+                                                <Skeleton height="100px" />
+                                            </Box>
+                                        ))}
+                                    </VStack>
+                                </Box>
+                            ))}
+                        </VStack>
+                    </GridItem>
+                </Grid>
+            </Box>
+        )
+    }
+
+    if (isLoadingDetails || isLoadingArticles || isLoadingComments) {
+        return renderSkeleton()
+    }
+
+    console.log(articleDetails.content);
 
     return (
         <Box p={[4, 6, 8, 12]} pt={[12, 12, 12, 12]}>
@@ -158,7 +262,7 @@ const DetailsArticle = () => {
                             <Box py={2}>
                                 <Divider borderColor="gray.300" />
                             </Box>
-                            <Box p={6}>
+                            <Box p={6} sx={articleContentStyles}>
                                 <Box dangerouslySetInnerHTML={{ __html: articleDetails.content }} />
                             </Box>
                         </Box>
@@ -241,7 +345,6 @@ const DetailsArticle = () => {
                                     ))}
                                 </Grid>
                             </Box>
-
                         </Box>
                     </Box>
                 </GridItem>

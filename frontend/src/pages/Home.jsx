@@ -96,7 +96,7 @@ const Home = () => {
 
                 <GridItem alignSelf="start">
                     <VStack alignItems="start" spacing={4} w="100%">
-                        {featuredArticle?.slice(0, visibleArticles).map((article, index) => (
+                        {sortByDate(articles)?.slice(0, visibleArticles).map((article, index) => (
                             <React.Fragment key={article._id}>
                                 <Box onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }} cursor='pointer'>
                                     <HStack alignItems="start">

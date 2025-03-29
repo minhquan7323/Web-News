@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Text, Image, Stack, Grid, Box, Link, useBreakpointValue, useColorModeValue, Tooltip } from "@chakra-ui/react"
+import { Text, Image, Stack, Grid, Box, Link, useBreakpointValue, useColorModeValue, Tooltip, Skeleton } from "@chakra-ui/react"
 import { useNavigate } from 'react-router-dom'
 import { sortByDate } from "../utils"
 import * as UserService from '../services/UserService'
@@ -11,6 +11,7 @@ const ArticleGrid = ({ articles, title }) => {
     const user = useSelector((state) => state?.user)
     const { success, error, warning } = useMessage()
     const [watchLaterList, setWatchLaterList] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
         const fetchWatchLater = async () => {
@@ -21,6 +22,14 @@ const ArticleGrid = ({ articles, title }) => {
         }
         fetchWatchLater()
     }, [user?.userId])
+
+    useEffect(() => {
+        if (articles.length !== 0) {
+            setIsLoading(false)
+        } else {
+            setIsLoading(true)
+        }
+    }, [articles])
 
     const handleDetailsArticle = (id) => {
         navigate(`/article/details/${id}`)
@@ -43,8 +52,6 @@ const ArticleGrid = ({ articles, title }) => {
             } else {
                 res = await UserService.addWatchLater(user.userId, articleId)
                 success('Added to Watch Later')
-                console.log(res);
-
                 setWatchLaterList(prev => [...prev, { _id: articleId }])
             }
 
@@ -69,6 +76,19 @@ const ArticleGrid = ({ articles, title }) => {
 
     const bgColor = useColorModeValue("gray.100", "gray.700")
 
+    const renderSkeleton = () => {
+        return Array(8).fill(0).map((_, index) => (
+            <Box key={index} p={2} backgroundColor={bgColor} borderRadius='5px'>
+                <Skeleton height="200px" borderRadius="5px" mb={3} />
+                <Stack spacing={3}>
+                    <Skeleton height="24px" />
+                    <Skeleton height="16px" width="70%" />
+                    <Skeleton height="40px" noOfLines={2} />
+                </Stack>
+            </Box>
+        ))
+    }
+
     return (
         <Box>
             {title && (
@@ -77,72 +97,76 @@ const ArticleGrid = ({ articles, title }) => {
                 </Text>
             )}
             <Grid templateColumns={gridTemplate} gap={4} mt={6} px={4}>
-                {sortByDate(articles)?.map((article) => (
-                    <Box
-                        key={article._id}
-                        p={2}
-                        backgroundColor={bgColor}
-                        borderRadius='5px'
-                        position="relative"
-                        _hover={{
-                            "& .watch-later-icon": {
-                                opacity: 1,
-                                transform: "translateY(0)"
-                            }
-                        }}
-                    >
-                        <Tooltip
-                            label={isInWatchLater(article._id) ? "Remove from Watch Later" : "Add to Watch Later"}
-                            placement="top"
-                            hasArrow
-                            bg="teal.500"
-                            color="white"
-                            borderRadius="md"
-                            px={3}
-                            py={1}
+                {isLoading ? (
+                    renderSkeleton()
+                ) : (
+                    sortByDate(articles)?.map((article) => (
+                        <Box
+                            key={article._id}
+                            p={2}
+                            backgroundColor={bgColor}
+                            borderRadius='5px'
+                            position="relative"
+                            _hover={{
+                                "& .watch-later-icon": {
+                                    opacity: 1,
+                                    transform: "translateY(0)"
+                                }
+                            }}
                         >
-                            <Box
-                                className="watch-later-icon"
-                                position="absolute"
-                                top={2}
-                                right={2}
-                                zIndex={2}
-                                opacity={0}
-                                transform="translateY(-10px)"
-                                transition="all 0.3s ease"
-                                cursor="pointer"
-                                bg={"rgba(0, 0, 0, 0.5)"}
-                                p={2}
-                                borderRadius="full"
-                                onClick={(e) => {
-                                    e.preventDefault()
-                                    handleWatchLater(article._id)
-                                }}
-                                _hover={{
-                                    bg: "rgba(0, 0, 0, 0.7)",
-                                    transform: "translateY(0) scale(1.1)"
-                                }}
+                            <Tooltip
+                                label={isInWatchLater(article._id) ? "Remove from Watch Later" : "Add to Watch Later"}
+                                placement="top"
+                                hasArrow
+                                bg="teal.500"
+                                color="white"
+                                borderRadius="md"
+                                px={3}
+                                py={1}
                             >
-                                <i
-                                    className={isInWatchLater(article._id) ? "fa-solid fa-circle-check" : "fa-solid fa-clock"}
-                                    style={{ color: 'white', fontSize: '1.2rem' }}
-                                ></i>
-                            </Box>
-                        </Tooltip>
-                        <Link onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }}>
-                            <Image src={article.imageUrl} alt={article.title} objectFit="cover" h="200px" w="100%" borderRadius="5px" transition="opacity 0.2s ease-in-out" _hover={{ opacity: 0.7 }} />
-                            <Stack spacing={3}>
-                                <Text fontSize='2xl' _hover={{ textDecoration: "underline" }}>{article.title}</Text>
-                                <Stack spacing={1}>
-                                    <Text fontSize="sm" color="gray.400">
-                                        {article.source?.map((source) => source).join(', ')} - {new Date(article.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                                    </Text>
+                                <Box
+                                    className="watch-later-icon"
+                                    position="absolute"
+                                    top={2}
+                                    right={2}
+                                    zIndex={2}
+                                    opacity={0}
+                                    transform="translateY(-10px)"
+                                    transition="all 0.3s ease"
+                                    cursor="pointer"
+                                    bg={"rgba(0, 0, 0, 0.5)"}
+                                    p={2}
+                                    borderRadius="full"
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        handleWatchLater(article._id)
+                                    }}
+                                    _hover={{
+                                        bg: "rgba(0, 0, 0, 0.7)",
+                                        transform: "translateY(0) scale(1.1)"
+                                    }}
+                                >
+                                    <i
+                                        className={isInWatchLater(article._id) ? "fa-solid fa-circle-check" : "fa-solid fa-clock"}
+                                        style={{ color: 'white', fontSize: '1.2rem' }}
+                                    ></i>
+                                </Box>
+                            </Tooltip>
+                            <Link onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }}>
+                                <Image src={article.imageUrl} alt={article.title} objectFit="cover" h="200px" w="100%" borderRadius="5px" transition="opacity 0.2s ease-in-out" _hover={{ opacity: 0.7 }} />
+                                <Stack spacing={3}>
+                                    <Text fontSize='xl' _hover={{ textDecoration: "underline" }}>{article.title}</Text>
+                                    <Stack spacing={1}>
+                                        <Text fontSize="sm" color="gray.400">
+                                            {article.source?.map((source) => source).join(', ')} - {new Date(article.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                        </Text>
+                                    </Stack>
+                                    <Text noOfLines={2}>{article.description}</Text>
                                 </Stack>
-                                <Text noOfLines={2}>{article.description}</Text>
-                            </Stack>
-                        </Link>
-                    </Box>
-                ))}
+                            </Link>
+                        </Box>
+                    ))
+                )}
             </Grid>
         </Box>
     )

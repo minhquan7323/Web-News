@@ -1,6 +1,5 @@
 import { Box, Input, InputLeftAddon, InputGroup, Stack, Text, Button, HStack, Image, Flex, Textarea, Checkbox, Grid, useBreakpointValue } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
-import { Editor } from "@tinymce/tinymce-react"
 import { uploadToCloudinary } from '../../utils'
 import { useNavigate } from 'react-router-dom'
 import * as ArticleService from '../../services/ArticleService'
@@ -8,6 +7,7 @@ import * as CategoryService from '../../services/CategoryService'
 import { useMutationHooks } from '../../hooks/useMutationHook'
 import { useMessage } from '../../components/Message/Message'
 import Loading from '../../components/Loading/Loading'
+import Editor from '../../components/Editor'
 
 const ArticleAdd = () => {
     const [imgDisplay, setImgDisplay] = useState('')
@@ -210,37 +210,8 @@ const ArticleAdd = () => {
                 </HStack>
                 <Box p={4}>
                     <Editor
-                        apiKey={import.meta.env.VITE_MCE_API_KEY}
-                        placeholder="<p>Nhập nội dung tại đây...</p>"
-                        init={{
-                            height: 500,
-                            menubar: true,
-                            plugins: "advlist autolink lists link image charmap preview anchor media",
-                            toolbar: "undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image media",
-                            image_uploadtab: true,
-                            file_picker_types: "image media",
-                            file_picker_callback: async (callback, value, meta) => {
-                                const input = document.createElement("input")
-                                input.setAttribute("type", "file")
-
-                                if (meta.filetype === "image") {
-                                    input.setAttribute("accept", "image/*")
-                                } else if (meta.filetype === "media") {
-                                    input.setAttribute("accept", "video/*")
-                                }
-
-                                input.onchange = async function () {
-                                    const file = this.files[0]
-                                    if (file) {
-                                        const fileUrl = await uploadToCloudinary(file)
-                                        callback(fileUrl, { title: file.name })
-                                    }
-                                }
-                                input.click()
-                            },
-                        }}
                         value={stateArticle.content}
-                        onEditorChange={(content) => setStateArticle({ ...stateArticle, content })}
+                        onChange={(content) => setStateArticle({ ...stateArticle, content })}
                     />
                 </Box>
             </Box>
