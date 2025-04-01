@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Deploy to EC2
       uses: appleboy/ssh-action@v0.1.7
@@ -24,8 +24,9 @@ jobs:
         key: ${{ secrets.EC2_KEY }}
         port: 22
         script: |
+          set -e
           cd /home/${{ secrets.EC2_USER }}/Web-News/
           git pull origin main
-          docker-compose down
-          docker system prune -af
-          docker-compose up -d --build
+          sudo docker-compose down || true
+          sudo docker system prune -af
+          sudo docker-compose up -d --build
