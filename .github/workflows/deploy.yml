@@ -24,7 +24,7 @@ jobs:
         key: ${{ secrets.EC2_KEY }}
         port: 22
         script: |
-          cd /home/${{ secrets.EC2_USER }}/web-news/
+          cd /home/${{ secrets.EC2_USER }}/Web-News/
           git pull origin main
           docker-compose down
           docker system prune -af
