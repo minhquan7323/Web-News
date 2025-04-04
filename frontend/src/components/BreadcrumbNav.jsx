@@ -7,6 +7,11 @@ const BreadcrumbNav = ({ categories, currentCategory, parentCategory, title }) =
     // Kiểm tra nếu currentCategory và parentCategory là cùng một category
     const isSameCategory = currentCategory && parentCategory && currentCategory._id === parentCategory._id;
 
+    // Kiểm tra an toàn cho các props
+    const safeCurrentCategory = currentCategory || null;
+    const safeParentCategory = parentCategory || null;
+    const safeTitle = title || '';
+
     return (
         <Breadcrumb spacing='8px' py={4} separator={<ChevronRightIcon color='gray.500' />}>
             <BreadcrumbItem>
@@ -14,26 +19,26 @@ const BreadcrumbNav = ({ categories, currentCategory, parentCategory, title }) =
             </BreadcrumbItem>
 
             {/* Chỉ hiển thị parentCategory nếu nó khác với currentCategory */}
-            {parentCategory && !isSameCategory && (
+            {safeParentCategory && !isSameCategory && (
                 <BreadcrumbItem>
-                    <Link to={`/type/${parentCategory._id}`}>
-                        <Text>{parentCategory.name}</Text>
+                    <Link to={`/type/${safeParentCategory._id}`}>
+                        <Text>{safeParentCategory.name}</Text>
                     </Link>
                 </BreadcrumbItem>
             )}
 
             {/* Hiển thị currentCategory nếu có */}
-            {currentCategory && (
+            {safeCurrentCategory && (
                 <BreadcrumbItem>
-                    <Link to={`/type/${currentCategory._id}`}>
-                        <Text>{currentCategory.name}</Text>
+                    <Link to={`/type/${safeCurrentCategory._id}`}>
+                        <Text>{safeCurrentCategory.name}</Text>
                     </Link>
                 </BreadcrumbItem>
             )}
 
-            {title && (
+            {safeTitle && (
                 <BreadcrumbItem isCurrentPage>
-                    <Text>{title}</Text>
+                    <Text>{safeTitle}</Text>
                 </BreadcrumbItem>
             )}
         </Breadcrumb>

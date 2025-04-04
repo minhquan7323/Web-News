@@ -253,9 +253,9 @@ const DetailsArticle = () => {
     return (
         <Box p={[4, 6, 8, 12]} pt={[12, 12, 12, 12]}>
             <BreadcrumbNav
-                currentCategory={getCategoryPath[getCategoryPath.length - 1]}
-                parentCategory={getCategoryPath[0]}
-                title={articleDetails.title}
+                currentCategory={getCategoryPath && getCategoryPath.length > 0 ? getCategoryPath[getCategoryPath.length - 1] : null}
+                parentCategory={getCategoryPath && getCategoryPath.length > 1 ? getCategoryPath[0] : null}
+                title={articleDetails?.title || ''}
             />
             <Grid templateColumns={gridTemplate} gap={6}>
                 <Box>
@@ -269,7 +269,7 @@ const DetailsArticle = () => {
                             </Text>
                         </Box>
                         <Box>
-                            Updated at {new Date(articleDetails.updatedAt).toLocaleString()}
+                            Published at {new Date(articleDetails.createdAt).toLocaleString()}
                         </Box>
                     </Box>
                 </Box>
