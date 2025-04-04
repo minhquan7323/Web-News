@@ -155,7 +155,7 @@ const ArticleGrid = ({ articles, title }) => {
                             <Link onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }}>
                                 <Image src={article.imageUrl} alt={article.title} objectFit="cover" h="200px" w="100%" borderRadius="5px" transition="opacity 0.2s ease-in-out" _hover={{ opacity: 0.7 }} />
                                 <Stack spacing={3}>
-                                    <Text fontSize='xl' _hover={{ textDecoration: "underline" }}>{article.title}</Text>
+                                    <Text fontSize='xl' minH='90px' _hover={{ textDecoration: "underline" }}>{article.title}</Text>
                                     <Stack spacing={1}>
                                         <Text fontSize="sm" color="gray.400">
                                             {article.source?.map((source) => source).join(', ')} - {new Date(article.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
