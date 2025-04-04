@@ -139,7 +139,7 @@ const Header = () => {
                                 <Box cursor='pointer' onClick={() => handleTypeArticle(category._id)} key={category._id}>
                                     <Text
                                         transition="color 0.3s ease"
-                                        _hover={{ textDecoration: "none" }}
+                                        _hover={{ textDecoration: "underline" }}
                                         fontWeight="bold"
                                         display={{ base: 'none', sm: 'flex' }}
                                         px={4}
@@ -148,17 +148,19 @@ const Header = () => {
                                     </Text>
                                 </Box>
                             ))}
-                            <Box cursor='pointer' onClick={() => navigate('/watch-later')}>
-                                <Text
-                                    transition="color 0.3s ease"
-                                    _hover={{ textDecoration: "none" }}
-                                    fontWeight="bold"
-                                    display={{ base: 'none', sm: 'flex' }}
-                                    px={4}
-                                >
-                                    Watch Later
-                                </Text>
-                            </Box>
+                            {user?.userId && (
+                                <Box cursor='pointer' onClick={() => navigate('/watch-later')}>
+                                    <Text
+                                        transition="color 0.3s ease"
+                                        _hover={{ textDecoration: "underline" }}
+                                        fontWeight="bold"
+                                        display={{ base: 'none', sm: 'flex' }}
+                                        px={4}
+                                    >
+                                        Watch Later
+                                    </Text>
+                                </Box>
+                            )}
                         </HStack>
                     )}
                 </Box>
@@ -232,27 +234,49 @@ const Header = () => {
 
                         <Divider borderColor="teal" />
 
-                        <HStack>
+                        <HStack spacing={12} wrap="wrap">
                             {categories?.filter(category => !category.parentId).map((category) => (
-                                <Box cursor='pointer' onClick={() => handleTypeArticle(category._id)} key={category._id}>
-                                    <Text
-                                        transition="color 0.3s ease"
-                                        _hover={{ textDecoration: "none" }}
-                                        fontWeight="bold"
-                                        display={{ base: 'none', sm: 'flex' }}
-                                        px={4}
-                                    >
-                                        {category.name}
-                                    </Text>
+                                <Box key={category._id} width={{ base: "100%", md: "45%", lg: "30%" }}>
+                                    <Box cursor='pointer' onClick={() => handleTypeArticle(category._id)}>
+                                        <Text
+                                            transition="color 0.3s ease"
+                                            _hover={{ textDecoration: "underline" }}
+                                            fontWeight="bold"
+                                            px={4}
+                                            color="teal"
+                                        >
+                                            {category.name}
+                                        </Text>
+                                    </Box>
+
+                                    <Box pl={8} mt={2}>
+                                        {categories?.filter(subCategory => subCategory.parentId === category._id).map((subCategory) => (
+                                            <Box
+                                                key={subCategory._id}
+                                                cursor='pointer'
+                                                onClick={() => handleTypeArticle(subCategory._id)}
+                                                mb={2}
+                                            >
+                                                <Text
+                                                    transition="color 0.3s ease"
+                                                    _hover={{ textDecoration: "underline" }}
+                                                    fontWeight="medium"
+                                                    fontSize="sm"
+                                                >
+                                                    {subCategory.name}
+                                                </Text>
+                                            </Box>
+                                        ))}
+                                    </Box>
                                 </Box>
                             ))}
-                            <Box cursor='pointer' onClick={() => navigate('/watch-later')}>
+                            <Box cursor='pointer' onClick={() => navigate('/watch-later')} width={{ base: "100%", md: "45%", lg: "30%" }}>
                                 <Text
                                     transition="color 0.3s ease"
-                                    _hover={{ textDecoration: "none" }}
+                                    _hover={{ textDecoration: "underline" }}
                                     fontWeight="bold"
-                                    display={{ base: 'none', sm: 'flex' }}
                                     px={4}
+                                    color="teal"
                                 >
                                     Watch Later
                                 </Text>

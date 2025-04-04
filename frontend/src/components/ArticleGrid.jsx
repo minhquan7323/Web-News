@@ -114,44 +114,46 @@ const ArticleGrid = ({ articles, title }) => {
                                 }
                             }}
                         >
-                            <Tooltip
-                                label={isInWatchLater(article._id) ? "Remove from Watch Later" : "Add to Watch Later"}
-                                placement="top"
-                                hasArrow
-                                bg="teal.500"
-                                color="white"
-                                borderRadius="md"
-                                px={3}
-                                py={1}
-                            >
-                                <Box
-                                    className="watch-later-icon"
-                                    position="absolute"
-                                    top={2}
-                                    right={2}
-                                    zIndex={2}
-                                    opacity={0}
-                                    transform="translateY(-10px)"
-                                    transition="all 0.3s ease"
-                                    cursor="pointer"
-                                    bg={"rgba(0, 0, 0, 0.5)"}
-                                    p={2}
-                                    borderRadius="full"
-                                    onClick={(e) => {
-                                        e.preventDefault()
-                                        handleWatchLater(article._id)
-                                    }}
-                                    _hover={{
-                                        bg: "rgba(0, 0, 0, 0.7)",
-                                        transform: "translateY(0) scale(1.1)"
-                                    }}
+                            {user?.userId && (
+                                <Tooltip
+                                    label={isInWatchLater(article._id) ? "Remove from Watch Later" : "Add to Watch Later"}
+                                    placement="top"
+                                    hasArrow
+                                    bg="teal.500"
+                                    color="white"
+                                    borderRadius="md"
+                                    px={3}
+                                    py={1}
                                 >
-                                    <i
-                                        className={isInWatchLater(article._id) ? "fa-solid fa-circle-check" : "fa-solid fa-clock"}
-                                        style={{ color: 'white', fontSize: '1.2rem' }}
-                                    ></i>
-                                </Box>
-                            </Tooltip>
+                                    <Box
+                                        className="watch-later-icon"
+                                        position="absolute"
+                                        top={2}
+                                        right={2}
+                                        zIndex={2}
+                                        opacity={0}
+                                        transform="translateY(-10px)"
+                                        transition="all 0.3s ease"
+                                        cursor="pointer"
+                                        bg={"rgba(0, 0, 0, 0.5)"}
+                                        p={2}
+                                        borderRadius="full"
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            handleWatchLater(article._id)
+                                        }}
+                                        _hover={{
+                                            bg: "rgba(0, 0, 0, 0.7)",
+                                            transform: "translateY(0) scale(1.1)"
+                                        }}
+                                    >
+                                        <i
+                                            className={isInWatchLater(article._id) ? "fa-solid fa-circle-check" : "fa-solid fa-clock"}
+                                            style={{ color: 'white', fontSize: '1.2rem' }}
+                                        ></i>
+                                    </Box>
+                                </Tooltip>
+                            )}
                             <Link onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }}>
                                 <Image src={article.imageUrl} alt={article.title} objectFit="cover" h="200px" w="100%" borderRadius="5px" transition="opacity 0.2s ease-in-out" _hover={{ opacity: 0.7 }} />
                                 <Stack spacing={3}>
