@@ -101,6 +101,7 @@ const Header = () => {
     }
     const handleTypeArticle = (typeId) => {
         navigate(`/type/${typeId}`)
+        onClose()
     }
 
     const { data: categories } = useQuery({

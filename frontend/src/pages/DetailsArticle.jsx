@@ -4,12 +4,14 @@ import { ChevronRightIcon } from '@chakra-ui/icons'
 import { useParams, Link } from "react-router-dom"
 import * as ArticleService from '../services/ArticleService'
 import * as CommentService from '../services/CommentService'
+import * as CategoryService from '../services/CategoryService'
 import { useQuery } from '@tanstack/react-query'
 import { useMutationHooks } from '../hooks/useMutationHook'
 import NewsList from "../components/NewsList"
 import { useSelector } from "react-redux"
 import Comment from '../components/Comment'
 import { articleContentStyles } from '../styles/articleContentStyles'
+import BreadcrumbNav from '../components/BreadcrumbNav'
 
 const DetailsArticle = () => {
     const user = useSelector((state) => state?.user)
@@ -44,6 +46,11 @@ const DetailsArticle = () => {
         return res.data
     }
 
+    const fetchAllCategories = async () => {
+        const res = await CategoryService.getAllCategory()
+        return res.data
+    }
+
     const { data: allArticles = [], isLoading: isLoadingArticles } = useQuery({
         queryKey: ['allArticles'],
         queryFn: fetchAllArticles,
@@ -57,6 +64,12 @@ const DetailsArticle = () => {
         queryKey: ['allComments'],
         queryFn: fetchAllComments,
     })
+    const { data: categories } = useQuery({
+        queryKey: ['categories'],
+        queryFn: fetchAllCategories,
+        retry: 2,
+        retryDelay: 1000
+    })
 
     const mostReadArticles = useMemo(() =>
         [...allArticles].sort((a, b) => b.read - a.read).slice(0, 10),
@@ -69,26 +82,29 @@ const DetailsArticle = () => {
             const shuffledCategories = categories.sort(() => 0.5 - Math.random()).slice(0, 2)
             setRandomCategories(shuffledCategories)
         }
-    }, [allArticles])
+    }, [allArticles, articleId])
 
     const categorizedArticles = useMemo(() => {
         return randomCategories.map(category => ({
             category,
-            articles: allArticles.filter(article =>
-                article.type.some(cat => cat.name === category)
-            ).slice(0, 3)
+            articles: allArticles
+                .filter(article =>
+                    article.type.some(cat => cat.name === category) &&
+                    article._id !== articleId
+                )
+                .slice(0, 3)
         }))
-    }, [allArticles, randomCategories])
+    }, [allArticles, randomCategories, articleId])
 
     useEffect(() => {
-        if (articleDetails?._id && typeof articleDetails.read === 'number' && !isUpdatedRead) {
+        if (articleDetails?._id) {
             mutationUpdate.mutate({
                 id: articleDetails._id,
                 read: articleDetails.read + 1,
             })
             setIsUpdatedRead(true)
         }
-    }, [articleDetails?._id, isUpdatedRead])
+    }, [articleDetails?._id])
 
     useEffect(() => {
         const filteredArticles = allArticles
@@ -114,6 +130,22 @@ const DetailsArticle = () => {
         md: "1fr",
         lg: "9fr 3fr",
     })
+
+    const getCategoryPath = useMemo(() => {
+        if (!categories || !articleDetails?.type?.[0]) return []
+
+        const currentCategory = categories.find(cat => cat._id === articleDetails.type[0]._id)
+        if (!currentCategory) return []
+
+        const path = [currentCategory]
+        if (currentCategory.parentId) {
+            const parentCategory = categories.find(cat => cat._id === currentCategory.parentId)
+            if (parentCategory) {
+                path.unshift(parentCategory)
+            }
+        }
+        return path
+    }, [categories, articleDetails])
 
     const renderSkeleton = () => {
         return (
@@ -218,19 +250,13 @@ const DetailsArticle = () => {
         return renderSkeleton()
     }
 
-    console.log(articleDetails.content);
-
     return (
         <Box p={[4, 6, 8, 12]} pt={[12, 12, 12, 12]}>
-            <Breadcrumb spacing='8px' py={4} separator={<ChevronRightIcon color='gray.500' />}>
-                <BreadcrumbItem>
-                    <BreadcrumbLink as={Link} to='/'><Text as='b'>Home</Text></BreadcrumbLink>
-                </BreadcrumbItem>
-
-                <BreadcrumbItem isCurrentPage>
-                    <BreadcrumbLink as={Link} to='#'>Details</BreadcrumbLink>
-                </BreadcrumbItem>
-            </Breadcrumb>
+            <BreadcrumbNav
+                currentCategory={getCategoryPath[getCategoryPath.length - 1]}
+                parentCategory={getCategoryPath[0]}
+                title={articleDetails.title}
+            />
             <Grid templateColumns={gridTemplate} gap={6}>
                 <Box>
                     <Text as='b' fontSize='5xl'>

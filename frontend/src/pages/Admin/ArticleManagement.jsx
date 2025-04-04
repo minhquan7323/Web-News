@@ -148,7 +148,13 @@ const ArticleManagement = () => {
         {
             title: 'Image',
             dataIndex: 'imageUrl',
-            render: (text) => <Image src={text} alt={text} />,
+            render: (text) => <Image
+                src={text}
+                alt={text}
+                width="100%"
+                height="100px"
+                objectFit="cover"
+            />,
             width: 200,
         },
         {

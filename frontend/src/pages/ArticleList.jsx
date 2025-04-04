@@ -3,9 +3,9 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import * as ArticleService from '../services/ArticleService'
 import * as CategoryService from '../services/CategoryService'
 import ArticleGrid from "../components/ArticleGrid"
-import { Box, Text, HStack, VStack, useBreakpointValue, Breadcrumb, BreadcrumbItem } from "@chakra-ui/react"
+import { Box, Text, HStack, VStack, useBreakpointValue } from "@chakra-ui/react"
 import { useQuery } from '@tanstack/react-query'
-import { ChevronRightIcon } from '@chakra-ui/icons'
+import BreadcrumbNav from '../components/BreadcrumbNav'
 
 const ArticleList = () => {
     const { id: typeId } = useParams()
@@ -80,25 +80,12 @@ const ArticleList = () => {
         <Box p={[4, 6, 8, 12]} pt={[12, 12, 12, 12]}>
             {selectedCategory && (
                 <>
-                    <Breadcrumb spacing='8px' py={4} separator={<ChevronRightIcon color='gray.500' />}>
-                        <BreadcrumbItem>
-                            <Link to='/'><Text as='b'>Home</Text></Link>
-                        </BreadcrumbItem>
-
-                        {parentCategory && (
-                            <BreadcrumbItem>
-                                <Link to={`/type/${parentCategory._id}`}>
-                                    <Text>{parentCategory.name}</Text>
-                                </Link>
-                            </BreadcrumbItem>
-                        )}
-
-                        <BreadcrumbItem isCurrentPage>
-                            <Text>{selectedCategory.name}</Text>
-                        </BreadcrumbItem>
-                    </Breadcrumb>
+                    <BreadcrumbNav
+                        currentCategory={selectedCategory}
+                        parentCategory={parentCategory}
+                    />
                     <VStack align="stretch">
-                        {parentCategory && (
+                        {articleList.length > 0 && (
                             <ArticleGrid articles={articleList} />
                         )}
                         <HStack spacing={4} wrap="wrap">
@@ -123,8 +110,7 @@ const ArticleList = () => {
                         </HStack>
                     </VStack>
                 </>
-            )
-            }
+            )}
         </Box>
     )
 }
