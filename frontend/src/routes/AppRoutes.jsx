@@ -35,7 +35,9 @@ const AppRoutes = () => {
                 <Route path='article/details/:id' element={<DetailsArticle />} />
                 <Route path='search' element={<ArticleSearch />} />
                 <Route path='type/:id' element={<ArticleList />} />
-                <Route path='watch-later' element={<WatchLater />} />
+                {user?.id && (
+                    <Route path='watch-later' element={<WatchLater />} />
+                )}
                 {isAdmin && (
                     <>
                         <Route path='system/admin' element={<Admin />} />
