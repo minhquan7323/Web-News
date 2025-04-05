@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Box, Text, Spinner, Grid, Link, Divider, Image, VStack, Input, Button, Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react'
+import { Box, Text, Spinner, Grid, Link, Divider, Image, VStack, Input, Button } from '@chakra-ui/react'
 import * as ArticleService from '../services/ArticleService'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { ChevronRightIcon } from '@chakra-ui/icons'
+import BreadcrumbNav from '../components/BreadcrumbNav'
 
 const ArticleSearch = () => {
     const location = useLocation()
@@ -66,15 +66,7 @@ const ArticleSearch = () => {
     const validSearch = newsSearch != ''
     return (
         <Box p={[4, 6, 8, 12]} pt={[12, 12, 12, 12]}>
-            <Breadcrumb spacing='8px' py={4} separator={<ChevronRightIcon color='gray.500' />}>
-                <BreadcrumbItem>
-                    <BreadcrumbLink href='/'><Text as='b'>Home</Text></BreadcrumbLink>
-                </BreadcrumbItem>
-
-                <BreadcrumbItem isCurrentPage>
-                    <BreadcrumbLink>Search</BreadcrumbLink>
-                </BreadcrumbItem>
-            </Breadcrumb>
+            <BreadcrumbNav title='Search' />
             <Box>
                 <Box display="flex" alignItems="center" p={8}>
                     <Input
@@ -96,6 +88,11 @@ const ArticleSearch = () => {
             </Box>
             {isLoading ? (
                 <Spinner size='xl' />
+            ) : data?.pages[0]?.length === 0 ? (
+                <Box textAlign="center" py={10}>
+                    <Text fontSize="xl" color="gray.500">No articles found</Text>
+                    <Text mt={2} color="gray.400">Try searching with different keywords</Text>
+                </Box>
             ) : data?.pages.map((page, pageIndex) => (
                 page.map((article, index) => {
                     const isLastArticle = pageIndex === data.pages.length - 1 && index === page.length - 1

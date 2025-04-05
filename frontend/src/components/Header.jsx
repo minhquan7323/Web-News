@@ -270,17 +270,19 @@ const Header = () => {
                                     </Box>
                                 </Box>
                             ))}
-                            <Box cursor='pointer' onClick={() => navigate('/watch-later')} width={{ base: "100%", md: "45%", lg: "30%" }}>
-                                <Text
-                                    transition="color 0.3s ease"
-                                    _hover={{ textDecoration: "underline" }}
-                                    fontWeight="bold"
-                                    px={4}
-                                    color="teal"
-                                >
-                                    Watch Later
-                                </Text>
-                            </Box>
+                            {user?.userId && (
+                                <Box cursor='pointer' onClick={() => navigate('/watch-later')} width={{ base: "100%", md: "45%", lg: "30%" }}>
+                                    <Text
+                                        transition="color 0.3s ease"
+                                        _hover={{ textDecoration: "underline" }}
+                                        fontWeight="bold"
+                                        px={4}
+                                        color="teal"
+                                    >
+                                        Watch Later
+                                    </Text>
+                                </Box>
+                            )}
                         </HStack>
                     </DrawerBody>
                 </DrawerContent>

@@ -6,11 +6,11 @@ import * as UserService from '../services/UserService'
 import { useSelector } from 'react-redux'
 import { useMessage } from '../components/Message/Message'
 
-const ArticleGrid = ({ articles, title }) => {
+const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) => {
     const navigate = useNavigate()
     const user = useSelector((state) => state?.user)
     const { success, error, warning } = useMessage()
-    const [watchLaterList, setWatchLaterList] = useState([])
+    const [watchLaterList, setWatchLaterList] = useState([0])
     const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
@@ -49,6 +49,11 @@ const ArticleGrid = ({ articles, title }) => {
                 res = await UserService.removeWatchLater(user.userId, articleId)
                 success('Removed from Watch Later')
                 setWatchLaterList(prev => prev.filter(item => item._id !== articleId))
+
+                if (onArticlesChange) {
+                    const updatedArticles = articles.filter(article => article._id !== articleId)
+                    onArticlesChange(updatedArticles)
+                }
             } else {
                 res = await UserService.addWatchLater(user.userId, articleId)
                 success('Added to Watch Later')
@@ -97,7 +102,12 @@ const ArticleGrid = ({ articles, title }) => {
                 </Text>
             )}
             <Grid templateColumns={gridTemplate} gap={4} mt={6} px={4}>
-                {isLoading ? (
+                {isWatchLaterList && watchLaterList.length === 0 ? (
+                    <Box textAlign="center" py={10} gridColumn="1 / -1">
+                        <Text fontSize="xl" color="gray.500">No articles in Watch Later</Text>
+                        <Text mt={2} color="gray.400">Add articles to your Watch Later list to view them here</Text>
+                    </Box>
+                ) : isLoading ? (
                     renderSkeleton()
                 ) : (
                     sortByDate(articles)?.map((article) => (

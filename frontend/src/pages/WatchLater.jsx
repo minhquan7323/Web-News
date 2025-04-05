@@ -21,7 +21,12 @@ const WatchLater = () => {
 
     return (
         <Box pt={16}>
-            <ArticleGrid articles={watchLaterList} title={'Watch Later List'} />
+            <ArticleGrid
+                articles={watchLaterList}
+                title={'Watch Later List'}
+                onArticlesChange={setWatchLaterList}
+                isWatchLaterList={true}
+            />
         </Box>
     )
 }

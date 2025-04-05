@@ -125,7 +125,11 @@ const allArticle = (limit, page, sort, filter, search) => {
         try {
             const query = {}
             if (search) {
-                query['title'] = { '$regex': search, '$options': 'i' }
+                query['$or'] = [
+                    { 'title': { '$regex': search, '$options': 'i' } },
+                    { 'content': { '$regex': search, '$options': 'i' } },
+                    { 'description': { '$regex': search, '$options': 'i' } }
+                ]
             }
 
             if (filter && Array.isArray(filter)) {
