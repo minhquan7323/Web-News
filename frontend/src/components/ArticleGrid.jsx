@@ -5,6 +5,7 @@ import { sortByDate } from "../utils"
 import * as UserService from '../services/UserService'
 import { useSelector } from 'react-redux'
 import { useMessage } from '../components/Message/Message'
+import { ArticleGridSkeleton } from "./SkeletonComponent"
 
 const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) => {
     const navigate = useNavigate()
@@ -81,19 +82,6 @@ const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) =>
 
     const bgColor = useColorModeValue("gray.100", "gray.700")
 
-    const renderSkeleton = () => {
-        return Array(8).fill(0).map((_, index) => (
-            <Box key={index} p={2} backgroundColor={bgColor} borderRadius='5px'>
-                <Skeleton height="200px" borderRadius="5px" mb={3} />
-                <Stack spacing={3}>
-                    <Skeleton height="24px" />
-                    <Skeleton height="16px" width="70%" />
-                    <Skeleton height="40px" noOfLines={2} />
-                </Stack>
-            </Box>
-        ))
-    }
-
     return (
         <Box>
             {title && (
@@ -108,7 +96,7 @@ const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) =>
                         <Text mt={2} color="gray.400">Add articles to your Watch Later list to view them here</Text>
                     </Box>
                 ) : isLoading ? (
-                    renderSkeleton()
+                    <ArticleGridSkeleton bgColor={bgColor} />
                 ) : (
                     sortByDate(articles)?.map((article) => (
                         <Box
