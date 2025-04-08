@@ -1,5 +1,7 @@
 const Article = require('../models/ArticleModel')
 const Category = require('../models/CategoryModel')
+const Comment = require('../models/CommentModel')
+const mongoose = require('mongoose')
 
 const createArticle = (newArticle) => {
     return new Promise(async (resolve, reject) => {
@@ -94,9 +96,11 @@ const deleteArticle = (id) => {
 
             await Article.findByIdAndDelete(id)
 
+            await Comment.deleteMany({ articleId: id })
+
             resolve({
                 status: 'OK',
-                message: 'Delete Article success'
+                message: 'Delete Article and related comments success'
             })
         } catch (e) {
             reject(e)
@@ -109,9 +113,11 @@ const deleteManyArticles = (ids) => {
         try {
             await Article.deleteMany({ _id: ids })
 
+            await Comment.deleteMany({ articleId: { $in: ids } })
+
             resolve({
                 status: 'OK',
-                message: 'Delete articles success'
+                message: 'Delete articles and related comments success'
             })
         } catch (e) {
             reject(e)

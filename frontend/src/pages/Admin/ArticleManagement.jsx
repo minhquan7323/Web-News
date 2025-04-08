@@ -20,6 +20,7 @@ const ArticleManagement = () => {
     const [searchedColumn, setSearchedColumn] = useState("")
     const searchInputRef = useRef(null)
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const [isDeleting, setIsDeleting] = useState(false)
 
     const handleClickNav = (type, idArticle = '') => {
         if (type === 'add-article') {
@@ -49,8 +50,8 @@ const ArticleManagement = () => {
             return res
         }
     )
-    const { data: dataDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted } = mutationDelete
-    const isLoadingDeleted = mutationDelete.isPending
+    const { data: dataDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted } = mutationDelete || {}
+    const isLoadingDeleted = mutationDelete?.isPending || false
 
     const mutationDeleteMany = useMutationHooks(
         async (data) => {
@@ -59,38 +60,48 @@ const ArticleManagement = () => {
             return res
         }
     )
-    const { data: dataDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeleteMany
-    const isLoadingDeletedMany = mutationDeleteMany.isPending
+    const { data: dataDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeleteMany || {}
+    const isLoadingDeletedMany = mutationDeleteMany?.isPending || false
 
     useEffect(() => {
         if (isSuccessDeleted && dataDeleted?.status === 'OK') {
             success()
             onClose()
+            setIsDeleting(false)
         } else if (isErrorDeleted) {
             error()
+            setIsDeleting(false)
         }
     }, [dataDeleted, isSuccessDeleted, isErrorDeleted])
     useEffect(() => {
         if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
             success()
+            setIsDeleting(false)
         } else if (isErrorDeletedMany) {
             error()
+            setIsDeleting(false)
         }
     }, [dataDeletedMany, isSuccessDeletedMany, isErrorDeletedMany])
 
     const deleteArticle = () => {
-        mutationDelete.mutate({ id: selectedArticles }, {
-            onSettled: () => {
-                queryArticle.refetch()
-            }
-        })
+        setIsDeleting(true)
+        if (mutationDelete) {
+            mutationDelete.mutate({ id: selectedArticles }, {
+                onSettled: () => {
+                    queryArticle.refetch()
+                }
+            })
+        }
     }
     const deleteManyArticles = (ids) => {
-        mutationDeleteMany.mutate({ ids: ids }, {
-            onSettled: () => {
-                queryArticle.refetch()
-            }
-        })
+        setIsDeleting(true)
+        if (mutationDeleteMany) {
+            mutationDeleteMany.mutate({ ids: ids }, {
+                onSettled: () => {
+                    queryArticle.refetch()
+                }
+            })
+        }
     }
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -203,7 +214,10 @@ const ArticleManagement = () => {
                     >
                         <i className="fa-solid fa-pen-to-square"></i>
                     </Button>
-                    <Button colorScheme="orange" size="sm" p={2} onClick={onOpen}>
+                    <Button colorScheme="orange" size="sm" p={2} onClick={() => {
+                        setSelectedArticles(record._id)
+                        onOpen()
+                    }}>
                         <i className="fa-solid fa-trash"></i>
                     </Button>
 
@@ -242,7 +256,7 @@ const ArticleManagement = () => {
                 }}
             />
 
-            <Modal Modal onClose={onClose} isOpen={isOpen} isCentered >
+            <Modal onClose={onClose} isOpen={isOpen} isCentered >
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Delete article</ModalHeader>
@@ -253,7 +267,7 @@ const ArticleManagement = () => {
                         </Box>
                     </ModalBody>
                     <ModalFooter gap={4}>
-                        <Loading isLoading={isLoadingDeleted}>
+                        <Loading isLoading={isDeleting}>
                             <Button colorScheme="red" onClick={deleteArticle}>Delete</Button>
                         </Loading>
                         <Button onClick={onClose}>Close</Button>
