@@ -22,7 +22,7 @@ const BreadcrumbNav = ({ categories, currentCategory, parentCategory, title }) =
             {safeParentCategory && !isSameCategory && (
                 <BreadcrumbItem>
                     <Link to={`/type/${safeParentCategory._id}`}>
-                        <Text>{safeParentCategory.name}</Text>
+                        <Text >{safeParentCategory.name}</Text>
                     </Link>
                 </BreadcrumbItem>
             )}

@@ -3,7 +3,7 @@ const Category = require('../models/CategoryModel')
 
 const createArticle = (newArticle) => {
     return new Promise(async (resolve, reject) => {
-        const { title, content, description, imageUrl, author, source, type, featured } = newArticle
+        const { title, content, description, imageUrl, author, source, type, featured, hide } = newArticle
         try {
             const checkArticle = await Article.findOne({ title: title })
             if (checkArticle !== null) {
@@ -13,7 +13,7 @@ const createArticle = (newArticle) => {
                 })
             }
             const newArticle = await Article.create({
-                title, content, description, imageUrl, author, source, type, featured
+                title, content, description, imageUrl, author, source, type, featured, hide
             })
             if (newArticle) {
                 resolve({

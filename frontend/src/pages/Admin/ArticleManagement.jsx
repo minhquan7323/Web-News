@@ -148,12 +148,13 @@ const ArticleManagement = () => {
         {
             title: 'Image',
             dataIndex: 'imageUrl',
-            render: (text) => <Image
+            render: (text, record) => <Image
                 src={text}
                 alt={text}
                 width="100%"
                 height="100px"
                 objectFit="cover"
+                opacity={record.hide ? 0.5 : 1} transition="opacity 0.3s ease"
             />,
             width: 200,
         },
@@ -162,19 +163,32 @@ const ArticleManagement = () => {
             dataIndex: 'title',
             searchable: true,
             ...getColumnSearchProps('title'),
-            ellipsis: true
+            ellipsis: true,
+            render: (text, record) => <Text
+                opacity={record.hide ? 0.5 : 1}
+                transition="opacity 0.3s ease">
+                {text}
+            </Text>
         },
         {
             title: 'Featured',
             dataIndex: 'featured',
             width: 150,
-            render: (featured) => featured ? (<Text>true</Text>) : (<Text>false</Text>)
+            render: (featured, record) => <Text
+                opacity={record.hide ? 0.5 : 1}
+                transition="opacity 0.3s ease">
+                {featured ? "true" : "false"}
+            </Text>
         },
         {
             title: 'Type',
             dataIndex: 'type',
             width: 150,
-            render: (types) => types.map(type => type.name).join(', ')
+            render: (types, record) => <Text
+                opacity={record.hide ? 0.5 : 1}
+                transition="opacity 0.3s ease">
+                {types.map(type => type.name).join(', ')}
+            </Text>
         },
         {
             title: 'Action',

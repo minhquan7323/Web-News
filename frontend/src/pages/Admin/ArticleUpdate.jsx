@@ -20,7 +20,8 @@ const ArticleUpdate = () => {
         featured: '',
         source: '',
         content: '',
-        imageUrl: ''
+        imageUrl: '',
+        hide: false
     })
     const { success, error } = useMessage()
     const [isLoadingImg, setIsLoadingImg] = useState(false)
@@ -66,6 +67,12 @@ const ArticleUpdate = () => {
             featured: !prev.featured
         }))
     }
+    const handleCheckboxHideChange = () => {
+        setStateArticle((prev) => ({
+            ...prev,
+            hide: !prev.hide
+        }))
+    }
     const fetchGetDetailsArticle = async () => {
         const res = await ArticleService.getDetailsArticle(articleId)
         if (res.data) {
@@ -77,7 +84,8 @@ const ArticleUpdate = () => {
                 type: res.data.type.map(t => t._id),
                 content: res.data.content,
                 featured: res.data.featured,
-                imageUrl: res.data.imageUrl
+                imageUrl: res.data.imageUrl,
+                hide: res.data.hide
             })
         }
     }
@@ -194,6 +202,12 @@ const ArticleUpdate = () => {
                         name="featured"
                         isChecked={stateArticle.featured}
                         onChange={handleCheckboxFeaturedChange}
+                    />
+                    <Text p={2} fontWeight='bold'>Hide</Text>
+                    <Checkbox
+                        name="hide"
+                        isChecked={stateArticle.hide}
+                        onChange={handleCheckboxHideChange}
                     />
                 </HStack>
                 <HStack spacing={4} p={4}>

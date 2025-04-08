@@ -2,7 +2,7 @@ const ArticleService = require('../services/ArticleService')
 
 const createArticle = async (req, res) => {
     try {
-        const { title, content, description, imageUrl, author, source, type, featured } = req.body
+        const { title, content, description, imageUrl, author, source, type, featured, hide } = req.body
 
         if (!title || !content || !imageUrl || !author || !type || !source) {
             return res.status(200).json({

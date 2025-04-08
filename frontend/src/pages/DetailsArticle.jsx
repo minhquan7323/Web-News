@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
-import { Text, Image, Grid, GridItem, Box, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Skeleton } from "@chakra-ui/react"
+import { Text, Image, Grid, GridItem, Box, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Skeleton, Button } from "@chakra-ui/react"
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import { useParams, Link } from "react-router-dom"
 import * as ArticleService from '../services/ArticleService'
@@ -255,52 +255,67 @@ const DetailsArticle = () => {
             <BreadcrumbNav
                 currentCategory={getCategoryPath[getCategoryPath.length - 1]}
                 parentCategory={getCategoryPath[0]}
-                title={articleDetails.title}
+                title={'details'}
             />
-            <Grid templateColumns={gridTemplate} gap={6}>
-                <Box>
-                    <Text as='b' fontSize='5xl'>
-                        {articleDetails.title}
-                    </Text>
-                    <Box p={8} color="gray">
+            {articleDetails && !articleDetails.hide && (
+                <>
+                    <Grid templateColumns={gridTemplate} gap={6}>
                         <Box>
-                            <Text>
-                                By <u>{articleDetails.author}</u>
+                            <Text as='b' fontSize='5xl'>
+                                {articleDetails.title}
                             </Text>
+                            <Box p={8} color="gray">
+                                <Box>
+                                    <Text>
+                                        By <u>{articleDetails.author}</u>
+                                    </Text>
+                                </Box>
+                                <Box>
+                                    Updated at {new Date(articleDetails.updatedAt).toLocaleString()}
+                                </Box>
+                            </Box>
                         </Box>
-                        <Box>
-                            Updated at {new Date(articleDetails.updatedAt).toLocaleString()}
-                        </Box>
-                    </Box>
-                </Box>
-            </Grid>
+                    </Grid>
+                </>
+            )}
             <Grid templateColumns={gridTemplate} gap={6}>
                 <GridItem>
                     <Box>
-                        <Box>
+                        {!articleDetails || articleDetails.hide ? (
+                            <Box textAlign="center" py={16}>
+                                <Text fontSize="3xl" fontWeight="bold" mb={4}>Article not found</Text>
+                                <Text fontSize="lg" color="gray.500" mb={8}>
+                                    The article you are looking for does not exist or has been hidden.
+                                </Text>
+                            </Box>
+                        ) : (
                             <Box>
-                                <Image src={articleDetails.imageUrl} alt={articleDetails.title} objectFit="cover" h="auto" w="100%" />
-                                <Box p={4}>
-                                    <Text opacity='0.5'>👁️ {articleDetails.read || 0} views</Text>
-                                    <Text fontSize='24px' align='center'>{articleDetails.description}</Text>
+                                <Box>
+                                    <Box>
+                                        <Image src={articleDetails.imageUrl} alt={articleDetails.title} objectFit="cover" h="auto" w="100%" />
+                                        <Box p={4}>
+                                            <Text opacity='0.5'>👁️ {articleDetails.read || 0} views</Text>
+                                            <Text fontSize='24px' align='center'>{articleDetails.description}</Text>
+                                        </Box>
+                                    </Box>
+                                    <Box py={2}>
+                                        <Divider borderColor="gray.300" />
+                                    </Box>
+                                    <Box p={6} sx={articleContentStyles}>
+                                        <Box dangerouslySetInnerHTML={{ __html: articleDetails.content }} />
+                                    </Box>
                                 </Box>
+                                <Box py={2}>
+                                    <Divider borderColor="gray.300" />
+                                </Box>
+                                <Comment
+                                    articleId={articleId}
+                                    user={user}
+                                    allComments={allComments}
+                                    refetchComments={refetchComments}
+                                />
                             </Box>
-                            <Box py={2}>
-                                <Divider borderColor="gray.300" />
-                            </Box>
-                            <Box p={6} sx={articleContentStyles}>
-                                <Box dangerouslySetInnerHTML={{ __html: articleDetails.content }} />
-                            </Box>
-                        </Box>
-                        <Box py={2}>
-                            <Divider borderColor="gray.300" />
-                        </Box>
-                        <Comment
-                            articleId={articleId}
-                            user={user}
-                            allComments={allComments}
-                            refetchComments={refetchComments}
-                        />
+                        )}
                         <Box px={[4, 6, 8, 12]}>
                             <Box pt={12}>
                                 <Text as="b" fontSize='2xl' textTransform="uppercase">

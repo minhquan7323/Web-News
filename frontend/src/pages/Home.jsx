@@ -18,12 +18,14 @@ const Home = () => {
 
     const fetchAllArticle = async () => {
         const res = await ArticleService.getAllArticle()
-        setArticles(res.data || [])
+        const filteredArticles = res.data?.filter(article => !article.hide) || []
+        setArticles(filteredArticles)
     }
 
     const fetchFeaturedArticle = async () => {
         const res = await ArticleService.getFeaturedArticle()
-        setFeaturedArticle(res.data || [])
+        const filteredFeaturedArticles = res.data?.filter(article => !article.hide) || []
+        setFeaturedArticle(filteredFeaturedArticles)
     }
 
     useEffect(() => {

@@ -20,7 +20,8 @@ const ArticleAdd = () => {
         content: '',
         featured: false,
         imageUrl: '',
-        type: []
+        type: [],
+        hide: false
     })
     const { success, error } = useMessage()
     const [isLoadingImg, setIsLoadingImg] = useState(false)
@@ -48,7 +49,8 @@ const ArticleAdd = () => {
                 content: '',
                 featured: false,
                 imageUrl: '',
-                type: []
+                type: [],
+                hide: false
             }))
             setImgDisplay('')
         } else if (isError) {
@@ -100,6 +102,12 @@ const ArticleAdd = () => {
         }))
     }
 
+    const handleCheckboxHideChange = () => {
+        setStateArticle((prev) => ({
+            ...prev,
+            hide: !prev.hide
+        }))
+    }
     const createArticle = () => {
         mutation.mutate({ ...stateArticle })
     }
@@ -191,6 +199,12 @@ const ArticleAdd = () => {
                         name="featured"
                         isChecked={stateArticle.featured}
                         onChange={handleCheckboxFeaturedChange}
+                    />
+                    <Text p={2} fontWeight='bold'>Hide</Text>
+                    <Checkbox
+                        name="hide"
+                        isChecked={stateArticle.hide}
+                        onChange={handleCheckboxHideChange}
                     />
                 </HStack>
                 <HStack spacing={4} p={4}>
