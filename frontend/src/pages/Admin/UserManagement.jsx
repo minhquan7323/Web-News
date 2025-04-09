@@ -10,8 +10,10 @@ import { sortByDate } from '../../utils'
 import { Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure, Image } from '@chakra-ui/react'
 import { useMessage } from '../../components/Message/Message'
 import Loading from '../../components/Loading/Loading'
+import { useSelector } from 'react-redux'
 
 const UserManagement = () => {
+    const user = useSelector((state) => state?.user)
     const [searchText, setSearchText] = useState("")
     const [searchedColumn, setSearchedColumn] = useState("")
     const [rowSelected, setRowSelected] = useState('')
@@ -147,7 +149,11 @@ const UserManagement = () => {
             align: 'center',
             width: 200,
             render: (_, record) => (
-                <Button colorScheme="blue" size="sm" p={2}
+                <Button
+                    colorScheme="blue"
+                    size="sm"
+                    p={2}
+                    isDisabled={record.userId === user?.userId}
                     onClick={() => {
                         setRowSelected(record.userId)
                         openEditModal()
