@@ -30,18 +30,13 @@ const CommentManagement = () => {
     })
     const { isLoading: isLoadingComments, data: comments } = queryComments
 
-    const mutationUpdateComment = useMutationHooks(
+    const mutationApproveComment = useMutationHooks(
         async (data) => {
-            const { commentId, ...rests } = data
-            const res = await CommentService.updateComment(commentId, rests)
+            const { commentId } = data
+            const res = await CommentService.approveComment(commentId)
             return res
         }
     )
-
-    const fetchDeleteComment = async (commentId) => {
-        const res = await CommentService.deleteComment(commentId)
-        return res.data
-    }
 
     const handleDeleteComment = async (commentId) => {
         await CommentService.deleteComment(commentId)
@@ -51,8 +46,8 @@ const CommentManagement = () => {
     }
 
     const handleApproveComment = async (commentId) => {
-        mutationUpdateComment.mutate(
-            { commentId, pending: false },
+        mutationApproveComment.mutate(
+            { commentId },
             {
                 onSettled: () => {
                     queryComments.refetch()

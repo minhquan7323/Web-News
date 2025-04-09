@@ -19,10 +19,10 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
         return res
     })
 
-    const mutationUpdateComment = useMutationHooks(
+    const mutationApproveComment = useMutationHooks(
         async (data) => {
-            const { commentId, ...rests } = data
-            const res = await CommentService.updateComment(commentId, rests)
+            const { commentId } = data
+            const res = await CommentService.approveComment(commentId)
             return res
         }
     )
@@ -64,8 +64,8 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
     }
 
     const handleApproveComment = async (commentId) => {
-        mutationUpdateComment.mutate(
-            { commentId, pending: false },
+        mutationApproveComment.mutate(
+            { commentId },
             {
                 onSettled: () => {
                     refetchComments()

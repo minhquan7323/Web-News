@@ -36,10 +36,10 @@ const deleteComment = async (req, res) => {
     }
 }
 
-const updateComment = async (req, res) => {
+const approveComment = async (req, res) => {
     try {
         const { commentId } = req.params
-        const response = await CommentService.updateComment(commentId, req.body)
+        const response = await CommentService.approveComment(commentId)
         return res.status(200).json(response)
     } catch (e) {
         return res.status(500).json({
@@ -63,6 +63,6 @@ module.exports = {
     createComment,
     getCommentsByPost,
     deleteComment,
-    updateComment,
+    approveComment,
     getAllComments
 }

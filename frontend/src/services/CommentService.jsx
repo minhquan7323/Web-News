@@ -15,8 +15,8 @@ export const deleteComment = async (commentId) => {
     return res.data
 }
 
-export const updateComment = async (commentId, data) => {
-    const res = await axios.put(`${import.meta.env.VITE_API_URL}/comments/${commentId}`, data)
+export const approveComment = async (commentId) => {
+    const res = await axios.put(`${import.meta.env.VITE_API_URL}/comments/${commentId}`)
     return res.data
 }
 

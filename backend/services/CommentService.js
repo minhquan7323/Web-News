@@ -1,10 +1,11 @@
 const Comment = require("../models/CommentModel")
 const mongoose = require("mongoose")
+const Article = require("../models/ArticleModel")
 
 const createComment = (newComment) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const { articleId, userId, content } = newComment
+            const { articleId, userId, content, fullName, imageUrl, pending } = newComment
 
             if (!articleId || !userId || !content) {
                 return resolve({
@@ -16,8 +17,17 @@ const createComment = (newComment) => {
             const comment = await Comment.create({
                 articleId,
                 userId: String(userId),
-                content
+                content,
+                fullName,
+                imageUrl,
+                pending
             })
+
+            if (pending == false) {
+                await Article.findByIdAndUpdate(articleId, {
+                    $inc: { commentCount: 1 }
+                })
+            }
 
             resolve({
                 status: "OK",
@@ -99,7 +109,21 @@ const deleteComment = (commentId) => {
                 })
             }
 
+            const comment = await Comment.findById(commentId)
+            if (!comment) {
+                return resolve({
+                    status: "ERR",
+                    message: "Comment not found",
+                })
+            }
+
             await Comment.findByIdAndDelete(commentId)
+
+            if (!comment.pending) {
+                await Article.findByIdAndUpdate(comment.articleId, {
+                    $inc: { commentCount: -1 }
+                })
+            }
 
             resolve({
                 status: "OK",
@@ -107,44 +131,6 @@ const deleteComment = (commentId) => {
             })
         } catch (e) {
             reject(e)
-        }
-    })
-}
-
-const updateComment = (commentId, data) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            if (!commentId) {
-                return resolve({
-                    status: "ERR",
-                    message: "Comment ID is required",
-                })
-            }
-
-            const checkComment = await Comment.findById(commentId)
-            if (!checkComment) {
-                return resolve({
-                    status: "ERR",
-                    message: "Comment not found",
-                })
-            }
-
-            const updatedComment = await Comment.findByIdAndUpdate(
-                commentId,
-                data,
-                { new: true }
-            )
-
-            resolve({
-                status: "OK",
-                message: "Comment updated successfully",
-                data: updatedComment
-            })
-        } catch (e) {
-            reject({
-                status: "ERR",
-                message: e.message
-            })
         }
     })
 }
@@ -171,10 +157,38 @@ const getAllComments = async () => {
     }
 }
 
+const approveComment = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const comment = await Comment.findByIdAndUpdate(id, { pending: false }, { new: true })
+            if (!comment) {
+                resolve({
+                    status: 'ERR',
+                    message: 'Comment not found'
+                })
+                return
+            }
+
+            await Article.findByIdAndUpdate(comment.articleId, {
+                $inc: { commentCount: 1 }
+            })
+
+            resolve({
+                status: 'OK',
+                message: 'Approve comment success',
+                data: comment
+            })
+        }
+        catch (e) {
+            reject(e)
+        }
+    })
+}
+
 module.exports = {
     createComment,
     getCommentsByPost,
     deleteComment,
-    updateComment,
-    getAllComments
+    getAllComments,
+    approveComment
 }

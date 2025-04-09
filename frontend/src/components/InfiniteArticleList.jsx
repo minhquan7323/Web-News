@@ -3,8 +3,7 @@ import { Box, Text, Grid, Link, Divider, Image, VStack, HStack } from '@chakra-u
 import { useNavigate } from 'react-router-dom'
 import { sortByDate } from '../utils'
 import { ArticleInfinitySkeleton } from './SkeletonComponent'
-import * as CommentService from '../services/CommentService'
-
+import ArticleStats from './ArticleStats'
 const InfiniteArticleList = ({
     data,
     isLoading,
@@ -18,9 +17,7 @@ const InfiniteArticleList = ({
     const [displayedItems, setDisplayedItems] = useState(itemsPerPage)
     const [loadMore, setLoadMore] = useState(false)
     const listRef = useRef(null)
-    const [commentsCount, setCommentsCount] = useState({})
 
-    // Xử lý dữ liệu
     const allArticles = Array.isArray(data) ? data : (data?.pages ? data.pages.flat() : [])
     const sortedArticles = sortByDate(allArticles)
     const visibleArticles = sortedArticles.slice(0, displayedItems)
@@ -61,18 +58,7 @@ const InfiniteArticleList = ({
     const handleDetailsArticle = (id) => {
         navigate(`/article/details/${id}`)
     }
-    useEffect(() => {
-        const fetchCommentsCount = async () => {
-            const counts = {}
-            for (const article of data) {
-                const res = await CommentService.getCommentsByPost(article._id)
-                const filterComments = res.data.filter(comment => comment.pending === false)
-                counts[article._id] = filterComments.length
-            }
-            setCommentsCount(counts)
-        }
-        fetchCommentsCount()
-    }, [data])
+
     if (isLoading) {
         return (
             <VStack spacing={4} width="100%">
@@ -137,10 +123,7 @@ const InfiniteArticleList = ({
                                             {article.source} - {new Date(article.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                                         </Text>
                                         {description && <Text noOfLines={2}>{article.description}</Text>}
-                                        <HStack width="100%" justifyContent="flex-end" spacing={4}>
-                                            <Text fontSize='sm' opacity='0.5'>{article.read} 👁️</Text>
-                                            <Text fontSize='sm' color='gray.400'>{commentsCount[article._id]} <i className="fa-regular fa-comment"></i></Text>
-                                        </HStack>
+                                        <ArticleStats read={article.read} commentCount={article.commentCount} />
                                     </VStack>
                                 </Grid>
                             </Link>

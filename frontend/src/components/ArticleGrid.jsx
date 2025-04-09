@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react"
-import { Text, Image, Stack, Grid, Box, Link, useBreakpointValue, useColorModeValue, Tooltip, Skeleton, HStack } from "@chakra-ui/react"
+import { Text, Image, Stack, Grid, Box, Link, useBreakpointValue, useColorModeValue, Tooltip } from "@chakra-ui/react"
 import { useNavigate } from 'react-router-dom'
 import { sortByDate } from "../utils"
 import * as UserService from '../services/UserService'
-import * as CommentService from '../services/CommentService'
 import { useSelector } from 'react-redux'
 import { useMessage } from '../components/Message/Message'
 import { ArticleGridSkeleton } from "./SkeletonComponent"
+import ArticleStats from "./ArticleStats"
 
 const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) => {
     const navigate = useNavigate()
@@ -14,7 +14,6 @@ const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) =>
     const { success, error, warning } = useMessage()
     const [watchLaterList, setWatchLaterList] = useState([0])
     const [isLoading, setIsLoading] = useState(false)
-    const [commentsCount, setCommentsCount] = useState({})
 
     useEffect(() => {
         const fetchWatchLater = async () => {
@@ -25,27 +24,6 @@ const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) =>
         }
         fetchWatchLater()
     }, [user?.userId])
-
-    useEffect(() => {
-        const fetchCommentsCount = async () => {
-            const counts = {}
-            articles.forEach(article => {
-                counts[article._id] = 0
-            })
-
-            const fetchPromises = articles.map(async (article) => {
-                const res = await CommentService.getCommentsByPost(article._id)
-                const filterComments = res.data.filter(comment => comment.pending === false)
-                counts[article._id] = filterComments.length
-            })
-            await Promise.all(fetchPromises)
-            setCommentsCount(counts)
-        }
-
-        if (articles.length > 0) {
-            fetchCommentsCount()
-        }
-    }, [articles])
 
     useEffect(() => {
         if (articles.length !== 0) {
@@ -187,10 +165,7 @@ const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) =>
                                     </Stack>
                                     <Text noOfLines={2}>{article.description}</Text>
                                 </Stack>
-                                <HStack justifyContent='right'>
-                                    <Text fontSize='sm' opacity='0.5'>{article.read} 👁️</Text>
-                                    <Text fontSize='sm' color='gray.400'>{commentsCount[article._id]} <i className="fa-regular fa-comment"></i></Text>
-                                </HStack>
+                                <ArticleStats read={article.read} commentCount={article.commentCount} />
                             </Link>
                         </Box>
                     ))

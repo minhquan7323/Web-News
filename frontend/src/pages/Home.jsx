@@ -1,19 +1,17 @@
 import React, { useEffect, useMemo, useState } from "react"
-import { Text, Image, Stack, Grid, GridItem, Box, Link, useBreakpointValue, Divider, HStack, VStack, Skeleton } from "@chakra-ui/react"
+import { Text, Image, Stack, Grid, GridItem, Box, Link, useBreakpointValue, Divider, HStack, VStack } from "@chakra-ui/react"
 import * as ArticleService from '../services/ArticleService'
-import * as CommentService from '../services/CommentService'
 import { useNavigate } from 'react-router-dom'
-import { sortByDate } from "../utils"
+import { sortByDate, sortByUpdatedAt } from "../utils"
 import InfiniteArticleList from "../components/InfiniteArticleList"
 import { FeaturedArticleSkeleton, SideArticleSkeleton } from "../components/SkeletonComponent"
 import MostReadArticles from "../components/MostReadArticles"
+import ArticleStats from "../components/ArticleStats"
 
 const Home = () => {
-    const [featuredArticle, setFeaturedArticle] = useState([])
     const [articles, setArticles] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const navigate = useNavigate()
-    const [commentsCount, setCommentsCount] = useState({})
 
     const handleDetailsArticle = (id) => {
         navigate(`/article/details/${id}`)
@@ -25,11 +23,6 @@ const Home = () => {
         setArticles(filteredArticles)
     }
 
-    const fetchFeaturedArticle = async () => {
-        const res = await ArticleService.getFeaturedArticle()
-        const filteredFeaturedArticles = res.data?.filter(article => !article.hide) || []
-        setFeaturedArticle(filteredFeaturedArticles)
-    }
     const mostReadArticles = useMemo(() =>
         [...articles].sort((a, b) => b.read - a.read).slice(0, 10),
         [articles]
@@ -38,33 +31,18 @@ const Home = () => {
         const loadData = async () => {
             setIsLoading(true)
             await fetchAllArticle()
-            await fetchFeaturedArticle()
             setIsLoading(false)
         }
 
         loadData()
     }, [])
 
-    useEffect(() => {
-        const fetchCommentsCount = async () => {
-            const counts = {}
-            for (const article of articles) {
-                const res = await CommentService.getCommentsByPost(article._id)
-                const filterComments = res.data.filter(comment => comment.pending === false)
-                counts[article._id] = filterComments.length
-            }
-            setCommentsCount(counts)
-        }
-        fetchCommentsCount()
-    }, [articles])
-
     const gridTemplate = useBreakpointValue({
         base: "1fr",
         lg: "2fr 1fr",
     })
 
-    const visibleArticles = useBreakpointValue({ base: 0, lg: featuredArticle.length })
-
+    const featuredArticle = articles.filter(article => article.featured)
     return (
         <Box p={4} paddingTop={10}>
             <Grid templateColumns={gridTemplate} gap={6} mt={6}>
@@ -93,10 +71,7 @@ const Home = () => {
                                         </Text>
                                     </Stack>
                                     <Text noOfLines={2}>{article.description}</Text>
-                                    <HStack justifyContent='right'>
-                                        <Text fontSize='sm' opacity='0.5'>{article.read} 👁️</Text>
-                                        <Text fontSize='sm' color='gray.400'>{commentsCount[article._id] || 0} <i className="fa-regular fa-comment"></i></Text>
-                                    </HStack>
+                                    <ArticleStats read={article.read} commentCount={article.commentCount} />
                                 </Stack>
                             </Link>
                         ))
@@ -128,9 +103,9 @@ const Home = () => {
                                 ))}
                             </>
                         ) : (
-                            sortByDate(featuredArticle)?.slice(0, visibleArticles).map((article, index) => (
-                                <React.Fragment key={article._id}>
-                                    <Box onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }} cursor='pointer' w='100%'>
+                            sortByUpdatedAt(featuredArticle)?.slice(0, 10).map((article, index) => (
+                                <Box key={article._id} display={{ base: "none", lg: "block" }} w='100%'>
+                                    <Box onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }} cursor='pointer'>
                                         <HStack alignItems="start" _hover={{ color: "teal" }}>
                                             <Image
                                                 src={article.imageUrl}
@@ -153,17 +128,14 @@ const Home = () => {
                                                 </Text>
                                             </Stack>
                                         </HStack>
-                                        <HStack justifyContent='right'>
-                                            <Text fontSize='sm' opacity='0.5'>{article.read} 👁️</Text>
-                                            <Text fontSize='sm' color='gray.400'>{commentsCount[article._id] || 0} <i className="fa-regular fa-comment"></i></Text>
-                                        </HStack>
+                                        <ArticleStats read={article.read} commentCount={article.commentCount} />
                                     </Box>
                                     {index < featuredArticle.length - 1 && (
                                         <Box py={2} w="100%">
                                             <Divider borderColor="gray.300" />
                                         </Box>
                                     )}
-                                </React.Fragment>
+                                </Box>
                             ))
                         )}
                     </VStack>

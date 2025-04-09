@@ -11,7 +11,8 @@ const articleSchema = new mongoose.Schema(
         hide: { type: Boolean, required: true, default: false },
         source: [{ type: String, required: true }],
         type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true }],
-        read: { type: Number, default: 0 }
+        read: { type: Number, default: 0 },
+        commentCount: { type: Number, default: 0 }
     },
     { timestamps: true }
 )

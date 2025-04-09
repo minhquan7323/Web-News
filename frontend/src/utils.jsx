@@ -139,3 +139,8 @@ export const sortByDate = (data) => {
     if (!Array.isArray(data)) return [];
     return data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 }
+
+export const sortByUpdatedAt = (data) => {
+    if (!Array.isArray(data)) return [];
+    return data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+}
