@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema(
         imageUrl: { type: String, required: true },
         fullName: { type: String, required: true },
         isAdmin: { type: Boolean, default: false, required: true },
+        isBanned: { type: Boolean, default: false, required: true },
+        // isActive: { type: Boolean, default: true, required: true },
         watchLater: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }]
     },
     { timestamps: true }

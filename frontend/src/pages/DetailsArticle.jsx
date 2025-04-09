@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
-import { Text, Image, Grid, GridItem, Box, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Skeleton, Button } from "@chakra-ui/react"
+import { Text, Image, Grid, GridItem, Box, useBreakpointValue, Divider, Breadcrumb, BreadcrumbItem, BreadcrumbLink, VStack, Skeleton, Button, Textarea, Avatar, useColorModeValue } from "@chakra-ui/react"
 import { ChevronRightIcon } from '@chakra-ui/icons'
-import { useParams, Link } from "react-router-dom"
+import { useParams, Link, useNavigate } from "react-router-dom"
 import * as ArticleService from '../services/ArticleService'
 import * as CommentService from '../services/CommentService'
 import * as CategoryService from '../services/CategoryService'
@@ -12,6 +12,8 @@ import { useSelector } from "react-redux"
 import Comment from '../components/Comment'
 import { articleContentStyles } from '../styles/articleContentStyles'
 import BreadcrumbNav from '../components/BreadcrumbNav'
+import InfiniteArticleList from "../components/InfiniteArticleList"
+import MostReadArticles from "../components/MostReadArticles"
 
 const DetailsArticle = () => {
     const user = useSelector((state) => state?.user)
@@ -354,37 +356,7 @@ const DetailsArticle = () => {
                                 ))}
                             </Box>
                             <Box pt={12}>
-                                <Text as="b" fontSize='2xl' textTransform="uppercase">
-                                    Most read
-                                </Text>
-                                <Grid templateColumns="1fr 1fr" gap={4} mt={4}>
-                                    {mostReadArticles.map((article, index) => (
-                                        <Box key={article._id} display="flex" alignItems="flex-start" gap={2}>
-                                            <Text fontSize="2xl" color="teal" fontWeight="bold" minWidth="30px">
-                                                {index + 1}
-                                            </Text>
-                                            <Box flex="1">
-                                                <Link to={`/article/details/${article._id}`}>
-                                                    <Text
-                                                        fontSize="sm"
-                                                        lineHeight="24px"
-                                                        height="72px"
-                                                        overflow="hidden"
-                                                        display="-webkit-box"
-                                                        width="auto"
-                                                        style={{
-                                                            WebkitLineClamp: 2,
-                                                            WebkitBoxOrient: "vertical",
-                                                        }}
-                                                    >
-                                                        {article.title}
-                                                    </Text>
-                                                </Link>
-                                                {index < mostReadArticles.length - 1 && <Divider borderColor="gray.300" pt={4} />}
-                                            </Box>
-                                        </Box>
-                                    ))}
-                                </Grid>
+                                <MostReadArticles articles={mostReadArticles} />
                             </Box>
                         </Box>
                     </Box>

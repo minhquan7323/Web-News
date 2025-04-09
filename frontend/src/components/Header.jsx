@@ -61,7 +61,8 @@ const Header = () => {
                 userId: res.user.userId,
                 fullName: res.user.fullName,
                 imageUrl: res.user.imageUrl,
-                isAdmin: res.user.isAdmin
+                isAdmin: res.user.isAdmin,
+                isBanned: res.user.isBanned
             }))
         }
     }
@@ -234,7 +235,7 @@ const Header = () => {
 
                         <Divider borderColor="teal" />
 
-                        <HStack spacing={12} wrap="wrap">
+                        <HStack spacing={12} pt={12} wrap="wrap" align="flex-start">
                             {categories?.filter(category => !category.parentId).map((category) => (
                                 <Box key={category._id} width={{ base: "100%", md: "45%", lg: "30%" }}>
                                     <Box cursor='pointer' onClick={() => handleTypeArticle(category._id)}>

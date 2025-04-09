@@ -16,7 +16,8 @@ const UserManagement = () => {
     const [searchedColumn, setSearchedColumn] = useState("")
     const [rowSelected, setRowSelected] = useState('')
     const [stateDetailsUser, setStateDetailsUser] = useState({
-        isAdmin: false
+        isAdmin: false,
+        isBanned: false
     })
     const searchInputRef = useRef(null)
 
@@ -34,7 +35,8 @@ const UserManagement = () => {
         const res = await UserService.getDetailsUser(rowSelected)
         if (res?.data) {
             setStateDetailsUser({
-                isAdmin: res.data.isAdmin
+                isAdmin: res.data.isAdmin,
+                isBanned: res.data.isBanned
             })
         }
         setIsLoadingDetails(false)
@@ -131,6 +133,14 @@ const UserManagement = () => {
             render: (isAdmin) => isAdmin ? 'Yes' : 'No'
         },
         {
+            title: 'Banned',
+            dataIndex: 'isBanned',
+            searchable: true,
+            ...getColumnSearchProps('isBanned'),
+            ellipsis: true,
+            render: (isBanned) => isBanned ? 'Yes' : 'No'
+        },
+        {
             title: 'Action',
             dataIndex: 'action',
             fixed: 'right',
@@ -221,6 +231,15 @@ const UserManagement = () => {
                                         name="isAdmin"
                                     />
                                     <Text>Is Admin</Text>
+                                </Box>
+                                <Box display="flex" alignItems="center" gap={2}>
+                                    <input
+                                        type="checkbox"
+                                        checked={stateDetailsUser.isBanned}
+                                        onChange={handleOnchangeDetails}
+                                        name="isBanned"
+                                    />
+                                    <Text>Is Banned</Text>
                                 </Box>
                             </Box>
                         </ModalBody>

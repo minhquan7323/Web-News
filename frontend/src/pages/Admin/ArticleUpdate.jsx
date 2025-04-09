@@ -163,7 +163,7 @@ const ArticleUpdate = () => {
                         <HStack>
                             <InputGroup>
                                 <InputLeftAddon>Author</InputLeftAddon>
-                                <Input placeholder='Author here' value={stateArticle.author} name="author" onChange={handleOnchangeDetails} required />
+                                <Input placeholder='Author here' value={stateArticle.author} name="author" disabled required />
                             </InputGroup>
                             <InputGroup>
                                 <InputLeftAddon>Source</InputLeftAddon>

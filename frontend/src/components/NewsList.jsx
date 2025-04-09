@@ -1,8 +1,22 @@
-import React from "react"
-import { Box, Text, Grid, GridItem, Image, Divider } from "@chakra-ui/react"
+import React, { useState, useEffect } from "react"
+import { Box, Text, Grid, GridItem, Image, Divider, HStack } from "@chakra-ui/react"
 import { Link } from "react-router-dom"
+import * as CommentService from '../services/CommentService'
 
 const NewsList = ({ moreFrom, news, templateColumnss = "2fr 2fr" }) => {
+    const [commentsCount, setCommentsCount] = useState({})
+    useEffect(() => {
+        const fetchCommentsCount = async () => {
+            const counts = {}
+            for (const article of news) {
+                const res = await CommentService.getCommentsByPost(article._id)
+                const filterComments = res.data.filter(comment => comment.pending === false)
+                counts[article._id] = filterComments.length
+            }
+            setCommentsCount(counts)
+        }
+        fetchCommentsCount()
+    }, [news])
     return (
         <Box>
             <Text as="b" borderLeft="6px solid teal" p={1} textTransform="uppercase">
@@ -30,6 +44,10 @@ const NewsList = ({ moreFrom, news, templateColumnss = "2fr 2fr" }) => {
                         >
                             {article.description}
                         </Text>
+                        <HStack justifyContent='space-between'>
+                            <Text fontSize='sm' opacity='0.5'>{article.read} 👁️</Text>
+                            <Text fontSize='sm' color='gray.400'>{commentsCount[article._id]} <i className="fa-regular fa-comment"></i></Text>
+                        </HStack>
                     </Link>
                     {index < news.length - 1 && (
                         <GridItem key={index} colSpan={2}>

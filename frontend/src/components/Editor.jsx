@@ -93,13 +93,7 @@ const Editor = ({ value, onChange, placeholder = "<p>Nhập nội dung tại đ�
                 toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
                 image_uploadtab: true,
                 file_picker_types: "image media",
-                file_picker_callback: handleFileUpload,
-                setup: (editor) => {
-                    editor.on('init', () => {
-                        // Thêm thông báo khi editor đã sẵn sàng
-                        console.log('Editor đã sẵn sàng')
-                    })
-                }
+                file_picker_callback: handleFileUpload
             }}
             value={value}
             onEditorChange={onChange}

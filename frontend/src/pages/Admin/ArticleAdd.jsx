@@ -8,13 +8,15 @@ import { useMutationHooks } from '../../hooks/useMutationHook'
 import { useMessage } from '../../components/Message/Message'
 import Loading from '../../components/Loading/Loading'
 import Editor from '../../components/Editor'
-
+import { useSelector } from 'react-redux'
 const ArticleAdd = () => {
     const [imgDisplay, setImgDisplay] = useState('')
+    const user = useSelector((state) => state?.user)
+
     const [stateCategory, setStateCategory] = useState([])
     const [stateArticle, setStateArticle] = useState({
         title: '',
-        author: '',
+        author: user.fullName,
         description: '',
         source: '',
         content: '',
@@ -43,7 +45,7 @@ const ArticleAdd = () => {
             setStateArticle(prev => ({
                 ...prev,
                 title: '',
-                author: '',
+                author: user.fullName,
                 description: '',
                 source: '',
                 content: '',
@@ -128,7 +130,6 @@ const ArticleAdd = () => {
 
     const isArticleFormValid =
         stateArticle.title !== '' &&
-        stateArticle.author !== '' &&
         stateArticle.source !== '' &&
         stateArticle.description !== '' &&
         stateArticle.content !== '' &&
@@ -160,7 +161,7 @@ const ArticleAdd = () => {
                         <HStack>
                             <InputGroup>
                                 <InputLeftAddon>Author</InputLeftAddon>
-                                <Input placeholder='Author here' value={stateArticle.author} name="author" onChange={handleOnchange} required />
+                                <Input placeholder='Author here' value={stateArticle.author} name="author" disabled required />
                             </InputGroup>
                             <InputGroup>
                                 <InputLeftAddon>Source</InputLeftAddon>

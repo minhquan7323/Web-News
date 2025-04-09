@@ -74,11 +74,26 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
         )
     }
 
+    const approvedCount = allComments.filter(comment => !comment.pending).length
+    const pendingCount = allComments.filter(comment => comment.pending).length
+
     return (
         <Box width={'100%'}>
             <Box
                 backgroundColor={useColorModeValue("gray.50", "gray.700")} borderRadius="5px" p={2}>
-                <Text as='b' fontSize={'xl'} textTransform='uppercase'>Comment</Text>
+                <HStack justifyContent='space-between'>
+                    <Text as='b' fontSize={'xl'} textTransform='uppercase'>Comment</Text>
+                    <Text fontSize='sm' as='b'>
+                        {approvedCount} {approvedCount > 1 ? 'comments' : 'comment'}
+                    </Text>
+                </HStack>
+                <Box display="flex" justifyContent='flex-end'>
+                    {user?.isAdmin && pendingCount > 0 && (
+                        <Text fontSize='sm' color='yellow.500'>
+                            {pendingCount} {pendingCount > 1 ? 'comments' : 'comment'} waiting for approval
+                        </Text>
+                    )}
+                </Box>
                 {allComments.length > 0 ? (
                     <VStack align='left' overflow='auto' height='250px' my={4} ref={commentsEndRef}>
                         {allComments.map((comment) => (
@@ -124,13 +139,19 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
                     </VStack>
                 )}
                 {user?.userId ? (
-                    <Box display='flex' gap={2}>
-                        <Input placeholder="Comment here" value={stateComment.content}
-                            name="content" onChange={handleOnchange}
-                            onKeyDown={(e) => e.key === "Enter" && handleComment()}
-                        />
-                        <Button colorScheme="teal" onClick={() => handleComment()}><SendOutlined /></Button>
-                    </Box>
+                    user?.isBanned ? (
+                        <Box textAlign='center' fontWeight='bold' color='red'>
+                            Your account has been banned. You cannot comment.
+                        </Box>
+                    ) : (
+                        <Box display='flex' gap={2}>
+                            <Input placeholder="Comment here" value={stateComment.content}
+                                name="content" onChange={handleOnchange}
+                                onKeyDown={(e) => e.key === "Enter" && handleComment()}
+                            />
+                            <Button colorScheme="teal" onClick={() => handleComment()}><SendOutlined /></Button>
+                        </Box>
+                    )
                 ) : (
                     <Box textAlign='center' fontWeight='bold' color='red'>
                         Sign in to comment

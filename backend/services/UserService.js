@@ -3,7 +3,7 @@ const User = require('../models/UserModel')
 const loginUser = async (userData) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const { userId, imageUrl, fullName, isAdmin = false } = userData
+            const { userId, imageUrl, fullName, isAdmin = false, isBanned = false } = userData
 
             if (!userId || !fullName || !imageUrl) {
                 return reject({
@@ -15,7 +15,7 @@ const loginUser = async (userData) => {
             let user = await User.findOne({ userId })
 
             if (!user) {
-                user = new User({ userId, imageUrl, fullName, isAdmin })
+                user = new User({ userId, imageUrl, fullName, isAdmin, isBanned })
                 await user.save()
                 return resolve({
                     status: "OK",
@@ -171,7 +171,7 @@ const getWatchLater = (userId) => {
             const user = await User.findOne({ userId: userId })
                 .populate({
                     path: 'watchLater',
-                    select: 'title description imageUrl source author type read createdAt updatedAt'
+                    select: 'title description imageUrl source author type read createdAt updatedAt hide'
                 })
 
             if (!user) {

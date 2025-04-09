@@ -34,7 +34,8 @@ const ArticleList = () => {
 
     const fetchArticles = async (categoryId) => {
         const articles = await fetchGetArticleByType(categoryId)
-        setArticleList(articles)
+        const filterArticles = articles.filter(article => article.hide === false)
+        setArticleList(filterArticles)
     }
 
     const fetchArticlesForSubcategories = async (parentId) => {
