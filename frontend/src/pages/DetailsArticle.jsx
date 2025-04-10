@@ -12,9 +12,9 @@ import { useSelector } from "react-redux"
 import Comment from '../components/Comment'
 import { articleContentStyles } from '../styles/articleContentStyles'
 import BreadcrumbNav from '../components/BreadcrumbNav'
-import InfiniteArticleList from "../components/InfiniteArticleList"
 import MostReadArticles from "../components/MostReadArticles"
 import ArticleStats from "../components/ArticleStats"
+
 const DetailsArticle = () => {
     const user = useSelector((state) => state?.user)
     const commentsEndRef = useRef(null)
@@ -22,7 +22,6 @@ const DetailsArticle = () => {
     const [isUpdatedRead, setIsUpdatedRead] = useState(false)
     const [randomCategories, setRandomCategories] = useState([])
     const [upNextArticles, setUpNextArticles] = useState([])
-
     const mutationUpdate = useMutationHooks(
         async (data) => {
             const { id, ...rests } = data
@@ -306,9 +305,6 @@ const DetailsArticle = () => {
                                     <Box p={6} sx={articleContentStyles}>
                                         <Box dangerouslySetInnerHTML={{ __html: articleDetails.content }} />
                                     </Box>
-                                </Box>
-                                <Box py={2}>
-                                    <Divider borderColor="gray.300" />
                                 </Box>
                                 <Comment
                                     articleId={articleId}

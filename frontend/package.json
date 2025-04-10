@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.6.1",
+    "@ant-design/icons": "^6.0.0",
     "@chakra-ui/icons": "^2.2.4",
     "@chakra-ui/react": "^2.10.4",
     "@clerk/clerk-js": "^5.54.2",
