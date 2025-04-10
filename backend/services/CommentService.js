@@ -1,11 +1,12 @@
 const Comment = require("../models/CommentModel")
 const mongoose = require("mongoose")
 const Article = require("../models/ArticleModel")
+// const { getIO } = require('../socket')
 
 const createComment = (newComment) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const { articleId, userId, content, fullName, imageUrl, pending } = newComment
+            const { articleId, userId, content, fullName, imageUrl, pending, parentId } = newComment
 
             if (!articleId || !userId || !content) {
                 return resolve({
@@ -20,14 +21,27 @@ const createComment = (newComment) => {
                 content,
                 fullName,
                 imageUrl,
-                pending
+                pending,
+                parentId: parentId || null
             })
+
+            if (parentId) {
+                await Comment.findByIdAndUpdate(parentId, {
+                    $push: { replies: comment._id }
+                })
+            }
 
             if (pending == false) {
                 await Article.findByIdAndUpdate(articleId, {
                     $inc: { commentCount: 1 }
                 })
             }
+
+            // const io = getIO()
+            // io.emit('comment_added', {
+            //     articleId: articleId,
+            //     comment: comment
+            // })
 
             resolve({
                 status: "OK",
@@ -81,6 +95,8 @@ const getCommentsByPost = async (articleId) => {
                     content: 1,
                     createdAt: 1,
                     pending: 1,
+                    parentId: 1,
+                    replies: 1,
                     userId: "$user.userId",
                     fullName: { $ifNull: ["$user.fullName", "Unknown User"] },
                     imageUrl: { $ifNull: ["$user.imageUrl", "default-avatar.jpg"] }
@@ -88,11 +104,31 @@ const getCommentsByPost = async (articleId) => {
             }
         ])
 
+        const commentMap = {};
+        const rootComments = [];
+
+        comments.forEach(comment => {
+            commentMap[comment._id.toString()] = {
+                ...comment,
+                replies: []
+            };
+        });
+
+        comments.forEach(comment => {
+            if (comment.parentId) {
+                const parentComment = commentMap[comment.parentId.toString()];
+                if (parentComment) {
+                    parentComment.replies.push(commentMap[comment._id.toString()]);
+                }
+            } else {
+                rootComments.push(commentMap[comment._id.toString()]);
+            }
+        });
 
         return {
             status: "OK",
             message: "Fetched comments successfully",
-            data: comments
+            data: rootComments
         }
     } catch (e) {
         return { status: "ERR", message: e.message }
@@ -117,13 +153,35 @@ const deleteComment = (commentId) => {
                 })
             }
 
+            let approvedRepliesCount = 0;
+            if (comment.replies && comment.replies.length > 0) {
+                const replies = await Comment.find({ _id: { $in: comment.replies } });
+                approvedRepliesCount = replies.filter(reply => !reply.pending).length;
+            }
+
+            if (comment.parentId) {
+                await Comment.findByIdAndUpdate(comment.parentId, {
+                    $pull: { replies: commentId }
+                });
+            }
+
+            if (comment.replies && comment.replies.length > 0) {
+                await Comment.deleteMany({ _id: { $in: comment.replies } });
+            }
+
             await Comment.findByIdAndDelete(commentId)
 
             if (!comment.pending) {
                 await Article.findByIdAndUpdate(comment.articleId, {
-                    $inc: { commentCount: -1 }
+                    $inc: { commentCount: -(1 + approvedRepliesCount) }
                 })
             }
+
+            // const io = getIO()
+            // io.emit('comment_removed', {
+            //     articleId: comment.articleId,
+            //     commentId: commentId
+            // })
 
             resolve({
                 status: "OK",
@@ -146,6 +204,7 @@ const getAllComments = async () => {
                 foreignField: 'userId'
             })
             .populate('articleId', 'title imageUrl')
+            .populate('parentId', 'content')
             .sort({ createdAt: -1 })
         return {
             status: "OK",
@@ -172,6 +231,12 @@ const approveComment = (id) => {
             await Article.findByIdAndUpdate(comment.articleId, {
                 $inc: { commentCount: 1 }
             })
+
+            // const io = getIO()
+            // io.emit('comment_updated', {
+            //     articleId: comment.articleId,
+            //     comment: comment
+            // })
 
             resolve({
                 status: 'OK',

@@ -5,7 +5,7 @@ const mongoose = require('mongoose')
 
 const createArticle = (newArticle) => {
     return new Promise(async (resolve, reject) => {
-        const { title, content, description, imageUrl, author, source, type, featured, hide } = newArticle
+        const { title, content, description, imageUrl, author, source, type, featured, hide, commentCount } = newArticle
         try {
             const checkArticle = await Article.findOne({ title: title })
             if (checkArticle !== null) {
@@ -15,7 +15,7 @@ const createArticle = (newArticle) => {
                 })
             }
             const newArticle = await Article.create({
-                title, content, description, imageUrl, author, source, type, featured, hide
+                title, content, description, imageUrl, author, source, type, featured, hide, commentCount
             })
             if (newArticle) {
                 resolve({

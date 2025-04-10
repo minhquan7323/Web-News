@@ -4,6 +4,7 @@ import { SendOutlined } from '@ant-design/icons'
 import * as CommentService from '../services/CommentService'
 import { useMutationHooks } from '../hooks/useMutationHook'
 import CommentPopover from './CommentPopover'
+// import io from 'socket.io-client'
 
 const Comment = ({ articleId, user, allComments, refetchComments }) => {
     const commentsScrollBoxRef = useRef(null)
@@ -15,6 +16,7 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
         parentId: null
     })
 
+    // const [socket, setSocket] = useState(null)
     const [replyingTo, setReplyingTo] = useState(null)
 
     const bgColor = useColorModeValue("gray.50", "gray.700")
@@ -36,6 +38,42 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
         const res = await CommentService.deleteComment(commentId)
         return res.data
     }
+
+    // useEffect(() => {
+    //     const newSocket = io(import.meta.env.VITE_SOCKET_URL)
+    //     setSocket(newSocket)
+
+    //     return () => newSocket.close()
+    // }, [])
+
+    // useEffect(() => {
+    //     if (socket) {
+    //         socket.on('comment_added', (data) => {
+    //             if (data.articleId === articleId) {
+    //                 setLatestCommentId(data.comment._id)
+    //                 refetchComments()
+    //             }
+    //         })
+
+    //         socket.on('comment_updated', (data) => {
+    //             if (data.articleId === articleId) {
+    //                 refetchComments()
+    //             }
+    //         })
+
+    //         socket.on('comment_removed', (data) => {
+    //             if (data.articleId === articleId) {
+    //                 refetchComments()
+    //             }
+    //         })
+
+    //         return () => {
+    //             socket.off('comment_added')
+    //             socket.off('comment_updated')
+    //             socket.off('comment_removed')
+    //         }
+    //     }
+    // }, [socket, articleId])
 
     const handleComment = () => {
         if (!stateComment.content.trim()) return
@@ -95,6 +133,9 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
 
     const renderComment = (comment, isReply = false) => {
         const parentComment = comment.parentId ? allComments.find(c => c._id === comment.parentId) : null
+
+        const shouldShowComment = !comment.pending || user?.isAdmin || comment.userId === user?.userId
+        if (!shouldShowComment) return null
 
         return (
             <Box
@@ -203,7 +244,17 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
                     )}
                 </Box>
 
-                {allComments.length > 0 ? (
+                {allComments?.length === 0 || (
+                    allComments.filter(c => !c.pending).length === 0 &&
+                    !user?.isAdmin &&
+                    !allComments.some(c => c.userId === user?.userId)
+                ) ? (
+                    <VStack overflow='auto' height='400px' my={4} justify="center" align="center">
+                        <Text fontSize='2xl' color='gray.400'>
+                            No comments yet
+                        </Text>
+                    </VStack>
+                ) : (
                     <Box
                         ref={commentsScrollBoxRef}
                         overflowY="auto"
@@ -211,18 +262,17 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
                         my={4}
                     >
                         <VStack align='left' spacing={0}>
-                            {allComments.map((comment) => (
-                                (!comment.pending || user?.isAdmin || comment.userId === user?.userId) && renderComment(comment)
-                            ))}
+                            {allComments?.map((comment) => {
+                                const shouldShowComment =
+                                    !comment.pending ||
+                                    user?.isAdmin ||
+                                    comment.userId === user?.userId;
+                                return shouldShowComment && renderComment(comment);
+                            })}
                         </VStack>
                     </Box>
-                ) : (
-                    <VStack overflow='auto' height='400px' my={4} justify="center" align="center">
-                        <Text fontSize='2xl' color='gray.400'>
-                            No comments yet
-                        </Text>
-                    </VStack>
                 )}
+
 
                 {user?.userId ? (
                     user?.isBanned ? (

@@ -1,7 +1,12 @@
 import React from 'react'
 import { Text, Grid, Box, Link, Divider } from "@chakra-ui/react"
+import { useNavigate } from 'react-router-dom';
 
 const MostReadArticles = ({ articles, title = "Most read" }) => {
+    const navigate = useNavigate();
+    const handleDetailsArticle = (id) => {
+        navigate(`/article/details/${id}`)
+    }
     return (
         <Box pt={12}>
             <Text as="b" fontSize='2xl' textTransform="uppercase">
@@ -14,7 +19,7 @@ const MostReadArticles = ({ articles, title = "Most read" }) => {
                             {index + 1}
                         </Text>
                         <Box flex="1">
-                            <Link to={`/article/details/${article._id}`}>
+                            <Link onClick={() => handleDetailsArticle(article._id)}>
                                 <Text
                                     fontSize="sm"
                                     lineHeight="24px"
