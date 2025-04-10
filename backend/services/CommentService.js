@@ -1,7 +1,7 @@
 const Comment = require("../models/CommentModel")
 const mongoose = require("mongoose")
 const Article = require("../models/ArticleModel")
-// const { getIO } = require('../socket')
+const { getIO } = require('../socket')
 
 const createComment = (newComment) => {
     return new Promise(async (resolve, reject) => {
@@ -37,11 +37,11 @@ const createComment = (newComment) => {
                 })
             }
 
-            // const io = getIO()
-            // io.emit('comment_added', {
-            //     articleId: articleId,
-            //     comment: comment
-            // })
+            const io = getIO()
+            io.emit('comment_added', {
+                articleId: articleId,
+                comment: comment
+            })
 
             resolve({
                 status: "OK",
@@ -177,11 +177,11 @@ const deleteComment = (commentId) => {
                 })
             }
 
-            // const io = getIO()
-            // io.emit('comment_removed', {
-            //     articleId: comment.articleId,
-            //     commentId: commentId
-            // })
+            const io = getIO()
+            io.emit('comment_removed', {
+                articleId: comment.articleId,
+                commentId: commentId
+            })
 
             resolve({
                 status: "OK",
@@ -232,11 +232,11 @@ const approveComment = (id) => {
                 $inc: { commentCount: 1 }
             })
 
-            // const io = getIO()
-            // io.emit('comment_updated', {
-            //     articleId: comment.articleId,
-            //     comment: comment
-            // })
+            const io = getIO()
+            io.emit('comment_updated', {
+                articleId: comment.articleId,
+                comment: comment
+            })
 
             resolve({
                 status: 'OK',

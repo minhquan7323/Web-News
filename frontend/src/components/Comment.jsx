@@ -4,7 +4,7 @@ import { SendOutlined } from '@ant-design/icons'
 import * as CommentService from '../services/CommentService'
 import { useMutationHooks } from '../hooks/useMutationHook'
 import CommentPopover from './CommentPopover'
-// import io from 'socket.io-client'
+import io from 'socket.io-client'
 
 const Comment = ({ articleId, user, allComments, refetchComments }) => {
     const commentsScrollBoxRef = useRef(null)
@@ -16,7 +16,7 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
         parentId: null
     })
 
-    // const [socket, setSocket] = useState(null)
+    const [socket, setSocket] = useState(null)
     const [replyingTo, setReplyingTo] = useState(null)
 
     const bgColor = useColorModeValue("gray.50", "gray.700")
@@ -39,41 +39,41 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
         return res.data
     }
 
-    // useEffect(() => {
-    //     const newSocket = io(import.meta.env.VITE_SOCKET_URL)
-    //     setSocket(newSocket)
+    useEffect(() => {
+        const newSocket = io(import.meta.env.VITE_SOCKET_URL)
+        setSocket(newSocket)
 
-    //     return () => newSocket.close()
-    // }, [])
+        return () => newSocket.close()
+    }, [])
 
-    // useEffect(() => {
-    //     if (socket) {
-    //         socket.on('comment_added', (data) => {
-    //             if (data.articleId === articleId) {
-    //                 setLatestCommentId(data.comment._id)
-    //                 refetchComments()
-    //             }
-    //         })
+    useEffect(() => {
+        if (socket) {
+            socket.on('comment_added', (data) => {
+                if (data.articleId === articleId) {
+                    setLatestCommentId(data.comment._id)
+                    refetchComments()
+                }
+            })
 
-    //         socket.on('comment_updated', (data) => {
-    //             if (data.articleId === articleId) {
-    //                 refetchComments()
-    //             }
-    //         })
+            socket.on('comment_updated', (data) => {
+                if (data.articleId === articleId) {
+                    refetchComments()
+                }
+            })
 
-    //         socket.on('comment_removed', (data) => {
-    //             if (data.articleId === articleId) {
-    //                 refetchComments()
-    //             }
-    //         })
+            socket.on('comment_removed', (data) => {
+                if (data.articleId === articleId) {
+                    refetchComments()
+                }
+            })
 
-    //         return () => {
-    //             socket.off('comment_added')
-    //             socket.off('comment_updated')
-    //             socket.off('comment_removed')
-    //         }
-    //     }
-    // }, [socket, articleId])
+            return () => {
+                socket.off('comment_added')
+                socket.off('comment_updated')
+                socket.off('comment_removed')
+            }
+        }
+    }, [socket, articleId])
 
     const handleComment = () => {
         if (!stateComment.content.trim()) return
