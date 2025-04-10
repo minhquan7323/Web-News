@@ -76,7 +76,7 @@ const Home = () => {
                             </Link>
                         ))
                     )}
-                    <Box pt={12}>
+                    <Box>
                         <MostReadArticles articles={mostReadArticles} />
                     </Box>
                     <InfiniteArticleList

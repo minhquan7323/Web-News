@@ -14,7 +14,7 @@ import { articleContentStyles } from '../styles/articleContentStyles'
 import BreadcrumbNav from '../components/BreadcrumbNav'
 import InfiniteArticleList from "../components/InfiniteArticleList"
 import MostReadArticles from "../components/MostReadArticles"
-
+import ArticleStats from "../components/ArticleStats"
 const DetailsArticle = () => {
     const user = useSelector((state) => state?.user)
     const commentsEndRef = useRef(null)
@@ -324,35 +324,38 @@ const DetailsArticle = () => {
                                     Up Next
                                 </Text>
                                 {upNextArticles.map((article, index) => (
-                                    <Grid key={index} templateColumns="2fr 1fr" gap={4} mt={4}>
-                                        <Link to={`/article/details/${article._id}`}>
-                                            <Text
-                                                fontSize='lg'
-                                                lineHeight="24px"
-                                                height="72px"
-                                                overflow="hidden"
-                                                display="-webkit-box"
-                                                style={{
-                                                    WebkitLineClamp: 3,
-                                                    WebkitBoxOrient: "vertical",
-                                                }}
-                                            >
-                                                {article.description}
-                                            </Text>
-                                        </Link>
-                                        <Link to={`/article/details/${article._id}`}>
-                                            <Box transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}>
-                                                <Image src={article.imageUrl} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
-                                            </Box>
-                                        </Link>
-                                        {index < upNextArticles.length - 1 && (
-                                            <GridItem key={index} colSpan={2}>
-                                                <Box py={2}>
-                                                    <Divider borderColor="gray.300" />
+                                    <Box key={index}>
+                                        <Grid templateColumns="2fr 1fr" gap={4} mt={4}>
+                                            <Link to={`/article/details/${article._id}`}>
+                                                <Text
+                                                    fontSize='lg'
+                                                    lineHeight="24px"
+                                                    height="72px"
+                                                    overflow="hidden"
+                                                    display="-webkit-box"
+                                                    style={{
+                                                        WebkitLineClamp: 3,
+                                                        WebkitBoxOrient: "vertical",
+                                                    }}
+                                                >
+                                                    {article.description}
+                                                </Text>
+                                            </Link>
+                                            <Link to={`/article/details/${article._id}`}>
+                                                <Box transition="opacity 0.1s ease-in-out" _hover={{ opacity: 0.7 }}>
+                                                    <Image src={article.imageUrl} alt={article.title} objectFit="cover" h="auto" maxH='120px' w="100%" />
                                                 </Box>
-                                            </GridItem>
-                                        )}
-                                    </Grid>
+                                            </Link>
+                                            <ArticleStats read={article.read} commentCount={article.commentCount} align="left" />
+                                            {index < upNextArticles.length - 1 && (
+                                                <GridItem key={index} colSpan={2}>
+                                                    <Box py={2}>
+                                                        <Divider borderColor="gray.300" />
+                                                    </Box>
+                                                </GridItem>
+                                            )}
+                                        </Grid>
+                                    </Box>
                                 ))}
                             </Box>
                             <Box pt={12}>
