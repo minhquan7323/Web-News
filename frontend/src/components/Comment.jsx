@@ -14,7 +14,6 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
         content: '',
         parentId: null
     })
-    console.log(user);
 
     const [replyingTo, setReplyingTo] = useState(null)
 
@@ -40,7 +39,6 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
 
     const handleComment = () => {
         if (!stateComment.content.trim()) return
-        console.log(stateComment);
 
         mutation.mutate(stateComment, {
             onSuccess: (res) => {
