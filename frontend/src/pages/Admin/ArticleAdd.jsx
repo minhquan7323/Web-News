@@ -159,10 +159,10 @@ const ArticleAdd = () => {
                             <Input placeholder='Nhập tiêu đề' value={stateArticle.title} name="title" onChange={handleOnchange} required />
                         </InputGroup>
                         <HStack>
-                            <InputGroup>
+                            {/* <InputGroup>
                                 <InputLeftAddon>Tác giả</InputLeftAddon>
                                 <Input placeholder='Nhập tác giả' value={stateArticle.author} name="author" disabled required />
-                            </InputGroup>
+                            </InputGroup> */}
                             <InputGroup>
                                 <InputLeftAddon>Nguồn</InputLeftAddon>
                                 <Input placeholder='Nhập nguồn' value={stateArticle.source} name="source" onChange={handleOnchange} required />

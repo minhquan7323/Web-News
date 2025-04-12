@@ -119,8 +119,7 @@ const CommentManagement = () => {
             title: 'Bài báo',
             dataIndex: 'articleId',
             ...getColumnSearchProps('articleId.title'),
-            ellipsis: true,
-            width: '40%',
+            width: 300,
             render: (articleId) => (
                 <HStack align='top'>
                     <HStack flex={1} opacity={articleId.pending ? 0.5 : 1} transition="opacity 0.3s ease">
@@ -143,8 +142,7 @@ const CommentManagement = () => {
             title: 'Bình luận',
             dataIndex: 'userId',
             ...getColumnSearchProps('userId.fullName'),
-            ellipsis: true,
-            width: 600,
+            width: 400,
             render: (_, record) => (
                 <HStack align='top'>
                     <HStack flex={1} opacity={record.pending ? 0.5 : 1} transition="opacity 0.3s ease">
@@ -199,25 +197,27 @@ const CommentManagement = () => {
             align: 'center',
             width: 100,
             render: (_, record) => (
-                <HStack spacing={2}>
-                    <Button colorScheme="blue" size="sm" p={2}
-                        disabled={!record.pending}
-                        onClick={() => {
-                            setRowSelected(record._id)
-                            handleApproveComment(record._id)
-                        }}
-                    >
-                        <i className="fas fa-edit"></i>
-                    </Button>
-                    <Button colorScheme="red" size="sm" p={2}
-                        onClick={() => {
-                            setDeleteCommentId(record._id)
-                            handleDeleteComment(record._id)
-                        }}
-                    >
-                        <i className="fas fa-trash"></i>
-                    </Button>
-                </HStack>
+                <Box display="flex" justifyContent="center">
+                    <HStack spacing={2}>
+                        <Button colorScheme="blue" size="sm" p={2}
+                            disabled={!record.pending}
+                            onClick={() => {
+                                setRowSelected(record._id)
+                                handleApproveComment(record._id)
+                            }}
+                        >
+                            <i className="fas fa-edit"></i>
+                        </Button>
+                        <Button colorScheme="red" size="sm" p={2}
+                            onClick={() => {
+                                setDeleteCommentId(record._id)
+                                handleDeleteComment(record._id)
+                            }}
+                        >
+                            <i className="fas fa-trash"></i>
+                        </Button>
+                    </HStack>
+                </Box>
             )
         }
     ]

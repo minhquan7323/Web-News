@@ -5,12 +5,14 @@ import CategoryManagement from './Admin/CategoryManagement'
 import UserManagement from './Admin/UserManagement'
 import CommentManagement from './Admin/CommentManagement'
 import { useSelector } from 'react-redux'
+import Dashboard from '../components/Dashboard'
 
 const Admin = () => {
     const user = useSelector((state) => state?.user)
 
     return (
         <Box pt={16}>
+            <Dashboard />
             <Tabs isManual isFitted variant='enclosed'>
                 <TabList mb='1em'>
                     <Tab><Text as='b'>Bài báo</Text></Tab>

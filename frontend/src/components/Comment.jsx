@@ -230,7 +230,7 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
         <Box width={'100%'}>
             <Box backgroundColor={bgColor} borderRadius="lg" p={4} boxShadow="md">
                 <HStack justifyContent='space-between' mb={4}>
-                    <Text as='b' fontSize={'xl'} textTransform='uppercase'>Comment</Text>
+                    <Text as='b' fontSize={'xl'} textTransform='uppercase'>Bình luận</Text>
                     <Text fontSize='sm' as='b'>
                         {/* {approvedCount + approvedRepliesCount} {approvedCount + approvedRepliesCount > 1 ? 'comments' : 'comment'} */}
                         {approvedCount + approvedRepliesCount} bình luận

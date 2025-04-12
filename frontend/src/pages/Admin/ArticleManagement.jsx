@@ -35,6 +35,7 @@ const ArticleManagement = () => {
         const res = await ArticleService.getAllArticle()
         return res.data
     }
+
     const queryArticle = useQuery({
         queryKey: ['articles'],
         queryFn: fetchAllArticle,
@@ -163,21 +164,40 @@ const ArticleManagement = () => {
                 src={text}
                 alt={text}
                 width="100%"
-                height="100px"
+                height="80px"
                 objectFit="cover"
                 opacity={record.hide ? 0.5 : 1} transition="opacity 0.3s ease"
             />,
-            width: 200,
+            width: 150,
         },
         {
             title: 'Tiêu đề',
             dataIndex: 'title',
             searchable: true,
+            width: 300,
             ...getColumnSearchProps('title'),
-            ellipsis: true,
             render: (text, record) => <Text
                 opacity={record.hide ? 0.5 : 1}
                 transition="opacity 0.3s ease">
+                {text}
+            </Text>
+        },
+        {
+            title: 'Tác giả',
+            dataIndex: 'author',
+            searchable: true,
+            width: 150,
+            ...getColumnSearchProps('author'),
+            render: (text, record) => <Text>
+                {text}
+            </Text>
+        },
+        {
+            title: 'Lượt xem',
+            sorter: (a, b) => a.read - b.read,
+            dataIndex: 'read',
+            width: 150,
+            render: (text, record) => <Text>
                 {text}
             </Text>
         },
@@ -230,7 +250,7 @@ const ArticleManagement = () => {
             dataIndex: 'action',
             fixed: 'right',
             align: 'center',
-            width: 200,
+            width: 100,
             render: (_, record) => (
                 <HStack spacing={2} justifyContent="center">
                     <Button colorScheme="blue" size="sm" p={2}

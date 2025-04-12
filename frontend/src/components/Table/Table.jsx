@@ -33,6 +33,8 @@ const TableComponent = (props) => {
                     )}
                 </Box>
                 <Table
+                    display='block'
+                    width='100%'
                     bordered
                     rowSelection={multiChoice && {
                         type: selectionType,
@@ -42,6 +44,9 @@ const TableComponent = (props) => {
                     dataSource={data}
                     pagination={{
                         position: ['bottomCenter'],
+                    }}
+                    scroll={{
+                        x: 'max-content',
                     }}
                     onChange={handleTableChange}
                     {...props}

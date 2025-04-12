@@ -109,16 +109,18 @@ const UserManagement = () => {
         {
             title: ' ',
             dataIndex: 'imageUrl',
-            ellipsis: true,
+            align: 'center',
             width: 80,
             render: (imageUrl) => (
-                <Image
-                    src={imageUrl}
-                    alt="User avatar"
-                    boxSize="40px"
-                    borderRadius="full"
-                    objectFit="cover"
-                />
+                <Box display="flex" justifyContent="center">
+                    <Image
+                        src={imageUrl}
+                        alt="User avatar"
+                        boxSize="40px"
+                        borderRadius="full"
+                        objectFit="cover"
+                    />
+                </Box>
             )
         },
         {
@@ -126,10 +128,11 @@ const UserManagement = () => {
             dataIndex: 'fullName',
             searchable: true,
             ...getColumnSearchProps('fullName'),
-            ellipsis: true
+            width: 200,
         },
         {
             title: 'Admin',
+            width: 100,
             dataIndex: 'isAdmin',
             filters: [
                 {
@@ -149,6 +152,7 @@ const UserManagement = () => {
         },
         {
             title: 'Super Admin',
+            width: 140,
             dataIndex: 'isSuperAdmin',
             filters: [
                 {
@@ -163,11 +167,11 @@ const UserManagement = () => {
             filterMode: 'tree',
             filterSearch: true,
             onFilter: (value, record) => record.isSuperAdmin === value,
-            ellipsis: true,
             render: (pending) => pending ? 'Có' : 'Không'
         },
         {
             title: 'Bị cấm',
+            width: 100,
             dataIndex: 'isBanned',
             filters: [
                 {
@@ -182,7 +186,6 @@ const UserManagement = () => {
             filterMode: 'tree',
             filterSearch: true,
             onFilter: (value, record) => record.isBanned === value,
-            ellipsis: true,
             render: (pending) => pending ? 'Có' : 'Không'
         },
         {
@@ -190,12 +193,10 @@ const UserManagement = () => {
             dataIndex: 'action',
             fixed: 'right',
             align: 'center',
-            width: 200,
+            width: 120,
             render: (_, record) => (
                 <Button
-                    colorScheme="blue"
-                    size="sm"
-                    p={2}
+                    colorScheme="blue" size="sm" p={2}
                     isDisabled={record.userId === user?.userId}
                     onClick={() => {
                         setRowSelected(record.userId)
@@ -264,7 +265,7 @@ const UserManagement = () => {
 
     return (
         <>
-            <Box>
+            <Box >
                 <TableComponent
                     columns={columns}
                     data={sortByDate(dataTable)}
