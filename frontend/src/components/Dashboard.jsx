@@ -11,17 +11,17 @@ const Dashboard = () => {
     const commentQuery = useDataQuery('allComments', CommentService.getAllComments)
 
     const stats = {
-        articles: articleQuery.data.length,
-        users: userQuery.data.length,
-        comments: commentQuery.data.length,
-        views: articleQuery.data.reduce((sum, article) => sum + (article.read), 0),
+        articles: articleQuery.data?.length,
+        users: userQuery.data?.length,
+        comments: commentQuery.data?.length,
+        views: articleQuery.data?.reduce((sum, article) => sum + (article.read), 0),
     }
 
     const statItems = [
-        { label: 'Bài báo', key: 'articles', isLoading: articleQuery.isLoading },
-        { label: 'Người dùng', key: 'users', isLoading: userQuery.isLoading },
-        { label: 'Bình luận', key: 'comments', isLoading: commentQuery.isLoading },
-        { label: 'Lượt xem', key: 'views', isLoading: articleQuery.isLoading },
+        { label: 'Bài báo', key: 'articles', isLoading: articleQuery?.isLoading },
+        { label: 'Người dùng', key: 'users', isLoading: userQuery?.isLoading },
+        { label: 'Bình luận', key: 'comments', isLoading: commentQuery?.isLoading },
+        { label: 'Lượt xem', key: 'views', isLoading: articleQuery?.isLoading },
     ]
 
     return (
