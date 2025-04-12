@@ -7,7 +7,7 @@ const FeaturedArticles = ({ articles, title, display = 10 }) => {
     const navigate = useNavigate()
 
     const handleDetailsArticle = (articleId) => {
-        navigate(`/article/${articleId}`)
+        navigate(`/article/details/${articleId}`)
     }
 
     const sortByUpdatedAt = (articles) => {
