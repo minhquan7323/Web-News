@@ -15,7 +15,7 @@ const BreadcrumbNav = ({ categories, currentCategory, parentCategory, title }) =
     return (
         <Breadcrumb spacing='8px' py={4} separator={<ChevronRightIcon color='gray.500' />}>
             <BreadcrumbItem>
-                <Link to='/'><Text as='b'>Home</Text></Link>
+                <Link to='/'><Text as='b'>Trang chủ</Text></Link>
             </BreadcrumbItem>
 
             {/* Chỉ hiển thị parentCategory nếu nó khác với currentCategory */}

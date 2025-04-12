@@ -74,14 +74,14 @@ const CategoryManagement = () => {
             }
 
             if (response?.data.status === 'OK') {
-                success(editingCategory ? 'Category updated successfully!' : 'Category added successfully')
+                success(editingCategory ? 'Cập nhật danh mục thành công!' : 'Thêm danh mục thành công')
                 fetchAllCategory()
                 handleClose()
             } else {
-                error(response?.data.message || 'Category name already exists')
+                error(response?.data.message || 'Tên danh mục đã tồn tại')
             }
         } catch (error) {
-            error(response?.data.message || 'Failed to add or update category')
+            error(response?.data.message || 'Không thể thêm hoặc cập nhật danh mục')
         }
     }
 
@@ -93,12 +93,12 @@ const CategoryManagement = () => {
     const handleDelete = async () => {
         try {
             await CategoryService.deleteCategory(deleteCategoryId)
-            success('Category deleted successfully')
+            success('Xóa danh mục thành công')
             fetchAllCategory()
             onDeleteClose()
             setDeleteCategoryId(null)
         } catch (e) {
-            error('Failed to delete category')
+            error('Không xóa được danh mục')
         }
     }
 
@@ -108,7 +108,7 @@ const CategoryManagement = () => {
                 <Box>
                     <Button colorScheme='blue' onClick={() => handleOpen()}>
                         <i className="fa-solid fa-plus"></i>
-                        <Text as="span" paddingLeft={4}>Category</Text>
+                        <Text as="span" paddingLeft={4}>Danh mục</Text>
                     </Button>
                 </Box>
 
@@ -143,17 +143,17 @@ const CategoryManagement = () => {
                 <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} isCentered>
                     <ModalOverlay />
                     <ModalContent>
-                        <ModalHeader>Delete Category</ModalHeader>
+                        <ModalHeader>Xóa danh mục</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
-                            Are you sure you want to delete this category? This action cannot be undone.
+                            Bạn có chắc chắn muốn xóa danh mục này không? Hành động này không thể hoàn tác.
                         </ModalBody>
                         <ModalFooter>
                             <Button variant="ghost" mr={3} onClick={onDeleteClose}>
-                                Cancel
+                                Hủy
                             </Button>
                             <Button colorScheme="red" onClick={handleDelete}>
-                                Delete
+                                Xóa
                             </Button>
                         </ModalFooter>
                     </ModalContent>

@@ -40,7 +40,7 @@ const CommentManagement = () => {
 
     const handleDeleteComment = async (commentId) => {
         await CommentService.deleteComment(commentId)
-        success('Comment deleted successfully')
+        success('Xóa bình luận thành công')
         queryComments.refetch()
         setDeleteCommentId(null)
     }
@@ -54,7 +54,7 @@ const CommentManagement = () => {
                 }
             }
         )
-        success('Comment approved successfully')
+        success('Bình luận đã được chấp thuận')
     }
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm()
@@ -116,7 +116,7 @@ const CommentManagement = () => {
 
     const columns = [
         {
-            title: 'Article',
+            title: 'Bài báo',
             dataIndex: 'articleId',
             ...getColumnSearchProps('articleId.title'),
             ellipsis: true,
@@ -140,7 +140,7 @@ const CommentManagement = () => {
             )
         },
         {
-            title: 'Comment',
+            title: 'Bình luận',
             dataIndex: 'userId',
             ...getColumnSearchProps('userId.fullName'),
             ellipsis: true,
@@ -173,7 +173,7 @@ const CommentManagement = () => {
             )
         },
         {
-            title: 'Status',
+            title: 'Trạng thái',
             dataIndex: 'pending',
             width: 100,
             filters: [
@@ -193,7 +193,7 @@ const CommentManagement = () => {
             render: (pending) => pending ? 'Pending' : 'Approved'
         },
         {
-            title: 'Action',
+            title: 'Hành động',
             dataIndex: 'action',
             fixed: 'right',
             align: 'center',

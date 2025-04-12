@@ -29,7 +29,7 @@ const TableComponent = (props) => {
             <Loading isLoading={isLoading}>
                 <Box py={4}>
                     {multiChoice && rowSelectedKeys.length > 0 && (
-                        <Button colorScheme="red" onClick={onOpen} >Delete all?</Button>
+                        <Button colorScheme="red" onClick={onOpen} >Xóa tất cả?</Button>
                     )}
                 </Box>
                 <Table
@@ -51,16 +51,16 @@ const TableComponent = (props) => {
             <Modal Modal onClose={onClose} isOpen={isOpen} isCentered >
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Delete article</ModalHeader>
+                    <ModalHeader>Xóa bài báo</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>
-                            Are you sure you want to delete this article?
+                            Bạn có chắc là muốn xóa bài báo này?
                         </Box>
                     </ModalBody>
                     <ModalFooter gap={4}>
-                        <Button colorScheme="red" onClick={handleDeleteAll}>Delete</Button>
-                        <Button onClick={onClose}>Close</Button>
+                        <Button colorScheme="red" onClick={handleDeleteAll}>Xóa</Button>
+                        <Button onClick={onClose}>Đóng</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

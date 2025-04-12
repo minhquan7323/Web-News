@@ -62,6 +62,7 @@ const Header = () => {
                 fullName: res.user.fullName,
                 imageUrl: res.user.imageUrl,
                 isAdmin: res.user.isAdmin,
+                isSuperAdmin: res.user.isSuperAdmin,
                 isBanned: res.user.isBanned
             }))
         }
@@ -158,7 +159,7 @@ const Header = () => {
                                         display={{ base: 'none', sm: 'flex' }}
                                         px={4}
                                     >
-                                        Watch Later
+                                        Xem sau
                                     </Text>
                                 </Box>
                             )}
@@ -182,7 +183,7 @@ const Header = () => {
                         </>
                     ) : (
                         <Button colorScheme="teal" size="md" marginRight={5} onClick={() => handleClickNav('home')}>
-                            Home
+                            Trang chủ
                         </Button>
                     )}
                     <Box p={2}>
@@ -280,7 +281,7 @@ const Header = () => {
                                         px={4}
                                         color="teal"
                                     >
-                                        Watch Later
+                                        Xem sau
                                     </Text>
                                 </Box>
                             )}

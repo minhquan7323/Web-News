@@ -3,7 +3,7 @@ import { useToast } from "@chakra-ui/react"
 export const useMessage = () => {
     const toast = useToast()
 
-    const success = (mes = 'Success', description = '') => {
+    const success = (mes = 'Thành công', description = '') => {
         toast({
             title: mes,
             description: description,
@@ -13,7 +13,7 @@ export const useMessage = () => {
         })
     }
 
-    const error = (mes = 'Error', description = '') => {
+    const error = (mes = 'Lỗi', description = '') => {
         toast({
             title: mes,
             description: description,
@@ -23,7 +23,7 @@ export const useMessage = () => {
         })
     }
 
-    const warning = (mes = 'Warning', description = '') => {
+    const warning = (mes = 'Cảnh báo', description = '') => {
         toast({
             title: mes,
             description: description,

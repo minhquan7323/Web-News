@@ -6,7 +6,7 @@ const NewsList = ({ moreFrom, news, templateColumnss = "2fr 2fr" }) => {
     return (
         <Box>
             <Text as="b" borderLeft="6px solid teal" p={1} textTransform="uppercase">
-                More from <Box as="span" color="teal">{moreFrom}</Box>
+                Thêm từ <Box as="span" color="teal">{moreFrom}</Box>
             </Text>
             {news.map((article, index) => (
                 <Grid key={index} templateColumns={templateColumnss} gap={4} mt={6}>

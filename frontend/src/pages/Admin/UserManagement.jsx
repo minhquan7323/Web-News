@@ -19,7 +19,8 @@ const UserManagement = () => {
     const [rowSelected, setRowSelected] = useState('')
     const [stateDetailsUser, setStateDetailsUser] = useState({
         isAdmin: false,
-        isBanned: false
+        isBanned: false,
+        isSuperAdmin: false
     })
     const searchInputRef = useRef(null)
 
@@ -38,6 +39,7 @@ const UserManagement = () => {
         if (res?.data) {
             setStateDetailsUser({
                 isAdmin: res.data.isAdmin,
+                isSuperAdmin: res.data.isSuperAdmin,
                 isBanned: res.data.isBanned
             })
         }
@@ -105,7 +107,7 @@ const UserManagement = () => {
     const columns = [
 
         {
-            title: 'Avatar',
+            title: ' ',
             dataIndex: 'imageUrl',
             ellipsis: true,
             width: 80,
@@ -120,7 +122,7 @@ const UserManagement = () => {
             )
         },
         {
-            title: 'Full Name',
+            title: 'Tên',
             dataIndex: 'fullName',
             searchable: true,
             ...getColumnSearchProps('fullName'),
@@ -129,21 +131,62 @@ const UserManagement = () => {
         {
             title: 'Admin',
             dataIndex: 'isAdmin',
-            searchable: true,
-            ...getColumnSearchProps('isAdmin'),
+            filters: [
+                {
+                    text: 'Có',
+                    value: true,
+                },
+                {
+                    text: 'Không',
+                    value: false,
+                },
+            ],
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => record.isAdmin === value,
             ellipsis: true,
-            render: (isAdmin) => isAdmin ? 'Yes' : 'No'
+            render: (pending) => pending ? 'Có' : 'Không'
         },
         {
-            title: 'Banned',
+            title: 'Super Admin',
+            dataIndex: 'isSuperAdmin',
+            filters: [
+                {
+                    text: 'Có',
+                    value: true,
+                },
+                {
+                    text: 'Không',
+                    value: false,
+                },
+            ],
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => record.isSuperAdmin === value,
+            ellipsis: true,
+            render: (pending) => pending ? 'Có' : 'Không'
+        },
+        {
+            title: 'Bị cấm',
             dataIndex: 'isBanned',
-            searchable: true,
-            ...getColumnSearchProps('isBanned'),
+            filters: [
+                {
+                    text: 'Có',
+                    value: true,
+                },
+                {
+                    text: 'Không',
+                    value: false,
+                },
+            ],
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => record.isBanned === value,
             ellipsis: true,
-            render: (isBanned) => isBanned ? 'Yes' : 'No'
+            render: (pending) => pending ? 'Có' : 'Không'
         },
         {
-            title: 'Action',
+            title: 'Hành động',
             dataIndex: 'action',
             fixed: 'right',
             align: 'center',
@@ -182,10 +225,10 @@ const UserManagement = () => {
 
     useEffect(() => {
         if (isSuccessUpdated && dataUpdated?.status === 'OK') {
-            success('User updated successfully!')
+            success('Cập nhật người dùng thành công!')
             closeEditModal()
         } else if (isErrorUpdated) {
-            error("Failed to update User")
+            error("Không cập nhật được Người dùng")
         }
     }, [dataUpdated, isSuccessUpdated, isErrorUpdated])
 
@@ -197,10 +240,18 @@ const UserManagement = () => {
 
     const handleOnchangeDetails = (e) => {
         const { name, type, checked } = e.target
-        setStateDetailsUser({
-            ...stateDetailsUser,
-            [name]: type === 'checkbox' ? checked : value
-        })
+        if (name === 'isAdmin' && !checked) {
+            setStateDetailsUser({
+                ...stateDetailsUser,
+                isAdmin: false,
+                isSuperAdmin: false
+            })
+        } else {
+            setStateDetailsUser({
+                ...stateDetailsUser,
+                [name]: type === 'checkbox' ? checked : value
+            })
+        }
     }
 
     const updateUser = () => {
@@ -225,7 +276,7 @@ const UserManagement = () => {
                 <ModalOverlay />
                 <ModalContent>
                     <Loading isLoading={isLoadingDetails}>
-                        <ModalHeader>Edit user admin status</ModalHeader>
+                        <ModalHeader>Chỉnh sửa trạng thái người dùng</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
                             <Box display="flex" flexDirection="column" gap={4}>
@@ -236,8 +287,19 @@ const UserManagement = () => {
                                         onChange={handleOnchangeDetails}
                                         name="isAdmin"
                                     />
-                                    <Text>Is Admin</Text>
+                                    <Text>Quản trị viên</Text>
                                 </Box>
+                                {stateDetailsUser.isAdmin && (
+                                    <Box display="flex" alignItems="center" gap={2}>
+                                        <input
+                                            type="checkbox"
+                                            checked={stateDetailsUser.isSuperAdmin}
+                                            onChange={handleOnchangeDetails}
+                                            name="isSuperAdmin"
+                                        />
+                                        <Text>Quản lý người dùng</Text>
+                                    </Box>
+                                )}
                                 <Box display="flex" alignItems="center" gap={2}>
                                     <input
                                         type="checkbox"
@@ -245,17 +307,17 @@ const UserManagement = () => {
                                         onChange={handleOnchangeDetails}
                                         name="isBanned"
                                     />
-                                    <Text>Is Banned</Text>
+                                    <Text>Cấm bình luận</Text>
                                 </Box>
                             </Box>
                         </ModalBody>
                         <ModalFooter gap={4}>
                             <Loading isLoading={isLoadingUpdated}>
                                 <Button colorScheme="red" onClick={updateUser}>
-                                    Update
+                                    Cập nhật
                                 </Button>
                             </Loading>
-                            <Button onClick={closeEditModal}>Close</Button>
+                            <Button onClick={closeEditModal}>Đóng</Button>
                         </ModalFooter>
                     </Loading>
                 </ModalContent>

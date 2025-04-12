@@ -33,29 +33,29 @@ const CategoryForm = ({ open, onClose, onSubmit, formData, setFormData, editingC
             <ModalContent>
                 <form onSubmit={onSubmit}>
                     <ModalHeader>
-                        {editingCategory ? 'Edit Category' : 'Add New Category'}
+                        {editingCategory ? 'Chỉnh sửa danh mục' : 'Thêm danh mục mới'}
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <VStack spacing={4}>
                             <FormControl isRequired>
-                                <FormLabel>Name</FormLabel>
+                                <FormLabel>Tên danh mục</FormLabel>
                                 <Input
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    placeholder="Enter category name"
+                                    placeholder="Nhập tên danh mục"
                                 />
                             </FormControl>
 
                             <FormControl>
-                                <FormLabel>Parent Category</FormLabel>
+                                <FormLabel>Danh mục cha</FormLabel>
                                 <Select
                                     name="parentId"
                                     value={formData.parentId}
                                     onChange={handleChange}
                                 >
-                                    <option value="">Root</option>
+                                    <option value="">Gốc</option>
                                     {getAvailableParentCategories().map(category => (
                                         <option key={category._id} value={category._id}>
                                             {category.name}
@@ -71,7 +71,7 @@ const CategoryForm = ({ open, onClose, onSubmit, formData, setFormData, editingC
                             Cancel
                         </Button>
                         <Button colorScheme="blue" onClick={onSubmit} isDisabled={!isValid}>
-                            {editingCategory ? 'Update' : 'Add'}
+                            {editingCategory ? 'Cập nhật' : 'Thêm'}
                         </Button>
                     </ModalFooter>
                 </form>

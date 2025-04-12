@@ -178,7 +178,7 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
                                 </Button>
                             )}
                             {!user?.isAdmin && comment.pending && (
-                                <Text fontSize="sm" color="yellow.500">Waiting for approval</Text>
+                                <Text fontSize="sm" color="yellow.500">Đang chờ phê duyệt</Text>
                             )}
                         </HStack>
                     </VStack>
@@ -232,14 +232,16 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
                 <HStack justifyContent='space-between' mb={4}>
                     <Text as='b' fontSize={'xl'} textTransform='uppercase'>Comment</Text>
                     <Text fontSize='sm' as='b'>
-                        {approvedCount + approvedRepliesCount} {approvedCount + approvedRepliesCount > 1 ? 'comments' : 'comment'}
+                        {/* {approvedCount + approvedRepliesCount} {approvedCount + approvedRepliesCount > 1 ? 'comments' : 'comment'} */}
+                        {approvedCount + approvedRepliesCount} bình luận
                     </Text>
                 </HStack>
 
                 <Box display="flex" justifyContent='flex-end' mb={2}>
                     {user?.isAdmin && pendingCount > 0 && (
                         <Text fontSize='sm' color='yellow.500'>
-                            {pendingCount + pendingRepliesCount} {pendingCount + pendingRepliesCount > 1 ? 'comments' : 'comment'} waiting for approval
+                            {/* {pendingCount + pendingRepliesCount} {pendingCount + pendingRepliesCount > 1 ? 'comments' : 'comment'} waiting for approval */}
+                            {pendingCount + pendingRepliesCount} bình luận đang chờ phê duyệt
                         </Text>
                     )}
                 </Box>
@@ -251,7 +253,7 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
                 ) ? (
                     <VStack overflow='auto' height='400px' my={4} justify="center" align="center">
                         <Text fontSize='2xl' color='gray.400'>
-                            No comments yet
+                            Chưa có bình luận nào
                         </Text>
                     </VStack>
                 ) : (
@@ -277,23 +279,23 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
                 {user?.userId ? (
                     user?.isBanned ? (
                         <Box textAlign='center' fontWeight='bold' color='red' p={4}>
-                            Your account has been banned. You cannot comment.
+                            Tài khoản của bạn đã bị cấm. Bạn không thể bình luận.
                         </Box>
                     ) : (
                         <Box>
                             {replyingTo && (
                                 <HStack mb={3} p={3} bg={replyBgColor} borderRadius="md" justifyContent='space-between'>
                                     <Text fontSize="sm" fontWeight="bold" color="blue.500">
-                                        Replying to <Text as="span" color="blue.700">{replyingTo.fullName}</Text>
+                                        Trả lời <Text as="span" color="blue.700">{replyingTo.fullName}</Text>
                                     </Text>
                                     <Button size="sm" colorScheme="yellow" onClick={cancelReply}>
-                                        <i className="fas fa-times"></i> <Text pl={2}>Cancel</Text>
+                                        <i className="fas fa-times"></i> <Text pl={2}>Hủy</Text>
                                     </Button>
                                 </HStack>
                             )}
                             <Box display='flex' gap={2}>
                                 <Input
-                                    placeholder={replyingTo ? `Reply to ${replyingTo.fullName}` : "Comment here"}
+                                    placeholder="Viết bình luận..."
                                     value={stateComment.content}
                                     name="content"
                                     onKeyDown={(e) => e.key === "Enter" && handleComment()}
@@ -308,7 +310,7 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
                     )
                 ) : (
                     <Box textAlign='center' fontWeight='bold' color='red' p={4}>
-                        Sign in to comment
+                        Đăng nhập để bình luận
                     </Box>
                 )}
             </Box>

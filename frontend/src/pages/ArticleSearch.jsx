@@ -61,7 +61,7 @@ const ArticleSearch = () => {
                 <Divider borderColor="teal" />
             </Box>
             <Box pt={4}>
-                <Text fontSize='xl' fontWeight='bold'>Search with "<Text as='span' color='teal'>{query}</Text>"</Text>
+                <Text fontSize='xl' fontWeight='bold'>Tìm kiếm với "<Text as='span' color='teal'>{query}</Text>"</Text>
             </Box>
 
             <InfiniteArticleList

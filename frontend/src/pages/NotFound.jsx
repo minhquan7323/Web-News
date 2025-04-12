@@ -24,7 +24,7 @@ const NotFound = () => {
                 <Logo logo="PAGE NOT FOUND" fontSize='10vw' />
                 <Button colorScheme="teal" variant="outline">
                     <Link to="/">
-                        Go to <Text as="span" color="teal" fontWeight="bold">Home</Text>
+                        Trở về <Text as="span" color="teal" fontWeight="bold">Trang chủ</Text>
                     </Link>
                 </Button>
             </VStack>

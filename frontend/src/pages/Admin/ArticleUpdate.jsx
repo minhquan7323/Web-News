@@ -152,32 +152,32 @@ const ArticleUpdate = () => {
                     <Box pb={4}>
                         <Button colorScheme='teal' onClick={() => handleClickNav('admin')}>
                             <i className="fa-solid fa-arrow-left"></i>
-                            <Text as='span' pl={4}>Back</Text>
+                            <Text as='span' pl={4}>Quay lại</Text>
                         </Button>
                     </Box>
                     <Stack spacing={4}>
                         <InputGroup>
-                            <InputLeftAddon>Title</InputLeftAddon>
-                            <Input placeholder='Title here' value={stateArticle.title} name="title" onChange={handleOnchangeDetails} required />
+                            <InputLeftAddon>Tiêu đề</InputLeftAddon>
+                            <Input placeholder='Nhập tiêu đề' value={stateArticle.title} name="title" onChange={handleOnchangeDetails} required />
                         </InputGroup>
                         <HStack>
                             <InputGroup>
-                                <InputLeftAddon>Author</InputLeftAddon>
-                                <Input placeholder='Author here' value={stateArticle.author} name="author" disabled required />
+                                <InputLeftAddon>Tác giả</InputLeftAddon>
+                                <Input placeholder='Nhập tác giả' value={stateArticle.author} name="author" disabled required />
                             </InputGroup>
                             <InputGroup>
-                                <InputLeftAddon>Source</InputLeftAddon>
-                                <Input placeholder='Source here' value={stateArticle.source} name="source" onChange={handleOnchangeDetails} required />
+                                <InputLeftAddon>Nguồn</InputLeftAddon>
+                                <Input placeholder='Nhập nguồn' value={stateArticle.source} name="source" onChange={handleOnchangeDetails} required />
                             </InputGroup>
                         </HStack>
                         <Box>
-                            <Text p={2}>Description</Text>
-                            <Textarea placeholder='Description here' value={stateArticle.description} name="description" onChange={handleOnchangeDetails} required />
+                            <Text p={2} fontWeight='bold'>Mô tả</Text>
+                            <Textarea placeholder='Nhập mô tả' value={stateArticle.description} name="description" onChange={handleOnchangeDetails} required />
                         </Box>
                     </Stack>
                 </Box>
                 <Box p={4}>
-                    <Text p={2} fontWeight='bold'>Category</Text>
+                    <Text p={2} fontWeight='bold'>Danh mục</Text>
                     <Grid templateColumns={gridTemplate} gap={2}>
                         {stateCategory?.filter(type => isLeafCategory(type._id)).map((type) => (
                             <Box key={type._id} display="flex" alignItems="center" gap={4}>
@@ -197,13 +197,13 @@ const ArticleUpdate = () => {
                     </Grid>
                 </Box>
                 <HStack p={4}>
-                    <Text p={2} fontWeight='bold'>Featured</Text>
+                    <Text p={2} fontWeight='bold'>Nổi bật</Text>
                     <Checkbox
                         name="featured"
                         isChecked={stateArticle.featured}
                         onChange={handleCheckboxFeaturedChange}
                     />
-                    <Text p={2} fontWeight='bold'>Hide</Text>
+                    <Text p={2} fontWeight='bold'>Ẩn</Text>
                     <Checkbox
                         name="hide"
                         isChecked={stateArticle.hide}
@@ -213,7 +213,7 @@ const ArticleUpdate = () => {
                 <HStack spacing={4} p={4}>
                     <Button as="label" cursor="pointer" colorScheme='orange'>
                         <i className="fa-solid fa-upload"></i>
-                        <Text as="span" paddingLeft={4} display={{ base: 'none', md: 'flex' }}>Display</Text>
+                        <Text as="span" paddingLeft={4} display={{ base: 'none', md: 'flex' }}>Ảnh hiển thị</Text>
                         <Input
                             type="file"
                             accept="image/*"
@@ -235,7 +235,7 @@ const ArticleUpdate = () => {
             <Flex justify="flex-end" p={4}>
                 <Button colorScheme='green' onClick={updateArticle} disabled={!isArticleFormValid}>
                     <i className="fa-solid fa-upload"></i>
-                    <Text as="span" paddingLeft={4}>Update</Text>
+                    <Text as="span" paddingLeft={4}>Cập nhật</Text>
                 </Button>
             </Flex>
         </Box>

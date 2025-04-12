@@ -1,17 +1,22 @@
 import React, { useEffect, useMemo, useState } from "react"
 import { Text, Image, Stack, Grid, GridItem, Box, Link, useBreakpointValue, Divider, HStack, VStack } from "@chakra-ui/react"
 import * as ArticleService from '../services/ArticleService'
+import * as UserService from '../services/UserService'
 import { useNavigate } from 'react-router-dom'
 import { sortByDate, sortByUpdatedAt } from "../utils"
 import InfiniteArticleList from "../components/InfiniteArticleList"
 import { FeaturedArticleSkeleton, SideArticleSkeleton } from "../components/SkeletonComponent"
 import MostReadArticles from "../components/MostReadArticles"
 import ArticleStats from "../components/ArticleStats"
+import { useSelector } from "react-redux"
+import FeaturedArticles from '../components/FeaturedArticles'
 
 const Home = () => {
     const [articles, setArticles] = useState([])
+    const [watchLaterList, setWatchLaterList] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const navigate = useNavigate()
+    const user = useSelector((state) => state?.user)
 
     const handleDetailsArticle = (id) => {
         navigate(`/article/details/${id}`)
@@ -21,6 +26,11 @@ const Home = () => {
         const res = await ArticleService.getAllArticle()
         const filteredArticles = res.data?.filter(article => !article.hide) || []
         setArticles(filteredArticles)
+    }
+
+    const fetchWatchLater = async () => {
+        const res = await UserService.getWatchLater(user?.userId)
+        setWatchLaterList(res?.data)
     }
 
     const mostReadArticles = useMemo(() =>
@@ -36,6 +46,12 @@ const Home = () => {
 
         loadData()
     }, [])
+
+    useEffect(() => {
+        if (user?.userId) {
+            fetchWatchLater()
+        }
+    }, [user?.userId])
 
     const gridTemplate = useBreakpointValue({
         base: "1fr",
@@ -88,55 +104,23 @@ const Home = () => {
                 </GridItem>
 
                 <GridItem alignSelf="start">
-                    <VStack alignItems="start" spacing={4} w="100%">
+                    <VStack align="left" spacing={4}>
                         {isLoading ? (
-                            <>
-                                {[1, 2, 3, 4, 5].map((index) => (
-                                    <React.Fragment key={index}>
-                                        <SideArticleSkeleton />
-                                        {index < 4 && (
-                                            <Box py={2} w="100%">
-                                                <Divider borderColor="gray.300" />
-                                            </Box>
-                                        )}
-                                    </React.Fragment>
-                                ))}
-                            </>
-                        ) : (
-                            sortByUpdatedAt(featuredArticle)?.slice(0, 10).map((article, index) => (
-                                <Box key={article._id} display={{ base: "none", lg: "block" }} w='100%'>
-                                    <Box onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none" }} cursor='pointer'>
-                                        <HStack alignItems="start" _hover={{ color: "teal" }}>
-                                            <Image
-                                                src={article.imageUrl}
-                                                alt={article.title}
-                                                objectFit="cover"
-                                                minH="100px"
-                                                maxH='100px'
-                                                minW='100px'
-                                                maxW='100px'
-                                                borderRadius="5px"
-                                                transition="opacity 0.1s ease-in-out"
-                                                _hover={{ opacity: 0.7 }}
-                                            />
-                                            <Stack spacing={1}>
-                                                <Text fontSize="lg" noOfLines={3} _hover={{ textDecoration: "underline" }}>
-                                                    {article.title}
-                                                </Text>
-                                                <Text fontSize="sm" color="gray.400">
-                                                    {article.source} - {new Date(article.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                                                </Text>
-                                            </Stack>
-                                        </HStack>
-                                        <ArticleStats read={article.read} commentCount={article.commentCount} />
-                                    </Box>
-                                    {index < featuredArticle.length - 1 && (
+                            [1, 2, 3, 4, 5].map((index) => (
+                                <React.Fragment key={index}>
+                                    <SideArticleSkeleton />
+                                    {index < 4 && (
                                         <Box py={2} w="100%">
                                             <Divider borderColor="gray.300" />
                                         </Box>
                                     )}
-                                </Box>
+                                </React.Fragment>
                             ))
+                        ) : (
+                            <>
+                                <FeaturedArticles articles={featuredArticle} title={'Nổi bật'} display={5} />
+                                {user && <FeaturedArticles articles={watchLaterList} title={'Xem sau'} display={5} />}
+                            </>
                         )}
                     </VStack>
                 </GridItem>

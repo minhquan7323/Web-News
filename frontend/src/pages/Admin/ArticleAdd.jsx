@@ -41,7 +41,7 @@ const ArticleAdd = () => {
 
     useEffect(() => {
         if (isSuccess && data?.status === "OK") {
-            success("Article created successfully!")
+            success("Bài viết đã được tạo thành công!")
             setStateArticle(prev => ({
                 ...prev,
                 title: '',
@@ -56,7 +56,7 @@ const ArticleAdd = () => {
             }))
             setImgDisplay('')
         } else if (isError) {
-            error("Failed to create article")
+            error("Không tạo được bài viết")
         }
     }, [data, isSuccess, isError])
 
@@ -150,32 +150,32 @@ const ArticleAdd = () => {
                     <Box pb={4}>
                         <Button colorScheme='teal' onClick={() => handleClickNav('admin')}>
                             <i className="fa-solid fa-arrow-left"></i>
-                            <Text as='span' pl={4}>Back</Text>
+                            <Text as='span' pl={4}>Quay lại</Text>
                         </Button>
                     </Box>
                     <Stack spacing={4}>
                         <InputGroup>
-                            <InputLeftAddon>Title</InputLeftAddon>
-                            <Input placeholder='Title here' value={stateArticle.title} name="title" onChange={handleOnchange} required />
+                            <InputLeftAddon>Tiêu đề</InputLeftAddon>
+                            <Input placeholder='Nhập tiêu đề' value={stateArticle.title} name="title" onChange={handleOnchange} required />
                         </InputGroup>
                         <HStack>
                             <InputGroup>
-                                <InputLeftAddon>Author</InputLeftAddon>
-                                <Input placeholder='Author here' value={stateArticle.author} name="author" disabled required />
+                                <InputLeftAddon>Tác giả</InputLeftAddon>
+                                <Input placeholder='Nhập tác giả' value={stateArticle.author} name="author" disabled required />
                             </InputGroup>
                             <InputGroup>
-                                <InputLeftAddon>Source</InputLeftAddon>
-                                <Input placeholder='Source here' value={stateArticle.source} name="source" onChange={handleOnchange} required />
+                                <InputLeftAddon>Nguồn</InputLeftAddon>
+                                <Input placeholder='Nhập nguồn' value={stateArticle.source} name="source" onChange={handleOnchange} required />
                             </InputGroup>
                         </HStack>
                         <Box>
-                            <Text p={2} fontWeight='bold'>Description</Text>
-                            <Textarea placeholder='Description here' value={stateArticle.description} name="description" onChange={handleOnchange} required />
+                            <Text p={2} fontWeight='bold'>Mô tả</Text>
+                            <Textarea placeholder='Nhập mô tả' value={stateArticle.description} name="description" onChange={handleOnchange} required />
                         </Box>
                     </Stack>
                 </Box>
                 <Box p={4}>
-                    <Text p={2} fontWeight='bold'>Category</Text>
+                    <Text p={2} fontWeight='bold'>Danh mục</Text>
                     <Grid templateColumns={gridTemplate} gap={2}>
                         {stateCategory?.filter(type => isLeafCategory(type._id)).map((type) => (
                             <Box key={type._id} display="flex" alignItems="center" gap={4}>
@@ -195,13 +195,13 @@ const ArticleAdd = () => {
                     </Grid>
                 </Box>
                 <HStack p={4}>
-                    <Text p={2} fontWeight='bold'>Featured</Text>
+                    <Text p={2} fontWeight='bold'>Nổi bật</Text>
                     <Checkbox
                         name="featured"
                         isChecked={stateArticle.featured}
                         onChange={handleCheckboxFeaturedChange}
                     />
-                    <Text p={2} fontWeight='bold'>Hide</Text>
+                    <Text p={2} fontWeight='bold'>Ẩn</Text>
                     <Checkbox
                         name="hide"
                         isChecked={stateArticle.hide}
@@ -211,7 +211,7 @@ const ArticleAdd = () => {
                 <HStack spacing={4} p={4}>
                     <Button as="label" cursor="pointer" colorScheme='orange'>
                         <i className="fa-solid fa-upload"></i>
-                        <Text as="span" paddingLeft={4} display={{ base: 'none', md: 'flex' }}>Display</Text>
+                        <Text as="span" paddingLeft={4} display={{ base: 'none', md: 'flex' }}>Ảnh hiển thị</Text>
                         <Input
                             type="file"
                             accept="image/*"
@@ -233,7 +233,7 @@ const ArticleAdd = () => {
             <Flex justify="flex-end" p={4}>
                 <Button colorScheme='green' onClick={createArticle} disabled={!isArticleFormValid}>
                     <i className="fa-solid fa-plus"></i>
-                    <Text as="span" paddingLeft={4}>Post</Text>
+                    <Text as="span" paddingLeft={4}>Đăng</Text>
                 </Button>
             </Flex>
         </Box>

@@ -157,7 +157,7 @@ const ArticleManagement = () => {
 
     const columns = [
         {
-            title: 'Image',
+            title: 'Hình ảnh',
             dataIndex: 'imageUrl',
             render: (text, record) => <Image
                 src={text}
@@ -170,7 +170,7 @@ const ArticleManagement = () => {
             width: 200,
         },
         {
-            title: 'Title',
+            title: 'Tiêu đề',
             dataIndex: 'title',
             searchable: true,
             ...getColumnSearchProps('title'),
@@ -182,19 +182,43 @@ const ArticleManagement = () => {
             </Text>
         },
         {
-            title: 'Featured',
+            title: 'Nổi bật',
             dataIndex: 'featured',
             width: 150,
+            filters: [
+                {
+                    text: 'Có',
+                    value: true,
+                },
+                {
+                    text: 'Không',
+                    value: false,
+                },
+            ],
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => record.featured === value,
+            ellipsis: true,
             render: (featured, record) => <Text
                 opacity={record.hide ? 0.5 : 1}
                 transition="opacity 0.3s ease">
-                {featured ? "true" : "false"}
+                {featured ? "Có" : "không"}
             </Text>
         },
         {
-            title: 'Type',
+            title: 'Thể loại',
             dataIndex: 'type',
             width: 150,
+            filters: articles?.reduce((acc, article) => {
+                article.type.forEach(type => {
+                    if (!acc.some(filter => filter.value === type.name)) {
+                        acc.push({ text: type.name, value: type.name })
+                    }
+                });
+                return acc
+            }, []),
+            filterMode: 'tree',
+            onFilter: (value, record) => record.type.some(type => type.name === value),
             render: (types, record) => <Text
                 opacity={record.hide ? 0.5 : 1}
                 transition="opacity 0.3s ease">
@@ -202,7 +226,7 @@ const ArticleManagement = () => {
             </Text>
         },
         {
-            title: 'Action',
+            title: 'Hành động',
             dataIndex: 'action',
             fixed: 'right',
             align: 'center',
@@ -237,7 +261,7 @@ const ArticleManagement = () => {
             <Box>
                 <Button colorScheme='blue' onClick={() => handleClickNav('add-article')}>
                     <i className="fa-solid fa-plus"></i>
-                    <Text as="span" paddingLeft={4}>Article</Text>
+                    <Text as="span" paddingLeft={4}>Thêm bài báo</Text>
                 </Button>
 
             </Box>
@@ -259,18 +283,18 @@ const ArticleManagement = () => {
             <Modal onClose={onClose} isOpen={isOpen} isCentered >
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Delete article</ModalHeader>
+                    <ModalHeader>Xóa bài báo</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>
-                            Are you sure you want to delete this article?
+                            Bạn có chắc là muốn xóa bài báo này?
                         </Box>
                     </ModalBody>
                     <ModalFooter gap={4}>
                         <Loading isLoading={isDeleting}>
-                            <Button colorScheme="red" onClick={deleteArticle}>Delete</Button>
+                            <Button colorScheme="red" onClick={deleteArticle}>Xóa</Button>
                         </Loading>
-                        <Button onClick={onClose}>Close</Button>
+                        <Button onClick={onClose}>Đóng</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

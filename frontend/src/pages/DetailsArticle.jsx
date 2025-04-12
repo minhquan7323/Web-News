@@ -256,7 +256,7 @@ const DetailsArticle = () => {
             <BreadcrumbNav
                 currentCategory={getCategoryPath[getCategoryPath.length - 1]}
                 parentCategory={getCategoryPath[0]}
-                title={'details'}
+                title={'Chi tiết'}
             />
             {articleDetails && !articleDetails.hide && (
                 <>
@@ -268,11 +268,11 @@ const DetailsArticle = () => {
                             <Box p={8} color="gray">
                                 <Box>
                                     <Text>
-                                        By <u>{articleDetails.author}</u>
+                                        Bởi <u>{articleDetails.author}</u>
                                     </Text>
                                 </Box>
                                 <Box>
-                                    Updated at {new Date(articleDetails.updatedAt).toLocaleString()}
+                                    Đăng vào {new Date(articleDetails.createdAt).toLocaleString()}
                                 </Box>
                             </Box>
                         </Box>
@@ -284,9 +284,9 @@ const DetailsArticle = () => {
                     <Box>
                         {!articleDetails || articleDetails.hide ? (
                             <Box textAlign="center" py={16}>
-                                <Text fontSize="3xl" fontWeight="bold" mb={4}>Article not found</Text>
+                                <Text fontSize="3xl" fontWeight="bold" mb={4}>Không tìm thấy bài viết</Text>
                                 <Text fontSize="lg" color="gray.500" mb={8}>
-                                    The article you are looking for does not exist or has been hidden.
+                                    Bài viết bạn đang tìm kiếm không tồn tại hoặc đã bị ẩn.
                                 </Text>
                             </Box>
                         ) : (
@@ -295,7 +295,7 @@ const DetailsArticle = () => {
                                     <Box>
                                         <Image src={articleDetails.imageUrl} alt={articleDetails.title} objectFit="cover" h="auto" w="100%" />
                                         <Box p={4}>
-                                            <Text opacity='0.5'>👁️ {articleDetails.read || 0} views</Text>
+                                            <Text opacity='0.5'>👁️ {articleDetails.read || 0} lượt xem</Text>
                                             <Text fontSize='24px' align='center'>{articleDetails.description}</Text>
                                         </Box>
                                     </Box>
@@ -317,7 +317,7 @@ const DetailsArticle = () => {
                         <Box px={[4, 6, 8, 12]}>
                             <Box pt={12}>
                                 <Text as="b" fontSize='2xl' textTransform="uppercase">
-                                    Up Next
+                                    Tiếp theo
                                 </Text>
                                 {upNextArticles.map((article, index) => (
                                     <Box key={index}>

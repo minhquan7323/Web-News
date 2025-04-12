@@ -3,7 +3,7 @@ const User = require('../models/UserModel')
 const loginUser = async (userData) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const { userId, imageUrl, fullName, isAdmin = false, isBanned = false } = userData
+            const { userId, imageUrl, fullName, isAdmin = false, isBanned = false, isSuperAdmin = false } = userData
 
             if (!userId || !fullName || !imageUrl) {
                 return reject({
@@ -15,7 +15,7 @@ const loginUser = async (userData) => {
             let user = await User.findOne({ userId })
 
             if (!user) {
-                user = new User({ userId, imageUrl, fullName, isAdmin, isBanned })
+                user = new User({ userId, imageUrl, fullName, isAdmin, isBanned, isSuperAdmin })
                 await user.save()
                 return resolve({
                     status: "OK",

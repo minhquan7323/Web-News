@@ -7,8 +7,8 @@ import ArticleStats from './ArticleStats'
 const InfiniteArticleList = ({
     data,
     isLoading,
-    emptyMessage = "No articles found",
-    emptySubMessage = "There are no articles available at the moment",
+    emptyMessage = "Không tìm thấy bài viết nào",
+    emptySubMessage = "Hiện tại không có bài viết nào",
     skipFirstArticle = false,
     description = true,
     itemsPerPage = 6

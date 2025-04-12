@@ -2,14 +2,14 @@ import React from 'react'
 import { Text, Grid, Box, Link, Divider } from "@chakra-ui/react"
 import { useNavigate } from 'react-router-dom';
 
-const MostReadArticles = ({ articles, title = "Most read" }) => {
+const MostReadArticles = ({ articles, title = "Đọc nhiều nhất" }) => {
     const navigate = useNavigate();
     const handleDetailsArticle = (id) => {
         navigate(`/article/details/${id}`)
     }
     return (
         <Box pt={12}>
-            <Text as="b" fontSize='2xl' textTransform="uppercase">
+            <Text as="b" fontSize='2xl' textTransform="uppercase" color='teal'>
                 {title}
             </Text>
             <Grid templateColumns="1fr 1fr" gap={4} mt={4}>

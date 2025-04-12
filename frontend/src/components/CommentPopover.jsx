@@ -11,17 +11,17 @@ const CommentPopover = ({ comment, onDelete, onApprove }) => {
             </PopoverTrigger>
             <PopoverContent>
                 <PopoverArrow />
-                <PopoverHeader>Manage comment</PopoverHeader>
+                <PopoverHeader>Quản lý bình luận</PopoverHeader>
                 <PopoverCloseButton />
                 <PopoverBody p={2}>
                     <VStack align="stretch">
                         <HStack justifyContent="flex-end">
-                            <Button colorScheme="red" onClick={() => onDelete(comment._id)}>Delete</Button>
+                            <Button colorScheme="red" onClick={() => onDelete(comment._id)}>Xóa</Button>
                             {comment.pending ? (
                                 <Button colorScheme="yellow" onClick={() => {
                                     onApprove(comment._id)
                                     onClose()
-                                }}>Approve</Button>
+                                }}>Phê duyệt</Button>
                             ) : null}
                         </HStack>
                     </VStack>

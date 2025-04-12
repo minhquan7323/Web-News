@@ -39,7 +39,7 @@ const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) =>
 
     const handleWatchLater = async (articleId) => {
         if (!user?.userId) {
-            warning('Please login first')
+            warning('Vui lòng đăng nhập trước')
             return
         }
 
@@ -49,7 +49,7 @@ const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) =>
 
             if (isInWatchLater) {
                 res = await UserService.removeWatchLater(user.userId, articleId)
-                success('Removed from Watch Later')
+                success('Xóa khỏi Xem sau')
                 setWatchLaterList(prev => prev.filter(item => item._id !== articleId))
 
                 if (onArticlesChange) {
@@ -58,15 +58,15 @@ const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) =>
                 }
             } else {
                 res = await UserService.addWatchLater(user.userId, articleId)
-                success('Added to Watch Later')
+                success('Thêm vào Xem sau')
                 setWatchLaterList(prev => [...prev, { _id: articleId }])
             }
 
             if (res?.status !== 'OK') {
-                error(isInWatchLater ? 'Failed to remove from Watch Later' : 'Failed to add to Watch Later')
+                error(isInWatchLater ? 'Không thể xóa khỏi Xem sau' : 'Không thể thêm vào Xem sau')
             }
         } catch (error) {
-            error(isInWatchLater ? 'Failed to remove from Watch Later' : 'Failed to add to Watch Later')
+            error(isInWatchLater ? 'Không thể xóa khỏi Xem sau' : 'Không thể thêm vào Xem sau')
         }
     }
 
@@ -93,8 +93,8 @@ const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) =>
             <Grid templateColumns={gridTemplate} gap={4} mt={6} px={4}>
                 {isWatchLaterList && watchLaterList.length === 0 ? (
                     <Box textAlign="center" py={10} gridColumn="1 / -1">
-                        <Text fontSize="xl" color="gray.500">No articles in Watch Later</Text>
-                        <Text mt={2} color="gray.400">Add articles to your Watch Later list to view them here</Text>
+                        <Text fontSize="xl" color="gray.500">Không có bài báo nào trong Xem sau</Text>
+                        <Text mt={2} color="gray.400">Thêm bài viết vào danh sách Xem sau của bạn để xem chúng ở đây</Text>
                     </Box>
                 ) : isLoading ? (
                     <ArticleGridSkeleton bgColor={bgColor} />
@@ -116,7 +116,7 @@ const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) =>
                         >
                             {user?.userId && (
                                 <Tooltip
-                                    label={isInWatchLater(article._id) ? "Remove from Watch Later" : "Add to Watch Later"}
+                                    label={isInWatchLater(article._id) ? "Xóa khỏi Xem sau" : "Thêm vào Xem sau"}
                                     placement="top"
                                     hasArrow
                                     bg="teal.500"

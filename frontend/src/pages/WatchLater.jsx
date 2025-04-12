@@ -23,7 +23,7 @@ const WatchLater = () => {
         <Box pt={16}>
             <ArticleGrid
                 articles={watchLaterList}
-                title={'Watch Later List'}
+                title={'Danh sách Xem sau'}
                 onArticlesChange={setWatchLaterList}
                 isWatchLaterList={true}
             />
