@@ -16,11 +16,11 @@ const FeaturedArticles = ({ articles, title, display = 10 }) => {
 
     return (
         <>
-            <Text as="b" fontSize='2xl' textTransform="uppercase" color='teal' display={{ base: "none", lg: "block" }}>
+            <Text as="b" fontSize='2xl' textTransform="uppercase" color='teal'>
                 {title}
             </Text>
             {sortByUpdatedAt(articles)?.slice(0, display).map((article, index) => (
-                <Box key={article._id} display={{ base: "none", lg: "block" }} w="100%">
+                <Box key={article._id} w="100%">
                     <Box
                         onClick={() => handleDetailsArticle(article._id)}
                         _hover={{ textDecoration: "none" }}
