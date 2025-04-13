@@ -16,7 +16,7 @@ const FeaturedArticles = ({ articles, title, display = 10 }) => {
 
     return (
         <>
-            <Text as="b" fontSize='2xl' textTransform="uppercase" color='teal'>
+            <Text as="b" fontSize='2xl' textTransform="uppercase" color='teal' display={{ base: "none", lg: "block" }}>
                 {title}
             </Text>
             {sortByUpdatedAt(articles)?.slice(0, display).map((article, index) => (
