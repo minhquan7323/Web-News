@@ -272,8 +272,12 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
                                 const shouldShowComment =
                                     !comment.pending ||
                                     user?.isAdmin ||
-                                    comment.userId === user?.userId;
-                                return shouldShowComment && renderComment(comment);
+                                    comment.userId === user?.userId
+                                return shouldShowComment && (
+                                    <Box key={comment._id}>
+                                        {renderComment(comment)}
+                                    </Box>
+                                )
                             })}
                         </VStack>
                     </Box>
