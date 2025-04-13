@@ -195,7 +195,11 @@ const Comment = ({ articleId, user, allComments, refetchComments }) => {
 
                 {comment.replies && comment.replies.length > 0 && (
                     <VStack align='left' mt={2} borderLeftWidth="2px" borderLeftColor={borderColor}>
-                        {comment.replies.map(reply => renderComment(reply, true))}
+                        {comment.replies.map(reply => (
+                            <Box key={reply._id}>
+                                {renderComment(reply, true)}
+                            </Box>
+                        ))}
                     </VStack>
                 )}
             </Box>

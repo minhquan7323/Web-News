@@ -131,47 +131,8 @@ const UserManagement = () => {
             width: 200,
         },
         {
-            title: 'Admin',
-            width: 100,
-            dataIndex: 'isAdmin',
-            filters: [
-                {
-                    text: 'Có',
-                    value: true,
-                },
-                {
-                    text: 'Không',
-                    value: false,
-                },
-            ],
-            filterMode: 'tree',
-            filterSearch: true,
-            onFilter: (value, record) => record.isAdmin === value,
-            ellipsis: true,
-            render: (pending) => pending ? 'Có' : 'Không'
-        },
-        {
-            title: 'Super Admin',
-            width: 140,
-            dataIndex: 'isSuperAdmin',
-            filters: [
-                {
-                    text: 'Có',
-                    value: true,
-                },
-                {
-                    text: 'Không',
-                    value: false,
-                },
-            ],
-            filterMode: 'tree',
-            filterSearch: true,
-            onFilter: (value, record) => record.isSuperAdmin === value,
-            render: (pending) => pending ? 'Có' : 'Không'
-        },
-        {
-            title: 'Bị cấm',
-            width: 100,
+            title: 'Cấm bình luận',
+            width: 150,
             dataIndex: 'isBanned',
             filters: [
                 {
@@ -188,6 +149,43 @@ const UserManagement = () => {
             onFilter: (value, record) => record.isBanned === value,
             render: (pending) => pending ? 'Có' : 'Không'
         },
+        ...(user?.isSuperAdmin
+            ? [
+                {
+                    title: 'Admin',
+                    width: 100,
+                    dataIndex: 'isAdmin',
+                    filters: [
+                        { text: 'Có', value: true },
+                        { text: 'Không', value: false },
+                    ],
+                    filterMode: 'tree',
+                    filterSearch: true,
+                    onFilter: (value, record) => record.isAdmin === value,
+                    ellipsis: true,
+                    render: (pending) => (pending ? 'Có' : 'Không'),
+                },
+                {
+                    title: 'Super Admin',
+                    width: 140,
+                    dataIndex: 'isSuperAdmin',
+                    filters: [
+                        {
+                            text: 'Có',
+                            value: true,
+                        },
+                        {
+                            text: 'Không',
+                            value: false,
+                        },
+                    ],
+                    filterMode: 'tree',
+                    filterSearch: true,
+                    onFilter: (value, record) => record.isSuperAdmin === value,
+                    render: (pending) => pending ? 'Có' : 'Không'
+                }
+            ]
+            : []),
         {
             title: 'Hành động',
             dataIndex: 'action',
@@ -281,25 +279,29 @@ const UserManagement = () => {
                         <ModalCloseButton />
                         <ModalBody>
                             <Box display="flex" flexDirection="column" gap={4}>
-                                <Box display="flex" alignItems="center" gap={2}>
-                                    <input
-                                        type="checkbox"
-                                        checked={stateDetailsUser.isAdmin}
-                                        onChange={handleOnchangeDetails}
-                                        name="isAdmin"
-                                    />
-                                    <Text>Quản trị viên</Text>
-                                </Box>
-                                {stateDetailsUser.isAdmin && (
-                                    <Box display="flex" alignItems="center" gap={2}>
-                                        <input
-                                            type="checkbox"
-                                            checked={stateDetailsUser.isSuperAdmin}
-                                            onChange={handleOnchangeDetails}
-                                            name="isSuperAdmin"
-                                        />
-                                        <Text>Quản lý người dùng</Text>
-                                    </Box>
+                                {user?.isSuperAdmin && (
+                                    <>
+                                        <Box display="flex" alignItems="center" gap={2}>
+                                            <input
+                                                type="checkbox"
+                                                checked={stateDetailsUser.isAdmin}
+                                                onChange={handleOnchangeDetails}
+                                                name="isAdmin"
+                                            />
+                                            <Text>Quản trị viên</Text>
+                                        </Box>
+                                        {stateDetailsUser.isAdmin && (
+                                            <Box display="flex" alignItems="center" gap={2}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={stateDetailsUser.isSuperAdmin}
+                                                    onChange={handleOnchangeDetails}
+                                                    name="isSuperAdmin"
+                                                />
+                                                <Text>Quản lý người dùng</Text>
+                                            </Box>
+                                        )}
+                                    </>
                                 )}
                                 <Box display="flex" alignItems="center" gap={2}>
                                     <input

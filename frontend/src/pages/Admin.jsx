@@ -4,12 +4,9 @@ import ArticleManagement from './Admin/ArticleManagement'
 import CategoryManagement from './Admin/CategoryManagement'
 import UserManagement from './Admin/UserManagement'
 import CommentManagement from './Admin/CommentManagement'
-import { useSelector } from 'react-redux'
 import Dashboard from '../components/Dashboard'
 
 const Admin = () => {
-    const user = useSelector((state) => state?.user)
-
     return (
         <Box pt={16}>
             <Dashboard />
@@ -17,9 +14,7 @@ const Admin = () => {
                 <TabList mb='1em'>
                     <Tab><Text as='b'>Bài báo</Text></Tab>
                     <Tab><Text as='b'>Danh mục</Text></Tab>
-                    {user.isSuperAdmin &&
-                        <Tab><Text as='b'>Người dùng</Text></Tab>
-                    }
+                    <Tab><Text as='b'>Người dùng</Text></Tab>
                     <Tab><Text as='b'>Bình luận</Text></Tab>
                 </TabList>
                 <TabPanels>
@@ -29,11 +24,9 @@ const Admin = () => {
                     <TabPanel>
                         <CategoryManagement />
                     </TabPanel>
-                    {user.isSuperAdmin &&
-                        <TabPanel>
-                            <UserManagement />
-                        </TabPanel>
-                    }
+                    <TabPanel>
+                        <UserManagement />
+                    </TabPanel>
                     <TabPanel>
                         <CommentManagement />
                     </TabPanel>

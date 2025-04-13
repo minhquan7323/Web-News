@@ -29,6 +29,9 @@ const ArticleManagement = () => {
         if (type === 'update-article' && idArticle) {
             navigate(`/system/admin/update-article/${idArticle}`)
         }
+        if (type === 'details' && idArticle) {
+            navigate(`/article/details/${idArticle}`)
+        }
     }
 
     const fetchAllArticle = async () => {
@@ -167,6 +170,8 @@ const ArticleManagement = () => {
                 height="80px"
                 objectFit="cover"
                 opacity={record.hide ? 0.5 : 1} transition="opacity 0.3s ease"
+                onClick={() => handleClickNav('details', record._id)}
+                cursor='pointer'
             />,
             width: 150,
         },
@@ -196,6 +201,15 @@ const ArticleManagement = () => {
             title: 'Lượt xem',
             sorter: (a, b) => a.read - b.read,
             dataIndex: 'read',
+            width: 150,
+            render: (text, record) => <Text>
+                {text}
+            </Text>
+        },
+        {
+            title: 'Bình luận',
+            sorter: (a, b) => a.commentCount - b.commentCount,
+            dataIndex: 'commentCount',
             width: 150,
             render: (text, record) => <Text>
                 {text}
