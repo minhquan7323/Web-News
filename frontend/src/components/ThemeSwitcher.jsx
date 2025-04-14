@@ -6,6 +6,7 @@ const ThemeSwitcher = () => {
 
     return (
         <Button
+            size="sm"
             onClick={toggleColorMode}
             color={colorMode === "dark" ? "white" : "#4C585B"}
             _hover={{

@@ -8,10 +8,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
     integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1809630718780861"
-     crossorigin="anonymous"></script>
-  <title>NEWS</title>
-  <script type="module" crossorigin src="/assets/index-Bm1SbOoZ.js"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1809630718780861"
+    crossorigin="anonymous"></script>
+  <script type="module" crossorigin src="/assets/index-CnpdmBxb.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-CIsuLhd_.css">
 </head>
 
@@ -19,5 +18,27 @@
   <div id="root"></div>
   <canvas id="bg"></canvas>
 </body>
+<script>
+  const roadLength = 33
+  const car = '🚗'
+
+  function updateDisplay(position) {
+    let display = Array(roadLength).join('_')
+    display = display.slice(0, position) + car + display.slice(position + 1)
+    document.title = display
+  }
+
+  let position = roadLength - 1
+  updateDisplay(position)
+
+  setInterval(() => {
+    if (position > 0) {
+      position--
+    } else {
+      position = roadLength - 1
+    }
+    updateDisplay(position)
+  }, 150)
+</script>
 
 </html>

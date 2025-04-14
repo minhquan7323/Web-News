@@ -1,7 +1,7 @@
 import {
     Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton,
     DrawerContent, DrawerHeader, DrawerOverlay, HStack, Input,
-    List, ListItem, Text, useBreakpointValue, useDisclosure, VStack
+    Text, useBreakpointValue, useDisclosure
 } from '@chakra-ui/react'
 import { HamburgerIcon } from '@chakra-ui/icons'
 import React, { useEffect, useState } from 'react'
@@ -13,7 +13,7 @@ import * as CategoryService from '../services/CategoryService'
 import { useQuery } from '@tanstack/react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { resetUser, updateUser } from '../redux/userSlice'
-import { persistor, store } from '../redux/store'
+import { persistor } from '../redux/store'
 import ThemeSwitcher from './ThemeSwitcher'
 
 const Header = () => {
@@ -176,13 +176,13 @@ const Header = () => {
                                 </Button>
                             </Box>
                             {user.isAdmin && (
-                                <Button colorScheme="teal" size="md" marginRight={5} onClick={() => handleClickNav('admin')}>
+                                <Button colorScheme="teal" size="md" onClick={() => handleClickNav('admin')}>
                                     Admin
                                 </Button>
                             )}
                         </>
                     ) : (
-                        <Button colorScheme="teal" size="md" marginRight={5} onClick={() => handleClickNav('home')}>
+                        <Button colorScheme="teal" size="md" onClick={() => handleClickNav('home')}>
                             Trang chủ
                         </Button>
                     )}

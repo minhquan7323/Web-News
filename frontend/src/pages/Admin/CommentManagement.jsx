@@ -8,7 +8,7 @@ import TableComponent from '../../components/Table/Table'
 import { sortByDate } from '../../utils'
 import { Input } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
-
+import { useNavigate } from 'react-router-dom'
 const CommentManagement = () => {
     const { success, error } = useMessage()
     const [deleteCommentId, setDeleteCommentId] = useState(null)
@@ -17,6 +17,7 @@ const CommentManagement = () => {
     const searchInputRef = useRef(null)
     const [searchText, setSearchText] = useState("")
     const [searchedColumn, setSearchedColumn] = useState("")
+    const navigate = useNavigate()
 
     const fetchAllComments = async () => {
         const res = await CommentService.getAllComments()
@@ -37,6 +38,18 @@ const CommentManagement = () => {
             return res
         }
     )
+
+    const handleClickNav = (type, idArticle = '') => {
+        if (type === 'add-article') {
+            navigate('/system/admin/add-article')
+        }
+        if (type === 'update-article' && idArticle) {
+            navigate(`/system/admin/update-article/${idArticle}`)
+        }
+        if (type === 'details' && idArticle) {
+            navigate(`/article/details/${idArticle}`)
+        }
+    }
 
     const handleDeleteComment = async (commentId) => {
         await CommentService.deleteComment(commentId)
@@ -130,6 +143,8 @@ const CommentManagement = () => {
                             height="60px"
                             objectFit="cover"
                             borderRadius="md"
+                            onClick={() => handleClickNav('details', articleId._id)}
+                            cursor='pointer'
                         />
                         <Text>
                             {articleId?.title}

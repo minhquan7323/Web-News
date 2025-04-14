@@ -8,9 +8,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
     integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1809630718780861"
-     crossorigin="anonymous"></script>
-  <title>NEWS</title>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1809630718780861"
+    crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -18,5 +17,27 @@
   <canvas id="bg"></canvas>
   <script type="module" src="/src/main.jsx"></script>
 </body>
+<script>
+  const roadLength = 33
+  const car = '🚗'
+
+  function updateDisplay(position) {
+    let display = Array(roadLength).join('_')
+    display = display.slice(0, position) + car + display.slice(position + 1)
+    document.title = display
+  }
+
+  let position = roadLength - 1
+  updateDisplay(position)
+
+  setInterval(() => {
+    if (position > 0) {
+      position--
+    } else {
+      position = roadLength - 1
+    }
+    updateDisplay(position)
+  }, 150)
+</script>
 
 </html>
