@@ -119,7 +119,7 @@ const Home = () => {
                         ) : (
                             <Box display={{ base: "none", lg: "block" }}>
                                 <FeaturedArticles articles={featuredArticle} title={'Nổi bật'} display={5} />
-                                {user && watchLaterList.length > 0 && <FeaturedArticles articles={watchLaterList} title={'Xem sau'} display={5} />}
+                                {user && watchLaterList.length > 0 && <FeaturedArticles articles={watchLaterList} title={'đọc tiếp'} display={5} />}
                             </Box>
                         )}
                     </VStack>

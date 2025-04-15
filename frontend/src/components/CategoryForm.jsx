@@ -16,13 +16,12 @@ const CategoryForm = ({ open, onClose, onSubmit, formData, setFormData, editingC
     }
 
     const getAvailableParentCategories = () => {
-        if (!editingCategory) return categories
         const getAllChildrenIds = (categoryId) => {
             const children = categories.filter(cat => cat.parentId === categoryId)
             return [categoryId, ...children.flatMap(child => getAllChildrenIds(child._id))]
         }
-        const excludedIds = getAllChildrenIds(editingCategory._id)
-        return categories.filter(cat => !excludedIds.includes(cat._id))
+        const excludedIds = editingCategory ? getAllChildrenIds(editingCategory._id) : []
+        return categories.filter(cat => !cat.parentId && !excludedIds.includes(cat._id))
     }
 
     const isValid = formData.name.trim() !== ''
