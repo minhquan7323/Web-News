@@ -3,11 +3,17 @@ import { Box, HStack, Image, Stack, Text, Divider } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import ArticleStats from './ArticleStats'
 
-const FeaturedArticles = ({ articles, title, display = 10 }) => {
+const FeaturedArticles = ({ articles, title, display = 10, linkList }) => {
     const navigate = useNavigate()
 
-    const handleDetailsArticle = (articleId) => {
-        navigate(`/article/details/${articleId}`)
+    const handleClickNav = (type, articleId) => {
+        if (type === 'details') {
+            navigate(`/article/details/${articleId}`)
+        } else if (type === 'watchlater') {
+            navigate(`/watch-later`)
+        } else if (type === 'featuredList') {
+            navigate(`/featured-list`)
+        }
     }
 
     const sortByUpdatedAt = (articles) => {
@@ -16,13 +22,13 @@ const FeaturedArticles = ({ articles, title, display = 10 }) => {
 
     return (
         <>
-            <Text as="b" fontSize='2xl' textTransform="uppercase" color='teal'>
+            <Text as="b" fontSize='2xl' textTransform="uppercase" color='teal' onClick={() => handleClickNav(linkList)} cursor="pointer">
                 {title}
             </Text>
             {sortByUpdatedAt(articles)?.slice(0, display).map((article, index) => (
                 <Box key={article._id} w="100%">
                     <Box
-                        onClick={() => handleDetailsArticle(article._id)}
+                        onClick={() => handleClickNav('details', article._id)}
                         _hover={{ textDecoration: "none" }}
                         cursor="pointer"
                     >

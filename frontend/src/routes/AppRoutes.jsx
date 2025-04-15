@@ -12,6 +12,7 @@ import * as UserService from '../services/UserService'
 import { useUser } from '@clerk/clerk-react'
 import ArticleList from '../pages/ArticleList'
 import WatchLater from "../pages/WatchLater"
+import FeaturedList from '../pages/FeaturedList'
 
 const AppRoutes = () => {
     const [isAdmin, setIsAdmin] = useState('')
@@ -35,6 +36,7 @@ const AppRoutes = () => {
                 <Route path='article/details/:id' element={<DetailsArticle />} />
                 <Route path='search' element={<ArticleSearch />} />
                 <Route path='type/:id' element={<ArticleList />} />
+                <Route path='featured-list' element={<FeaturedList />} />
                 {user?.id && (
                     <Route path='watch-later' element={<WatchLater />} />
                 )}

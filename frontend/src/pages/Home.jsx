@@ -18,10 +18,14 @@ const Home = () => {
     const navigate = useNavigate()
     const user = useSelector((state) => state?.user)
 
-    const handleDetailsArticle = (id) => {
-        navigate(`/article/details/${id}`)
+    const handleClickNav = (type, id) => {
+        if (type === 'details') {
+            navigate(`/article/details/${id}`)
+        }
+        else if (type === 'watchlater') {
+            navigate(`/watchlater`)
+        }
     }
-
     const fetchAllArticle = async () => {
         const res = await ArticleService.getAllArticle()
         const filteredArticles = res.data?.filter(article => !article.hide) || []
@@ -67,7 +71,7 @@ const Home = () => {
                         <FeaturedArticleSkeleton />
                     ) : (
                         articles.length > 0 && sortByDate(articles)?.slice(0, 1).map((article) => (
-                            <Link key={article._id} onClick={() => handleDetailsArticle(article._id)} _hover={{ textDecoration: "none", color: "teal" }}>
+                            <Link key={article._id} onClick={() => handleClickNav('details', article._id)} _hover={{ textDecoration: "none", color: "teal" }}>
                                 <Image
                                     src={article.imageUrl}
                                     alt={article.title}
@@ -118,8 +122,8 @@ const Home = () => {
                             ))
                         ) : (
                             <Box display={{ base: "none", lg: "block" }}>
-                                <FeaturedArticles articles={featuredArticle} title={'Nổi bật'} display={5} />
-                                {user && watchLaterList.length > 0 && <FeaturedArticles articles={watchLaterList} title={'đọc tiếp'} display={5} />}
+                                <FeaturedArticles articles={featuredArticle} linkList={'featuredList'} title={'Nổi bật'} display={5} />
+                                {user && watchLaterList.length > 0 && <FeaturedArticles articles={watchLaterList} linkList={'watchlater'} title={'đọc tiếp'} display={5} />}
                             </Box>
                         )}
                     </VStack>

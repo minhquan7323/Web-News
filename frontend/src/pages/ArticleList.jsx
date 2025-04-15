@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react"
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import * as ArticleService from '../services/ArticleService'
 import * as CategoryService from '../services/CategoryService'
 import ArticleGrid from "../components/ArticleGrid"
-import { Box, Text, HStack, VStack, useBreakpointValue } from "@chakra-ui/react"
+import { Box, Text, HStack, VStack } from "@chakra-ui/react"
 import { useQuery } from '@tanstack/react-query'
 import BreadcrumbNav from '../components/BreadcrumbNav'
 
