@@ -159,10 +159,10 @@ const allArticle = (limit, page, sort, filter, search) => {
             if (sort) {
                 const objectSort = {}
                 objectSort[sort[1]] = sort[0] === 'asc' ? 1 : -1
-                articleQuery = articleQuery.sort(objectSort);
+                articleQuery = articleQuery.sort(objectSort)
             }
 
-            const allArticle = await articleQuery;
+            const allArticle = await articleQuery
 
             resolve({
                 status: 'OK',
@@ -172,33 +172,54 @@ const allArticle = (limit, page, sort, filter, search) => {
                 totalArticleFilter,
                 currentPage: Number(page),
                 totalPage: Math.ceil(totalArticleFilter / limit),
-            });
+            })
         } catch (e) {
-            reject(e);
+            reject(e)
         }
-    });
+    })
 }
 
 const getAllTypeArticle = async () => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const allCategories = await Category.find()
-            const allTypesInArticles = await Article.distinct('type')
-            resolve({
-                status: 'OK',
-                message: 'Success',
-                data: {
-                    categories: allCategories,
-                    types: allTypesInArticles,
-                }
-            })
-        } catch (e) {
-            reject({
-                status: 'ERROR',
-                message: e.message,
-            })
+    try {
+        const allCategories = await Category.find()
+        const allTypesInArticles = await Article.distinct('type', { hide: false })
+
+        const categoryMap = new Map()
+        allCategories.forEach(cat => categoryMap.set(cat._id.toString(), cat))
+
+        const findRootCategory = (catId) => {
+            let current = categoryMap.get(catId)
+            while (current && current.parentId) {
+                current = categoryMap.get(current.parentId.toString())
+            }
+            return current
         }
-    })
+
+        const rootCategoriesMap = new Map()
+
+        allTypesInArticles.forEach(typeId => {
+            const rootCat = findRootCategory(typeId.toString())
+            if (rootCat) {
+                rootCategoriesMap.set(rootCat._id.toString(), rootCat)
+            }
+        })
+
+        const rootCategories = Array.from(rootCategoriesMap.values())
+
+        return {
+            status: 'OK',
+            message: 'Success',
+            data: {
+                categories: rootCategories,
+                types: allTypesInArticles,
+            }
+        }
+    } catch (e) {
+        return {
+            status: 'ERROR',
+            message: e.message,
+        }
+    }
 }
 
 const getFeaturedArticles = async () => {
@@ -227,7 +248,7 @@ const getArticleByType = (typeId) => {
                 return resolve({
                     status: 'ERR',
                     message: 'Type ID is required'
-                });
+                })
             }
 
             const articles = await Article.find({ type: typeId }).populate('type', 'name')

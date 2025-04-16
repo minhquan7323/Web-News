@@ -10,6 +10,7 @@ import { useUser, SignedIn, SignedOut, useAuth, SignInButton, UserButton } from 
 import Logo from './Logo'
 import * as UserService from '../services/UserService'
 import * as CategoryService from '../services/CategoryService'
+import * as ArticleService from '../services/ArticleService'
 import { useQuery } from '@tanstack/react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { resetUser, updateUser } from '../redux/userSlice'
@@ -101,6 +102,10 @@ const Header = () => {
         const res = await CategoryService.getAllCategory()
         return res.data
     }
+    const fetchAllTypeArticle = async () => {
+        const res = await ArticleService.getAllTypeArticle()
+        return res.data
+    }
     const handleTypeArticle = (typeId) => {
         navigate(`/type/${typeId}`)
         onClose()
@@ -109,6 +114,12 @@ const Header = () => {
     const { data: categories } = useQuery({
         queryKey: ['categories'],
         queryFn: fetchAllCategory,
+        retry: 2,
+        retryDelay: 1000
+    })
+    const { data: allTypeCategory } = useQuery({
+        queryKey: ['allTypeCategories'],
+        queryFn: fetchAllTypeArticle,
         retry: 2,
         retryDelay: 1000
     })
@@ -137,7 +148,7 @@ const Header = () => {
                     </Link>
                     {!adminPath && (
                         <HStack>
-                            {categories?.filter(category => !category.parentId).slice(0, visibleCategories).map((category) => (
+                            {allTypeCategory?.categories.slice(0, visibleCategories).map((category) => (
                                 <Box cursor='pointer' onClick={() => handleTypeArticle(category._id)} key={category._id}>
                                     <Text
                                         transition="color 0.3s ease"
@@ -237,7 +248,7 @@ const Header = () => {
                         <Divider borderColor="teal" />
 
                         <HStack spacing={12} pt={12} wrap="wrap" align="flex-start">
-                            {categories?.filter(category => !category.parentId).map((category) => (
+                            {allTypeCategory?.categories.map((category) => (
                                 <Box key={category._id} width={{ base: "100%", md: "45%", lg: "30%" }}>
                                     <Box cursor='pointer' onClick={() => handleTypeArticle(category._id)}>
                                         <Text
@@ -273,7 +284,15 @@ const Header = () => {
                                 </Box>
                             ))}
                             {user?.userId && (
-                                <Box cursor='pointer' onClick={() => navigate('/watch-later')} width={{ base: "100%", md: "45%", lg: "30%" }}>
+                                <Box
+                                    cursor='pointer'
+                                    onClick={() => {
+                                        navigate('/watch-later')
+                                        onClose()
+                                    }}
+                                    width={{ base: "100%", md: "45%", lg: "30%" }}
+                                >
+
                                     <Text
                                         transition="color 0.3s ease"
                                         _hover={{ textDecoration: "underline" }}

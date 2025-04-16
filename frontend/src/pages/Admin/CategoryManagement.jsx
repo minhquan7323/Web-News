@@ -90,7 +90,17 @@ const CategoryManagement = () => {
         onDeleteOpen()
     }
 
+    const hasChildCategories = (categoryId) => {
+        return categories.some(category => category.parentId === categoryId)
+    }
+
     const handleDelete = async () => {
+        if (hasChildCategories(deleteCategoryId)) {
+            error('Danh mục này có danh mục con, không thể xóa!');
+            onDeleteClose();
+            return;
+        }
+
         try {
             await CategoryService.deleteCategory(deleteCategoryId)
             success('Xóa danh mục thành công')
@@ -101,6 +111,7 @@ const CategoryManagement = () => {
             error('Không xóa được danh mục')
         }
     }
+
 
     return (
         <Box>

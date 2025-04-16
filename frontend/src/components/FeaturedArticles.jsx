@@ -22,11 +22,11 @@ const FeaturedArticles = ({ articles, title, display = 10, linkList }) => {
 
     return (
         <>
-            <Text as="b" fontSize='2xl' textTransform="uppercase" color='teal' onClick={() => handleClickNav(linkList)} cursor="pointer">
+            <Text as="b" fontSize='2xl' textTransform="uppercase" color='teal' _hover={{ opacity: '0.5' }} onClick={() => handleClickNav(linkList)} cursor="pointer">
                 {title}
             </Text>
             {sortByUpdatedAt(articles)?.slice(0, display).map((article, index) => (
-                <Box key={article._id} w="100%">
+                <Box key={article._id} w="100%" pt={4}>
                     <Box
                         onClick={() => handleClickNav('details', article._id)}
                         _hover={{ textDecoration: "none" }}

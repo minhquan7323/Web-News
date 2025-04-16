@@ -193,8 +193,10 @@ const ArticleManagement = () => {
             searchable: true,
             width: 150,
             ...getColumnSearchProps('author'),
-            render: (text, record) => <Text>
-                {text}
+            render: (author, record) => <Text
+                opacity={record.hide ? 0.5 : 1}
+                transition="opacity 0.3s ease">
+                {author}
             </Text>
         },
         {
@@ -202,8 +204,10 @@ const ArticleManagement = () => {
             sorter: (a, b) => a.read - b.read,
             dataIndex: 'read',
             width: 150,
-            render: (text, record) => <Text>
-                {text}
+            render: (view, record) => <Text
+                opacity={record.hide ? 0.5 : 1}
+                transition="opacity 0.3s ease">
+                {view}
             </Text>
         },
         {
@@ -211,8 +215,10 @@ const ArticleManagement = () => {
             sorter: (a, b) => a.commentCount - b.commentCount,
             dataIndex: 'commentCount',
             width: 150,
-            render: (text, record) => <Text>
-                {text}
+            render: (commentCount, record) => <Text
+                opacity={record.hide ? 0.5 : 1}
+                transition="opacity 0.3s ease">
+                {commentCount}
             </Text>
         },
         {

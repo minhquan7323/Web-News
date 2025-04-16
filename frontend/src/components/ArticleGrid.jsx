@@ -99,7 +99,7 @@ const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) =>
                 ) : isLoading ? (
                     <ArticleGridSkeleton bgColor={bgColor} />
                 ) : (
-                    sortByDate(articles)?.map((article) => (
+                    sortByDate(articles)?.filter((article) => !article.hide).map((article) => (
                         <Box
                             key={article._id}
                             p={2}
