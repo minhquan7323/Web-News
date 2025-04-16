@@ -62,8 +62,9 @@ const DetailsArticle = () => {
         enabled: !!articleId,
     })
     const { data: allComments = [], refetch: refetchComments, isLoading: isLoadingComments } = useQuery({
-        queryKey: ['allComments'],
+        queryKey: ['allComments', articleId],
         queryFn: fetchAllComments,
+        enabled: !!articleId,
     })
     const { data: categories } = useQuery({
         queryKey: ['categories'],
@@ -94,7 +95,7 @@ const DetailsArticle = () => {
                     article._id !== articleId
                 )
                 .slice(0, 3)
-        }))
+        })).filter(item => item.articles.length > 0)
     }, [allArticles, randomCategories, articleId])
 
     useEffect(() => {
