@@ -11,6 +11,7 @@ import Highlighter from 'react-highlight-words'
 import { Input } from 'antd'
 import Loading from '../../components/Loading/Loading'
 import { useMessage } from '../../components/Message/Message'
+import ExportExcelButton from '../../components/ExportExcelButton'
 
 const ArticleManagement = () => {
     const { success, error } = useMessage()
@@ -296,15 +297,32 @@ const ArticleManagement = () => {
         }
     })
 
+    const exportColumns = [
+        { label: "Tiêu đề", value: "title" },
+        { label: "Tác giả", value: "author" },
+        { label: "Hình ảnh", value: (item) => item.imageUrl },
+        { label: "Ngày tạo", value: (item) => new Date(item.createdAt).toLocaleString() },
+        { label: "Lượt xem", value: "read" },
+        { label: "Bình luận", value: "commentCount" },
+        { label: "Nổi bật", value: (item) => item.featured ? "Có" : "Không" },
+        { label: "Thể loại", value: (item) => item.type.map(t => t.name).join(', ') },
+        { label: "Mô tả", value: "description" },
+        { label: "Nội dung", value: "content" }
+    ]
+
     return (
         <Box>
-            <Box>
+            <HStack spacing={8} mb={4} alignItems="center">
                 <Button colorScheme='blue' onClick={() => handleClickNav('add-article')}>
                     <i className="fa-solid fa-plus"></i>
                     <Text as="span" paddingLeft={4}>Thêm bài báo</Text>
                 </Button>
-
-            </Box>
+                <ExportExcelButton
+                    data={articles?.map(article => ({ ...article, key: article._id }))}
+                    columns={exportColumns}
+                    defaultFileName="DanhSachBaiBao"
+                />
+            </HStack>
             <TableComponent
                 multiChoice={true}
                 deleteMany={deleteManyArticles}

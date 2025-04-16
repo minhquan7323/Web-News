@@ -1,5 +1,7 @@
-import imageCompression from 'browser-image-compression';
+import imageCompression from 'browser-image-compression'
 import { Clerk } from "@clerk/clerk-js";
+import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
 
 export const uploadToCloudinary = async (file) => {
     try {
@@ -143,4 +145,24 @@ export const sortByDate = (data) => {
 export const sortByUpdatedAt = (data) => {
     if (!Array.isArray(data)) return [];
     return data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+}
+
+export const exportToExcel = ({ data, fileName = 'Export.xlsx', columns = [] }) => {
+    if (!data || data.length === 0) return
+
+    const exportData = data.map(item => {
+        const row = {}
+        columns.forEach(col => {
+            row[col.label] = typeof col.value === 'function' ? col.value(item) : item[col.value]
+        })
+        return row
+    })
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+    const dataBlob = new Blob([excelBuffer], { type: 'application/octet-stream' })
+    saveAs(dataBlob, fileName)
 }
