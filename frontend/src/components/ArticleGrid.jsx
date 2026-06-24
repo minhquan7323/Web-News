@@ -8,13 +8,12 @@ import { useMessage } from '../components/Message/Message'
 import { ArticleGridSkeleton } from "./SkeletonComponent"
 import ArticleStats from "./ArticleStats"
 
-const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) => {
+const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList, isLoading }) => {
     const navigate = useNavigate()
     const user = useSelector((state) => state?.user)
     const { success, error, warning } = useMessage()
     const [watchLaterList, setWatchLaterList] = useState([0])
-    const [isLoading, setIsLoading] = useState(false)
-
+    
     useEffect(() => {
         const fetchWatchLater = async () => {
             if (user?.userId) {
@@ -24,14 +23,6 @@ const ArticleGrid = ({ articles, title, onArticlesChange, isWatchLaterList }) =>
         }
         fetchWatchLater()
     }, [user?.userId])
-
-    useEffect(() => {
-        if (articles.length !== 0) {
-            setIsLoading(false)
-        } else {
-            setIsLoading(true)
-        }
-    }, [articles])
 
     const handleDetailsArticle = (id) => {
         navigate(`/article/details/${id}`)

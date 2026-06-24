@@ -44,7 +44,7 @@ const ArticleList = () => {
 
         for (const subcategory of subcategories) {
             const articles = await fetchGetArticleByType(subcategory._id)
-            articlesMap[subcategory._id] = articles
+            articlesMap[subcategory._id] = articles.filter(article => article.hide === false)
         }
 
         setCategoryArticles(articlesMap)
@@ -92,22 +92,22 @@ const ArticleList = () => {
                         <HStack spacing={4} wrap="wrap">
                             {categories
                                 ?.filter(cat => cat.parentId === typeId)
-                                .map((category) => (
-                                    <Box key={category._id} width="100%">
-                                        <Text
-                                            fontSize="xl"
-                                            fontWeight="bold"
-                                            color="teal.600"
-                                            mb={4}
-                                            cursor="pointer"
-                                            _hover={{ color: "teal.400", textDecoration: "underline" }}
-                                            onClick={() => handleCategoryClick(category._id)}
-                                        >
-                                            {category.name}
-                                        </Text>
-                                        <ArticleGrid articles={categoryArticles[category._id] || []} />
-                                    </Box>
-                                ))}
+                                .map((category) => {
+                                    const articles = categoryArticles[category._id];
+                                    const shouldRender = !articles || articles.length > 0;
+                                    if (!shouldRender) return null;
+                                    return (
+                                        <Box key={category._id} width="100%">
+                                            <Text fontSize="xl" fontWeight="bold" color="teal.600" mb={4}>
+                                                {category.name}
+                                            </Text>
+                                            <ArticleGrid
+                                                articles={articles || []}
+                                                isLoading={!articles}
+                                            />
+                                        </Box>
+                                    );
+                                })}
                         </HStack>
                     </VStack>
                 </>
